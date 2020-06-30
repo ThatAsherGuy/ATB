@@ -138,13 +138,13 @@
 #                      tool_settings,
 #                      "transform_pivot_point",
 #                      text="",
-#                      value='ACTIVE_ELEMENT'
+#                      value='ATBIVE_ELEMENT'
 #         )
 
 #     col = layout.column(align=True)
 #     row = col.row(align=True)
 #     row.prop(shading, "show_xray", text="Xray", toggle=True, icon='XRAY')
-#     row.popover('ACT_PT_HeaderButtons', text="", icon='NONE')
+#     row.popover('ATB_PT_HeaderButtons', text="", icon='NONE')
 #     row = col.column(align=True)
 #     row.scale_y = 0.65
 #     if shading.show_xray:

@@ -123,9 +123,9 @@ class ATVPCursorGizmo(GizmoGroup):
     @classmethod
     def setup_keymap(self, keys):
         # Key Map - box, not present
-        if not keys.keymaps.find(name="ACT Gizmo", space_type="VIEW_3D"):
+        if not keys.keymaps.find(name="ATB Gizmo", space_type="VIEW_3D"):
             print("No Keymap - Making a New One")
-            km = keys.keymaps.new(name='ACT Gizmo', space_type="VIEW_3D")
+            km = keys.keymaps.new(name='ATB Gizmo', space_type="VIEW_3D")
 
             # Key Map Item - present, not box
             km.keymap_items.new("gizmogroup.gizmo_tweak", "LEFTMOUSE", "PRESS")
@@ -135,11 +135,11 @@ class ATVPCursorGizmo(GizmoGroup):
                 'RIGHTMOUSE',
                 'CLICK',
                 )
-            kmi.properties.name = "VIEW3D_MT_ACT_cursor_pie"
+            kmi.properties.name = "VIEW3D_MT_ATB_cursor_pie"
         else:
-            km = keys.keymaps.find(name="ACT Gizmo", space_type="VIEW_3D")
+            km = keys.keymaps.find(name="ATB Gizmo", space_type="VIEW_3D")
             km.restore_to_default()
-            # print("ACT Gizmo Keymap Found: " + str(len(km.keymap_items)) + " Entries")
+            # print("ATB Gizmo Keymap Found: " + str(len(km.keymap_items)) + " Entries")
             if (len(km.keymap_items)) < 2:
                 km.restore_to_default()
                 km.keymap_items.new("gizmogroup.gizmo_tweak", "LEFTMOUSE", "PRESS")
@@ -149,7 +149,7 @@ class ATVPCursorGizmo(GizmoGroup):
                     'RIGHTMOUSE',
                     'CLICK',
                     )
-                kmi.properties.name = "VIEW3D_MT_ACT_cursor_pie"
+                kmi.properties.name = "VIEW3D_MT_ATB_cursor_pie"
         return km
 
     def setup(self, context):
@@ -197,7 +197,7 @@ class ATVPCursorGizmo(GizmoGroup):
         # props.right_op_args = "'INVOKE_DEFAULT', True"
         # props.right_op_props = (
         #                       "{"
-        #                       "'name': 'VIEW3D_MT_ACT_cursor_pie',"
+        #                       "'name': 'VIEW3D_MT_ATB_cursor_pie',"
         #                       "}"
         #                       )
 

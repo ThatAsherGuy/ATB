@@ -1186,11 +1186,11 @@ class VIEW3D_PT_meta_panel(Panel):
                         active_obj.vertex_groups and
                         (
                             active_obj.mode == 'EDIT' or
-                                                        (
-                                                            active_obj.mode == 'WEIGHT_PAINT'
-                                                            and active_obj.type == 'MESH'
-                                                            and active_obj.data.use_paint_mask_vertex
-                                                        )
+                                                         (
+                                                             active_obj.mode == 'WEIGHT_PAINT'
+                                                             and active_obj.type == 'MESH'
+                                                             and active_obj.data.use_paint_mask_vertex
+                                                         )
                         )
                 ):
                     querb = True

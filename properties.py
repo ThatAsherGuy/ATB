@@ -181,8 +181,8 @@ bpy.types.Scene.piv_gz_twist = bpy.props.FloatProperty(
                                                   max=360.0,
                                                   )
 bpy.types.Scene.act_gizmo_pick = bpy.props.BoolVectorProperty(
-                                        name="ACT Gizmos",
-                                        description="ACT Gizmo Toolbox",
+                                        name="ATB Gizmos",
+                                        description="ATB Gizmo Toolbox",
                                         default=(False, False, False, False),
                                         size=4
                                         )
@@ -344,7 +344,7 @@ class MetaPanelTabs(PropertyGroup):
 
     debug: BoolVectorProperty(
                             name="Debug Switches",
-                            description="ACT Gizmo Toolbox",
+                            description="ATB Gizmo Toolbox",
                             default=(False, False, False, False),
                             size=4,
                             options={'SKIP_SAVE'}
@@ -352,7 +352,7 @@ class MetaPanelTabs(PropertyGroup):
 
     cavity_toggle: BoolVectorProperty(
                                     name="Cavity Shading",
-                                    description="ACT Cavity Toggles",
+                                    description="ATB Cavity Toggles",
                                     default=(False, False),
                                     size=2,
                                     options={'SKIP_SAVE'}
@@ -360,7 +360,7 @@ class MetaPanelTabs(PropertyGroup):
 
     activeObjectPanel_Toggles: BoolVectorProperty(
                             name="Active Object Panel Sub-Section Toggles",
-                            description="ACT Gizmo Toolbox",
+                            description="ATB Gizmo Toolbox",
                             default=(False, False, False, False),
                             size=4,
                             options={'SKIP_SAVE'}
@@ -395,7 +395,7 @@ class QuickOpMenus(PropertyGroup):
 # WIRE COLORS
 
 
-class ACTWireColors(PropertyGroup):
+class ATBWireColors(PropertyGroup):
 
     default_obj_wire: FloatVectorProperty(
                                         name="Object Wireframe Color",

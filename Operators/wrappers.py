@@ -20,7 +20,7 @@
 
 import bpy
 import ast
-from . import ViewportOps 
+from . import ViewportOps
 import mathutils
 from bpy.props import (
     StringProperty,
@@ -39,10 +39,10 @@ import math
 
 
 # For header buttons, doesn't push an undo
-class ACT_OT_BoolToEnum(bpy.types.Operator):
+class ATB_OT_BoolToEnum(bpy.types.Operator):
     """Takes a BoolVector and an Enum, makes them play nice"""
     bl_idname = "act.bool_to_enum"
-    bl_label = "ACT Bool to Enum"
+    bl_label = "ATB Bool to Enum"
     bl_description = "Takes a BoolVector and an Enum, makes them play nice"
 
     bool_prop: StringProperty(
@@ -121,10 +121,10 @@ class ACT_OT_BoolToEnum(bpy.types.Operator):
 
 
 # For header buttons, forces a re-draw, doesn't push an undo
-class ACT_OT_CycleEnum(bpy.types.Operator):
+class ATB_OT_CycleEnum(bpy.types.Operator):
     """Wrapper for context_cycle_enum that updates the 3d viewport"""
     bl_idname = "act.cycle_enum"
-    bl_label = "ACT Cycle Enum"
+    bl_label = "ATB Cycle Enum"
     bl_description = "Wrapper for context_cycle_enum"
 
     path: StringProperty(
@@ -146,10 +146,10 @@ class ACT_OT_CycleEnum(bpy.types.Operator):
 
 
 # For Panel tabs, doesn't push an undo
-class ACT_OT_SetEnum(bpy.types.Operator):
+class ATB_OT_SetEnum(bpy.types.Operator):
     """Wrapper for context_set_enum that updates the 3d viewport"""
     bl_idname = "act.set_enum"
-    bl_label = "ACT Set Enum and Update"
+    bl_label = "ATB Set Enum and Update"
     bl_description = "Wrapper for context_set_enum"
 
     path: StringProperty(
@@ -178,10 +178,10 @@ class ACT_OT_SetEnum(bpy.types.Operator):
 
 
 # A general-purpose dynamic operator operator.
-class ACT_OT_ContextOp(bpy.types.Operator):
+class ATB_OT_ContextOp(bpy.types.Operator):
     """Root Operator for checking modifer key status on operator invocation"""
     bl_idname = "act.context_op"
-    bl_label = "ACT Context Operator"
+    bl_label = "ATB Context Operator"
     bl_description = """Calls different operators depending on the modifier key pressed"""
     bl_options = {'REGISTER'}
 
@@ -349,10 +349,10 @@ class ACT_OT_ContextOp(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ACT_OT_MouseContextOp(bpy.types.Operator):
+class ATB_OT_MouseContextOp(bpy.types.Operator):
     """Root Operator for checking mouse button status on operator invocation"""
     bl_idname = "act.mouse_context_op"
-    bl_label = "ACT Mouse Context Operator"
+    bl_label = "ATB Mouse Context Operator"
     bl_description = """Calls different operators depending on the mouse button pressed"""
     bl_options = {'REGISTER'}
 
@@ -515,10 +515,10 @@ class ACT_OT_MouseContextOp(bpy.types.Operator):
 
 
 # The Select Operator, with Pie
-class ACT_OT_EnhancedSelect(bpy.types.Operator):
+class ATB_OT_EnhancedSelect(bpy.types.Operator):
     """Select operator wrapper with a pie menu for fancy things"""
     bl_idname = "act.super_select"
-    bl_label = "ACT Super Select"
+    bl_label = "ATB Super Select"
     bl_description = """Fancy Things"""
     bl_options = {'REGISTER'}
 
@@ -669,10 +669,10 @@ class ACT_OT_EnhancedSelect(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ACT_OT_EnhancedTag(bpy.types.Operator):
+class ATB_OT_EnhancedTag(bpy.types.Operator):
     """Shortest Path Pick operator wrapper with a pie menu for fancy things"""
     bl_idname = "act.super_tag"
-    bl_label = "ACT Super Tag"
+    bl_label = "ATB Super Tag"
     bl_description = """Fancy Things"""
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -801,10 +801,10 @@ class ACT_OT_EnhancedTag(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ACT_OT_GroupSelect(bpy.types.Operator):
+class ATB_OT_GroupSelect(bpy.types.Operator):
     """Object-Mode Selection That Actually Makes Sense"""
     bl_idname = "act.group_select"
-    bl_label = "ACT Group Select"
+    bl_label = "ATB Group Select"
     bl_description = "Jesus on a pogo stick"
 
     def execute(self, context):
@@ -854,10 +854,10 @@ class ACT_OT_GroupSelect(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ACT_OT_AddToMode(bpy.types.Operator):
+class ATB_OT_AddToMode(bpy.types.Operator):
     """Wrapper for editmode_toggle that uses overrides to enable mode expansion"""
     bl_idname = "act.add_to_mode"
-    bl_label = "ACT Add Object to Mode"
+    bl_label = "ATB Add Object to Mode"
     bl_description = "Adds objects to current editor mode"
 
     mouse_loc: IntVectorProperty(
@@ -909,10 +909,10 @@ class ACT_OT_AddToMode(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ACT_OT_MoveCursor(bpy.types.Operator):
+class ATB_OT_MoveCursor(bpy.types.Operator):
     """Wrapper for various 3D Cursor Operators, with context overrides"""
     bl_idname = "act.move_cursor"
-    bl_label = "ACT Move Cursor"
+    bl_label = "ATB Move Cursor"
     bl_description = "Does Things to the 3D Cursor"
 
     mode_items = [
@@ -968,10 +968,10 @@ class ACT_OT_MoveCursor(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ACT_OT_FastSnap(bpy.types.Operator):
+class ATB_OT_FastSnap(bpy.types.Operator):
     """Wrapper for various transforms, which toggles snapping and pivot setting"""
     bl_idname = "act.fast_snap"
-    bl_label = "ACT Fast Snap"
+    bl_label = "ATB Fast Snap"
     bl_description = "Fast Snapping"
 
     cursor: BoolProperty(
@@ -1106,10 +1106,10 @@ def scale_round(x, base=5):
 
 
 # Stolen from someone smarter than me
-class ACT_OT_context_modal_mouse(bpy.types.Operator):
+class ATB_OT_context_modal_mouse(bpy.types.Operator):
     """Adjust arbitrary values with mouse input, but not shitty"""
     bl_idname = "act.context_modal_mouse"
-    bl_label = "ACT Context Modal Mouse"
+    bl_label = "ATB Context Modal Mouse"
     bl_options = {'GRAB_CURSOR', 'BLOCKING', 'UNDO', 'INTERNAL'}
 
     initial_zoom: FloatProperty(
@@ -1189,10 +1189,10 @@ class ACT_OT_context_modal_mouse(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
-class ACT_OT_drop_tool(bpy.types.Operator):
+class ATB_OT_drop_tool(bpy.types.Operator):
     """Changes the active tool to a contextually-appropriate 'default tool'"""
     bl_idname = "act.drop_tool"
-    bl_label = "ACT Drop Tool"
+    bl_label = "ATB Drop Tool"
     # bl_options = {'GRAB_CURSOR', 'BLOCKING', 'UNDO', 'INTERNAL'}
 
     def invoke(self, context, event):
@@ -1236,10 +1236,10 @@ class ACT_OT_drop_tool(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class ACT_OT_Set_Custom_Popover(bpy.types.Operator):
+class ATB_OT_Set_Custom_Popover(bpy.types.Operator):
     """Let's the user set which panel will be displayed by the associated popover button"""
     bl_idname = "act.set_custom_pop"
-    bl_label = "ACT Set Custom Popover"
+    bl_label = "ATB Set Custom Popover"
     bl_options = {'BLOCKING', 'UNDO', 'INTERNAL', 'REGISTER'}
 
     panel_name: StringProperty(
@@ -1287,10 +1287,10 @@ class ACT_OT_Set_Custom_Popover(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
 
-class ACT_OT_Clear_Custom_Popover(bpy.types.Operator):
+class ATB_OT_Clear_Custom_Popover(bpy.types.Operator):
     """Let's the user clear the panel of the associated popover button"""
     bl_idname = "act.clear_custom_pop"
-    bl_label = "ACT Clear Custom Popover"
+    bl_label = "ATB Clear Custom Popover"
     bl_options = {'BLOCKING', 'UNDO', 'INTERNAL', 'REGISTER'}
 
     button: IntProperty(
