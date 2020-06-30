@@ -110,11 +110,11 @@ from .UI.EditMenu import VIEW3D_MT_actc_sub_shading
 from .UI.ExamplePanel import VIEW3D_PT_view3d_example_panel
 
 bl_info = {
-    "name": "ACT",
-    "author": "Asher",
-    "description": "Asher's Creative Toolset",
+    "name": "ATB",
+    "author": "ThatAsherGuy",
+    "description": "Asher's Toolbox",
     "blender": (2, 83, 0),
-    "version": (0, 0, 95),
+    "version": (0, 0, 35),
     "location": "View3D",
     "warning": "Alpha of all Alphas",
     "category": "Modeling"
