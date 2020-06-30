@@ -47,8 +47,8 @@ class View3DPanel:
             return True
 
 
-class ACT_MT_MeshShadingMenu(bpy.types.Menu):
-    bl_idname = "ACT_MT_MeshShadingMenu"
+class ATB_MT_MeshShadingMenu(bpy.types.Menu):
+    bl_idname = "ATB_MT_MeshShadingMenu"
     bl_label = "Shading"
 
     def draw(self, context):
@@ -58,8 +58,8 @@ class ACT_MT_MeshShadingMenu(bpy.types.Menu):
         layout.operator("object.shade_flat")
 
 
-class ACT_MT_MiscOverlaysMenu(bpy.types.Menu):
-    bl_idname = "ACT_MT_MiscOverlaysMenu"
+class ATB_MT_MiscOverlaysMenu(bpy.types.Menu):
+    bl_idname = "ATB_MT_MiscOverlaysMenu"
     bl_label = "Miscellaneous"
 
     def draw(self, context):
@@ -80,8 +80,8 @@ class ACT_MT_MiscOverlaysMenu(bpy.types.Menu):
         layout.prop(overlay, "show_occlude_wire")
 
 
-class ACT_PT_MiscOverlaysPanel(View3DPanel_hidden, bpy.types.Panel):
-    bl_idname = "ACT_PT_MiscOverlaysPanel"
+class ATB_PT_MiscOverlaysPanel(View3DPanel_hidden, bpy.types.Panel):
+    bl_idname = "ATB_PT_MiscOverlaysPanel"
     bl_label = "Miscellaneous Overlays"
     bl_ui_units_x = 8
 
@@ -130,8 +130,8 @@ class ACT_PT_MiscOverlaysPanel(View3DPanel_hidden, bpy.types.Panel):
         col.prop(overlay, "show_occlude_wire", icon=ico)
 
 
-class ACT_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
-    bl_idname = "ACT_PT_ViewOverlaysPanel"
+class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
+    bl_idname = "ATB_PT_ViewOverlaysPanel"
     bl_label = "Overlays"
 
     @classmethod
@@ -147,7 +147,7 @@ class ACT_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         units = scene.unit_settings
 
         overlay = context.space_data.overlay
-        shading = ACT_PT_ViewOverlaysPanel.get_shading(context)
+        shading = ATB_PT_ViewOverlaysPanel.get_shading(context)
 
         active_obj = context.view_layer.objects.active
 
@@ -565,7 +565,7 @@ class ACT_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
 
         row = col.row(align=True)
         op = row.operator("wm.call_panel", text="Extras")
-        op.name = "ACT_PT_MiscOverlaysPanel"
+        op.name = "ATB_PT_MiscOverlaysPanel"
 
         # row = col.row(align=True)
 
@@ -578,7 +578,7 @@ class ACT_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         #         row.prop(active_mesh, "auto_smooth_angle", text="")
         #         # row = col.row(align=True)
         #         # row.emboss = 'PULLDOWN_MENU'
-        #         row.menu("ACT_MT_MeshShadingMenu")
+        #         row.menu("ATB_MT_MeshShadingMenu")
         #         row.prop(
         #             active_mesh,
         #             "use_auto_smooth",
@@ -588,7 +588,6 @@ class ACT_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         #         )
         #         # row.operator("object.shade_smooth", text="Smooth")
         #         # row.operator("object.shade_flat", text="Flat")
-
 
         # $$Edge_Overlays
 
@@ -745,7 +744,7 @@ class ACT_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
                 row.prop(active_mesh, "auto_smooth_angle", text="")
                 # row = col.row(align=True)
                 # row.emboss = 'PULLDOWN_MENU'
-                row.menu("ACT_MT_MeshShadingMenu")
+                row.menu("ATB_MT_MeshShadingMenu")
 
         flow_3 = col.grid_flow(columns=GeC_F3[0], align=True, row_major=True)
         # flow_3 = col.row(align=True)
@@ -869,8 +868,8 @@ class ACT_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         flow_3.prop(units, "length_unit", text="")
 
 
-class ACT_PT_viewport_transform_settings(View3DPanel_hidden, bpy.types.Panel):
-    bl_idname = "ACT_PT_viewport_transform_settings"
+class ATB_PT_viewport_transform_settings(View3DPanel_hidden, bpy.types.Panel):
+    bl_idname = "ATB_PT_viewport_transform_settings"
     bl_label = "Quick Transforms"
 
     def draw(self, context):
@@ -878,7 +877,7 @@ class ACT_PT_viewport_transform_settings(View3DPanel_hidden, bpy.types.Panel):
         # units = scene.unit_settings
 
         # overlay = context.space_data.overlay
-        # shading = ACT_PT_ViewOverlaysPanel.get_shading(context)
+        # shading = ATB_PT_ViewOverlaysPanel.get_shading(context)
 
         # active_obj = context.active_object
         # active_mat = context.active_object.active_material
@@ -1153,8 +1152,8 @@ class ACT_PT_viewport_transform_settings(View3DPanel_hidden, bpy.types.Panel):
             )
 
 
-class ACT_PT_quick_operators(View3DPanel, bpy.types.Panel):
-    bl_idname = "ACT_PT_quick_operators"
+class ATB_PT_quick_operators(View3DPanel, bpy.types.Panel):
+    bl_idname = "ATB_PT_quick_operators"
     bl_label = "Menu Panel"
 
     def draw(self, context):

@@ -26,9 +26,9 @@ from bpy.props import (
 )
 
 
-class ACT_OT_set_color(bpy.types.Operator):
+class ATB_OT_set_color(bpy.types.Operator):
     bl_idname = "act.set_color"
-    bl_label = "ACT Set Theme Color"
+    bl_label = "ATB Set Theme Color"
     bl_description = "Currently toggles the viewport wireframe colors"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -174,9 +174,9 @@ class ACT_OT_set_color(bpy.types.Operator):
         return self.execute(context)
 
 
-class ACT_OT_store_wire_color(bpy.types.Operator):
+class ATB_OT_store_wire_color(bpy.types.Operator):
     bl_idname = "act.store_wire_color"
-    bl_label = "ACT Store Wire Color"
+    bl_label = "ATB Store Wire Color"
     bl_description = "Currently toggles the viewport wireframe colors"
     bl_options = {'REGISTER', 'UNDO'}
 

@@ -21,7 +21,7 @@
 import bpy
 
 
-class ACTPrintVerts(bpy.types.Operator):
+class ATBPrintVerts(bpy.types.Operator):
     bl_idname = "act.print_verts"
     bl_label = "Print Vertex Coordinates"
     bl_description = "Creates a list of vertex coordinates that can be used for gizmos"

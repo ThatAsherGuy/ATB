@@ -29,42 +29,42 @@ from . properties import FastPanelProps
 from . properties import ObjectMatrixConversions
 from . properties import MetaPanelTabs
 from . properties import QuickOpMenus
-from . properties import ACTWireColors
+from . properties import ATBWireColors
 from . properties import FastSnapProps
 from . properties import CustomPopoverProps
 
-from . preferences import ACTAddonPreferences
+from . preferences import ATBAddonPreferences
 from . preferences import register_keymaps, unregister_keymaps
 from . preferences import get_keys
 
-from .Operators.wrappers import ACT_OT_SetEnum
-from .Operators.wrappers import ACT_OT_CycleEnum
-from .Operators.wrappers import ACT_OT_ContextOp
-from .Operators.wrappers import ACT_OT_MouseContextOp
-from .Operators.wrappers import ACT_OT_BoolToEnum
-from .Operators.wrappers import ACT_OT_EnhancedSelect
-from .Operators.wrappers import ACT_OT_EnhancedTag
-from .Operators.wrappers import ACT_OT_GroupSelect
-from .Operators.wrappers import ACT_OT_AddToMode
-from .Operators.wrappers import ACT_OT_MoveCursor
-from .Operators.wrappers import ACT_OT_FastSnap
-from .Operators.wrappers import ACT_OT_context_modal_mouse
-from .Operators.wrappers import ACT_OT_drop_tool
-from .Operators.wrappers import ACT_OT_Set_Custom_Popover
-from .Operators.wrappers import ACT_OT_Clear_Custom_Popover
+from .Operators.wrappers import ATB_OT_SetEnum
+from .Operators.wrappers import ATB_OT_CycleEnum
+from .Operators.wrappers import ATB_OT_ContextOp
+from .Operators.wrappers import ATB_OT_MouseContextOp
+from .Operators.wrappers import ATB_OT_BoolToEnum
+from .Operators.wrappers import ATB_OT_EnhancedSelect
+from .Operators.wrappers import ATB_OT_EnhancedTag
+from .Operators.wrappers import ATB_OT_GroupSelect
+from .Operators.wrappers import ATB_OT_AddToMode
+from .Operators.wrappers import ATB_OT_MoveCursor
+from .Operators.wrappers import ATB_OT_FastSnap
+from .Operators.wrappers import ATB_OT_context_modal_mouse
+from .Operators.wrappers import ATB_OT_drop_tool
+from .Operators.wrappers import ATB_OT_Set_Custom_Popover
+from .Operators.wrappers import ATB_OT_Clear_Custom_Popover
 
-from .Operators.ViewportOps import ACT_OT_ViewAxis
-from .Operators.ViewportOps import ACT_OT_set_axis
+from .Operators.ViewportOps import ATB_OT_ViewAxis
+from .Operators.ViewportOps import ATB_OT_set_axis
 
-from .Operators.TransformOperators import ACT_OT_RotateAroundPivot
+from .Operators.TransformOperators import ATB_OT_RotateAroundPivot
 
-from .Operators.ThemeOps import ACT_OT_set_color
-from .Operators.ThemeOps import ACT_OT_store_wire_color
+from .Operators.ThemeOps import ATB_OT_set_color
+from .Operators.ThemeOps import ATB_OT_store_wire_color
 
-from .Operators.SelectOps import ACT_OT_SuperContextMenu
-from .Operators.SelectOps import ACT_OT_SelectThrough
+from .Operators.SelectOps import ATB_OT_SuperContextMenu
+from .Operators.SelectOps import ATB_OT_SelectThrough
 
-from .Utilities.GizmoUtils import ACTPrintVerts
+from .Utilities.GizmoUtils import ATBPrintVerts
 
 from .Gizmos.VertPieGizmo import ATVertexGizmoGroup
 from .Gizmos.PivotGizmo import ATPivotGizmoGroup
@@ -83,20 +83,20 @@ from .UI.ContextPies import VIEW3D_MT_PIE_expand_mode
 from .UI.ContextPies import VIEW3D_MT_PIE_quick_snap
 from .UI.ContextPies import VIEW3D_MT_PIE_quick_orientation
 
-from .UI.ViewPanel import ACT_PT_ViewOverlaysPanel
-from .UI.ViewPanel import ACT_MT_MeshShadingMenu
-from .UI.ViewPanel import ACT_MT_MiscOverlaysMenu
-from .UI.ViewPanel import ACT_PT_viewport_transform_settings
-# from .UI.ViewPanel import ACT_PT_quick_operators
-from .UI.ViewPanel import ACT_PT_MiscOverlaysPanel
+from .UI.ViewPanel import ATB_PT_ViewOverlaysPanel
+from .UI.ViewPanel import ATB_MT_MeshShadingMenu
+from .UI.ViewPanel import ATB_MT_MiscOverlaysMenu
+from .UI.ViewPanel import ATB_PT_viewport_transform_settings
+# from .UI.ViewPanel import ATB_PT_quick_operators
+from .UI.ViewPanel import ATB_PT_MiscOverlaysPanel
 
 from .UI.FastPanel import VIEW3D_PT_view3d_fast_panel
 from .UI.FastPanel import VIEW3D_PT_grid_ribbon
 from .UI.FastPanel import VIEW3D_PT_snap_ribbon
 from .UI.FastPanel import VIEW3D_PT_draw_ribbon
 
-from .UI.ViewPie import VIEW3D_MT_ACT_view_pie
-from .UI.ViewPie import VIEW3D_MT_ACT_cursor_pie
+from .UI.ViewPie import VIEW3D_MT_ATB_view_pie
+from .UI.ViewPie import VIEW3D_MT_ATB_cursor_pie
 from .UI.ViewPie import VIEW3D_MT_PIE_view_utilities
 from .UI.ViewPie import VIEW3D_PT_viewport_rotation_panel
 
@@ -122,7 +122,7 @@ bl_info = {
 
 
 panels = (
-        ACT_PT_ViewOverlaysPanel,
+        ATB_PT_ViewOverlaysPanel,
         )
 
 
@@ -142,7 +142,7 @@ def update_panel(self, context):
         pass
 
 
-# class ACTAddonPreferences(bpy.types.AddonPreferences):
+# class ATBAddonPreferences(bpy.types.AddonPreferences):
 #     # this must match the addon name, use '__package__'
 #     # when defining this in a submodule of a python package.
 #     bl_idname = __name__
@@ -179,37 +179,37 @@ def debug_keymap():
 
 
 classes = (
-    # ACTAddonPreferences,
-    ACTAddonPreferences,
+    # ATBAddonPreferences,
+    ATBAddonPreferences,
     # wrappers.py
-    ACT_OT_SetEnum,
-    ACT_OT_CycleEnum,
-    ACT_OT_ContextOp,
-    ACT_OT_MouseContextOp,
-    ACT_OT_BoolToEnum,
-    ACT_OT_EnhancedSelect,
-    ACT_OT_EnhancedTag,
-    ACT_OT_GroupSelect,
-    ACT_OT_AddToMode,
-    ACT_OT_MoveCursor,
-    ACT_OT_FastSnap,
-    ACT_OT_context_modal_mouse,
-    ACT_OT_drop_tool,
+    ATB_OT_SetEnum,
+    ATB_OT_CycleEnum,
+    ATB_OT_ContextOp,
+    ATB_OT_MouseContextOp,
+    ATB_OT_BoolToEnum,
+    ATB_OT_EnhancedSelect,
+    ATB_OT_EnhancedTag,
+    ATB_OT_GroupSelect,
+    ATB_OT_AddToMode,
+    ATB_OT_MoveCursor,
+    ATB_OT_FastSnap,
+    ATB_OT_context_modal_mouse,
+    ATB_OT_drop_tool,
     VIEW3D_MT_PIE_orbit_lock,
     VIEW3D_MT_PIE_expand_mode,
-    ACT_OT_Set_Custom_Popover,
-    ACT_OT_Clear_Custom_Popover,
+    ATB_OT_Set_Custom_Popover,
+    ATB_OT_Clear_Custom_Popover,
     # TransformOperators.py
-    ACT_OT_RotateAroundPivot,
-    ACT_PT_ViewOverlaysPanel,
-    ACT_PT_viewport_transform_settings,
-    ACT_MT_MeshShadingMenu,
-    ACT_MT_MiscOverlaysMenu,
-    # ACT_PT_quick_operators,
-    ACT_PT_MiscOverlaysPanel,
+    ATB_OT_RotateAroundPivot,
+    ATB_PT_ViewOverlaysPanel,
+    ATB_PT_viewport_transform_settings,
+    ATB_MT_MeshShadingMenu,
+    ATB_MT_MiscOverlaysMenu,
+    # ATB_PT_quick_operators,
+    ATB_PT_MiscOverlaysPanel,
     # ThemeOps.py
-    ACT_OT_set_color,
-    ACT_OT_store_wire_color,
+    ATB_OT_set_color,
+    ATB_OT_store_wire_color,
     VIEW3D_PT_view3d_fast_panel,
     VIEW3D_PT_grid_ribbon,
     VIEW3D_PT_snap_ribbon,
@@ -220,16 +220,16 @@ classes = (
     ATVPCursorGizmo,
     AxisGizmo,
     # ViewportOps.py
-    ACT_OT_ViewAxis,
-    ACT_OT_set_axis,
+    ATB_OT_ViewAxis,
+    ATB_OT_set_axis,
     # SelectOps.py
-    ACT_OT_SuperContextMenu,
-    ACT_OT_SelectThrough,
+    ATB_OT_SuperContextMenu,
+    ATB_OT_SelectThrough,
     # GizmoUtils.py
-    ACTPrintVerts,
+    ATBPrintVerts,
     # Pies
-    VIEW3D_MT_ACT_view_pie,
-    VIEW3D_MT_ACT_cursor_pie,
+    VIEW3D_MT_ATB_view_pie,
+    VIEW3D_MT_ATB_cursor_pie,
     VIEW3D_MT_PIE_view_utilities,
     VIEW3D_MT_PIE_quick_snap,
     VIEW3D_MT_PIE_quick_orientation,
@@ -237,7 +237,7 @@ classes = (
     # Property Groups
     MetaPanelTabs,
     QuickOpMenus,
-    ACTWireColors,
+    ATBWireColors,
     FastPanelProps,
     ObjectMatrixConversions,
     FastSnapProps,
@@ -263,7 +263,7 @@ def register():
     WindowManager.quick_op_menus = PointerProperty(type=QuickOpMenus)
     WindowManager.fp_props = PointerProperty(type=FastPanelProps)
     WindowManager.mat_convert = PointerProperty(type=ObjectMatrixConversions)
-    WorkSpace.temp_wires = PointerProperty(type=ACTWireColors)
+    WorkSpace.temp_wires = PointerProperty(type=ATBWireColors)
     WorkSpace.customPops = PointerProperty(type=CustomPopoverProps)
 
     WindowManager.snap_state = PointerProperty(type=FastSnapProps)

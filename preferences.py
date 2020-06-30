@@ -117,8 +117,8 @@ def register_keymaps(keylists):
                 i += 1
 
                 ref = refmap.keymaps.find(name=str(keymap), space_type=space_type)
-                if debug == 2:
-                    print("KM Found: " + str(km.name))
+                # if debug == 2:
+                #     print("KM Found: " + str(km.name))
 
                 if ref:
                     km = kc.keymaps.new(name=str(keymap), space_type=space_type)
@@ -135,11 +135,11 @@ def register_keymaps(keylists):
 
                     if debug == 1:
                         print(str(kmi.idname)
-                            + " | "
-                            + "Is Active: " + str(kmi.name)
-                            + " | "
-                            + str(kmi.type)
-                            )
+                              + " | "
+                              + "Is Active: " + str(kmi.name)
+                              + " | "
+                              + str(kmi.type)
+                              )
 
                     if kmi:
                         properties = item.get("properties")
@@ -207,7 +207,6 @@ def draw_keymap_items(kc, name, keylist, layout, debug=False):
                     pre.label(text=str(kmi.idname))
                     pre.label(text=str(keymap))
 
-
                 row = box.row()
 
                 rna_keymap_ui.draw_kmi(["ADDON", "USER", "DEFAULT"], kc, km, kmi, row, 0)
@@ -234,7 +233,7 @@ def get_keymap_item(name, idname, key, alt=False, ctrl=False, shift=False):
 #     message = "Asher's Custom Tools: Panel update has failed"
 
 #     panels = (
-#             ACT_PT_ViewOverlaysPanel,
+#             ATB_PT_ViewOverlaysPanel,
 #             )
 
 #     try:
@@ -251,7 +250,7 @@ def get_keymap_item(name, idname, key, alt=False, ctrl=False, shift=False):
 #         pass
 
 
-class ACTAddonPreferences(bpy.types.AddonPreferences):
+class ATBAddonPreferences(bpy.types.AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
     path = get_path()
@@ -394,31 +393,31 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
         subcol = col.column(align=True)
 
         subrow = subcol.split(factor=0.2)
-        subrow.label(text="ACT View Pie:")
+        subrow.label(text="ATB View Pie:")
         subrow.label(text="Viewport snapping, "
                           "Rotation Modes, "
                           "and related settings")
 
         subrow = subcol.split(factor=0.2)
-        subrow.label(text="ACT Selection Pie:")
+        subrow.label(text="ATB Selection Pie:")
         subrow.label(text="Select Inner/Outer, "
                           "Flat Faces, Loops, NGons, etc"
                           "")
 
         subrow = subcol.split(factor=0.2)
-        subrow.label(text="ACT Transform Pie:")
+        subrow.label(text="ATB Transform Pie:")
         subrow.label(text="Toggle or cycle common "
                           "transformation settings "
                           "(snapping mode, pivot, etc)")
 
         subrow = subcol.split(factor=0.2)
-        subrow.label(text="ACT Orientation Pie:")
+        subrow.label(text="ATB Orientation Pie:")
         subrow.label(text="Switch between various "
                           "transforma orientations "
                           "")
 
         subrow = subcol.split(factor=0.2)
-        subrow.label(text="ACT Cursor Pie:")
+        subrow.label(text="ATB Cursor Pie:")
         subrow.label(text="Does 3D Cursor Things"
                           ""
                           "")
@@ -435,7 +434,7 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
         subcol = col.column(align=True)
 
         subrow = subcol.split(factor=0.2)
-        subrow.label(text="ACT Modeling Menu:")
+        subrow.label(text="ATB Modeling Menu:")
         subrow.label(text="A shortlist of common "
                           "operators, with shortcuts for "
                           "quick access")
@@ -452,7 +451,7 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
         subcol = col.column(align=True)
 
         subrow = subcol.split(factor=0.2)
-        subrow.label(text="ACT Set Axis:")
+        subrow.label(text="ATB Set Axis:")
         subrow.label(text="Snaps the viewport to an "
                           "isometric angle"
                           "")

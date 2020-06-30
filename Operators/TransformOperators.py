@@ -22,10 +22,10 @@ from bpy.props import (
 )
 
 
-class ACT_OT_RotateAroundPivot(bpy.types.Operator):
+class ATB_OT_RotateAroundPivot(bpy.types.Operator):
     """Wrapper for transform.rotate"""
     bl_idname = "act.rotate_around_pivot"
-    bl_label = "ACT Rotate Around Pivot"
+    bl_label = "ATB Rotate Around Pivot"
     bl_description = "Wrapper for transform.rotate"
     bl_options = {'REGISTER', 'UNDO'}
 

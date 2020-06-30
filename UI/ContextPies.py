@@ -568,7 +568,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
 
 class VIEW3D_MT_PIE_expand_mode(Menu):
-    bl_label = "ACT Mode Pie"
+    bl_label = "ATB Mode Pie"
 
     def draw(self, context):
         layout = self.layout

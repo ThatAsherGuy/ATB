@@ -25,8 +25,8 @@ from bpy.types import (
 )
 
 
-class VIEW3D_MT_ACT_view_pie(Menu):
-    bl_label = "ACT View Pie"
+class VIEW3D_MT_ATB_view_pie(Menu):
+    bl_label = "ATB View Pie"
 
     def draw(self, context):
         region = context.region_data
@@ -205,8 +205,8 @@ class VIEW3D_PT_viewport_rotation_panel(Panel):
             col.prop(context.preferences.inputs, "view_rotate_sensitivity_turntable")
 
 
-class VIEW3D_MT_ACT_cursor_pie(Menu):
-    bl_label = "ACT Cursor Pie"
+class VIEW3D_MT_ATB_cursor_pie(Menu):
+    bl_label = "ATB Cursor Pie"
 
     def draw(self, context):
         # region = context.region_data

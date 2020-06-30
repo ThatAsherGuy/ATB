@@ -22,10 +22,10 @@ import bpy
 import functools
 
 
-class ACT_OT_SuperContextMenu(bpy.types.Operator):
+class ATB_OT_SuperContextMenu(bpy.types.Operator):
     """Edit Mode Context menu for out-of-mode objects"""
     bl_idname = "act.moar_context"
-    bl_label = "ACT Moar Context"
+    bl_label = "ATB Moar Context"
     bl_description = "Moar, Moar, Moar, MOAR!"
 
     def invoke(self, context, event):
@@ -75,10 +75,10 @@ class ACT_OT_SuperContextMenu(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ACT_OT_SelectThrough(bpy.types.Operator):
+class ATB_OT_SelectThrough(bpy.types.Operator):
     """Wrapper for editmode_toggle that uses overrides to enable mode expansion"""
     bl_idname = "act.select_through"
-    bl_label = "ACT Select Through"
+    bl_label = "ATB Select Through"
     bl_description = "Give your balls a tug, Shorsey"
 
     def modal(self, context, event):
