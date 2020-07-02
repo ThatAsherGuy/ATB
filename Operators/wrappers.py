@@ -514,6 +514,36 @@ class ATB_OT_MouseContextOp(bpy.types.Operator):
         return {'FINISHED'}
 
 
+# Enables Fullscreen, hides overlays, headers, gizmos, etc
+class ATB_OT_TogglePhotoMode(bpy.types.Operator):
+    """Wrapper for context_cycle_enum that updates the 3d viewport"""
+    bl_idname = "act.toggle_photo_mode"
+    bl_label = "ATB Toggle Photo Mode"
+    bl_description = "Enables Fullscreen, hides overlays, headers, gizmos, etc"
+
+    def invoke(self, context, event):
+
+        if hasattr(context.space_data, 'overlay'):
+            if len(context.window.screen.areas) > 1:
+                do = False
+            else:
+                do = True
+
+            context.space_data.overlay.show_overlays = do
+            context.space_data.show_gizmo = do
+
+            bpy.ops.screen.screen_full_area('INVOKE_DEFAULT', False, use_hide_panels=True)
+            bpy.ops.wm.window_fullscreen_toggle('INVOKE_DEFAULT', False)
+        else:
+            print("WRONG")
+
+        # bpy.ops.screen.region_toggle(region_type='HEADER')
+        # bpy.ops.screen.region_toggle(region_type='TOOL_HEADER')
+
+        bpy.context.area.tag_redraw()
+        return {'FINISHED'}
+
+
 # The Select Operator, with Pie
 class ATB_OT_EnhancedSelect(bpy.types.Operator):
     """Select operator wrapper with a pie menu for fancy things"""

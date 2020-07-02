@@ -52,6 +52,8 @@ from .Operators.wrappers import ATB_OT_context_modal_mouse
 from .Operators.wrappers import ATB_OT_drop_tool
 from .Operators.wrappers import ATB_OT_Set_Custom_Popover
 from .Operators.wrappers import ATB_OT_Clear_Custom_Popover
+from .Operators.wrappers import ATB_OT_TogglePhotoMode
+
 
 from .Operators.ViewportOps import ATB_OT_ViewAxis
 from .Operators.ViewportOps import ATB_OT_set_axis
@@ -199,6 +201,7 @@ classes = (
     VIEW3D_MT_PIE_expand_mode,
     ATB_OT_Set_Custom_Popover,
     ATB_OT_Clear_Custom_Popover,
+    ATB_OT_TogglePhotoMode,
     # TransformOperators.py
     ATB_OT_RotateAroundPivot,
     ATB_PT_ViewOverlaysPanel,

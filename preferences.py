@@ -413,7 +413,7 @@ class ATBAddonPreferences(bpy.types.AddonPreferences):
         subrow = subcol.split(factor=0.2)
         subrow.label(text="ATB Orientation Pie:")
         subrow.label(text="Switch between various "
-                          "transforma orientations "
+                          "transform orientations "
                           "")
 
         subrow = subcol.split(factor=0.2)

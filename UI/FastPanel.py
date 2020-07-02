@@ -72,10 +72,17 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
         # ignoring Blender's variable naming conventions for UI layouts
         # because it's bad and you should feel bad for using it
         col_1 = root.column(align=True)
-        tab_row = col_1.row(align=True)
-        tab_row.alignment = 'RIGHT'
+        tab_row = col_1.row(align=False)
+        tab_row.alignment = 'EXPAND'
+
+        tb_l = tab_row.row(align=True)
+        tb_l.alignment = 'LEFT'
+        tb_l.operator("act.toggle_photo_mode", text="", icon='FULLSCREEN_ENTER')
+
+        tb_r = tab_row.row(align=True)
+        tb_r.alignment = 'RIGHT'
         # tab_row.prop(fp, "layout_bool", text="", icon="KEYFRAME_HLT")
-        tab_row.prop(fp, "fast_panel_tabs", expand=True, icon_only=True)
+        tb_r.prop(fp, "fast_panel_tabs", expand=True, icon_only=True)
 
         # Measures Row
         if fp.fast_panel_tabs == 'MEASURES':
