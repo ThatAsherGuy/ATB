@@ -21,6 +21,8 @@
 import bpy
 from bpy.types import (
     Panel,
+    Curve,
+    SurfaceCurve
 )
 from ..Utilities.WidthFunc import (
     get_breakpoints,
@@ -882,7 +884,7 @@ class VIEW3D_PT_meta_panel(Panel):
             row = ocol.row(align=True)
             row.template_ID(context.view_layer.objects, "active", filter='AVAILABLE')
 
-            if active_obj and (active_obj.type == 'MESH' or active_obj.type == 'CURVE'):
+            if active_obj and (active_obj.type == 'MESH'):
 
                 ocol.label(text="Display As:")
 
@@ -1314,6 +1316,357 @@ class VIEW3D_PT_meta_panel(Panel):
                     text=row_labels[2][label_tog],
                     toggle=True,
                 )
+
+            elif active_obj and active_obj.type == 'CURVE':
+                curve = active_obj.data
+                act_spline = curve.splines.active
+                # is_surf = type(curve) is SurfaceCurve
+                # is_poly = (act_spline.type == 'POLY')
+
+                if act_spline.type == 'BEZIER':
+
+                    active_point = 0
+
+                    for cp in act_spline.bezier_points:
+                        if cp.select_control_point:
+                            active_point = cp
+
+                    if active_point:
+                        ocol.label(text="Active Point:")
+                        row = ocol.row(align=True)
+                        col = row.column(align=True)
+                        col.prop(
+                            active_point,
+                            'radius')
+
+                    if active_point:
+                        col.prop(
+                            active_point,
+                            'tilt')
+
+                ocol.label(text="Curve Geometry:")
+
+                row = ocol.row(align=True)
+                col = row.column(align=True)
+
+                col.prop(
+                    context.object.data,
+                    'resolution_u',
+                    text="U Resolution",
+                )
+                col.prop(
+                    context.object.data,
+                    'offset',
+                    text="Offset",
+                )
+                col.prop(
+                    context.object.data,
+                    'extrude',
+                    text="Extrude",
+                )
+
+                subrow = col.split(factor=0.65, align=True)
+                subrow.prop(
+                    context.object.data,
+                    'twist_smooth',
+                    text="Smooth",
+                )
+                subrow.prop(
+                    context.object.data,
+                    'twist_mode',
+                    text="",
+                )
+
+                subrow = col.split(factor=0.65, align=True)
+                subrow.prop(
+                    context.object.data,
+                    'taper_object',
+                    text="",
+                )
+                subrow.prop(
+                    context.object.data,
+                    'use_map_taper',
+                    text="Map Taper",
+                    toggle=True
+                )
+
+                ocol.label(text="Bevel")
+
+                row = ocol.row(align=True)
+                col = row.column(align=True)
+
+                col.prop(
+                    context.object.data,
+                    'bevel_depth',
+                    text="Bevel Depth",
+                )
+                col.prop(
+                    context.object.data,
+                    'bevel_resolution',
+                    text="Bevel Segments",
+                )
+
+                subrow = col.split(factor=0.65, align=True)
+                subrow.prop(
+                    context.object.data,
+                    'bevel_factor_start',
+                    text="Bevel Start",
+                )
+                subrow.prop(
+                    context.object.data,
+                    'bevel_factor_mapping_start',
+                    text="",
+                )
+
+                subrow = col.split(factor=0.65, align=True)
+                subrow.prop(
+                    context.object.data,
+                    'bevel_factor_end',
+                    text="Bevel End",
+                    expand=True
+                )
+                subrow.prop(
+                    context.object.data,
+                    'bevel_factor_mapping_end',
+                    text="",
+                )
+
+                subrow = col.split(factor=0.65, align=True)
+                subrow.prop(
+                    context.object.data,
+                    'bevel_object',
+                    text="",
+                )
+                subrow.prop(
+                    context.object.data,
+                    'use_fill_caps',
+                    text="Fill Caps",
+                    toggle=True
+                )
+
+                ocol.label(text="Spline Settings")
+
+                row = ocol.row(align=True)
+                # row.alignment='CENTER'
+                col = row.column(align=True)
+                col.alignment = 'EXPAND'
+
+                subrow = col.row(align=True)
+                # subrow.alignment = 'CENTER'
+                subrow.prop(
+                    context.object.data,
+                    'fill_mode',
+                    text="Fill",
+                )
+
+                col.prop(
+                    act_spline,
+                    'tilt_interpolation',
+                    text="Tilt",
+                )
+                col.prop(
+                    act_spline,
+                    'radius_interpolation',
+                    text="Radius",
+                )
+
+                ocol.separator()
+
+                row = ocol.row(align=True)
+                row.scale_y = 0.75
+                row.prop(
+                    act_spline,
+                    'use_cyclic_u',
+                    text="Cyclic",
+                    toggle=True,
+                )
+                row.prop(
+                    act_spline,
+                    'use_smooth',
+                    text="Smooth",
+                    toggle=True,
+                )
+                row.prop(
+                    context.object.data,
+                    'use_radius',
+                    text="Radius",
+                    toggle=True,
+                )
+                row.prop(
+                    context.object.data,
+                    'use_stretch',
+                    text="Stretch",
+                    toggle=True,
+                )
+
+                row = ocol.row(align=True)
+                row.scale_y = 0.75
+                row.prop(
+                    context.object.data,
+                    'use_deform_bounds',
+                    text="Clamp Bounds",
+                    toggle=True,
+                )
+                row.prop(
+                    context.object.data,
+                    'use_fill_deform',
+                    text="Fill Deformed",
+                    toggle=True,
+                )
+
+            elif active_obj and active_obj.type == 'LATTICE':
+                ocol.label(text="Resolution:")
+
+                row = ocol.row(align=True)
+                row.prop(
+                    active_obj.data,
+                    'points_u')
+                row.prop(
+                    active_obj.data,
+                    'interpolation_type_u',
+                    text="")
+
+                row = ocol.row(align=True)
+                row.prop(
+                    active_obj.data,
+                    'points_v')
+                row.prop(
+                    active_obj.data,
+                    'interpolation_type_v',
+                    text="")
+
+                row = ocol.row(align=True)
+                row.prop(
+                    active_obj.data,
+                    'points_w')
+                row.prop(
+                    active_obj.data,
+                    'interpolation_type_w',
+                    text="")
+
+                ocol.separator()
+
+                label_row = ocol.row(align=True)
+
+                label_row.label(text="Vertex Groups")
+
+                # Yoinked from properties_data_mesh.py
+
+                group = active_obj.vertex_groups.active
+
+                rows = 4
+                if group:
+                    rows = 4
+
+                obj_collection = context.view_layer.objects
+
+                row = ocol.row(align=True)
+
+                row.template_list(
+                                "MESH_UL_vgroups",
+                                "",
+                                active_obj,
+                                "vertex_groups",
+                                active_obj.vertex_groups,
+                                "active_index",
+                                rows=rows
+                                )
+
+                col = row.column(align=True)
+                _row = col.row(align=True)
+                _row.menu("MESH_MT_vertex_group_context_menu", icon='PROPERTIES', text="")
+
+                _col = col.column(align=True)
+
+                _col.operator("object.vertex_group_add", icon='ADD', text="")
+
+                _col = col.column(align=True)
+                _col.active = (True if group else False)
+                querb = False
+
+                props = _col.operator("object.vertex_group_remove", icon='REMOVE', text="")
+                props.all_unlocked = props.all = False
+
+                _col.operator(
+                    "object.vertex_group_move",
+                    icon='TRIA_UP',
+                    text=""
+                    ).direction = 'UP'
+                _col.operator(
+                    "object.vertex_group_move",
+                    icon='TRIA_DOWN',
+                    text=""
+                    ).direction = 'DOWN'
+
+                if (
+                        active_obj.vertex_groups and
+                        (
+                            active_obj.mode == 'EDIT' or
+                                                         (
+                                                             active_obj.mode == 'WEIGHT_PAINT'
+                                                             and active_obj.type == 'MESH'
+                                                             and active_obj.data.use_paint_mask_vertex
+                                                         )
+                        )
+                ):
+                    querb = True
+
+                ocol.separator(factor=0.5)
+                row = ocol.row(align=True)
+                row.active = querb
+
+                row_width_check = check_width('UI', 9, 1, 440)
+
+                label_tog = 0
+                if not row_width_check[0]:
+                    label_tog = 1
+
+                row_labels = [
+                            ("Assign", " "),
+                            ("Remove", " "),
+                            ("Select", " "),
+                            ("Deselect", " "),
+                ]
+
+                row_icons = [
+                            ('NONE', 'ADD'),
+                            ('NONE', 'REMOVE'),
+                            ('NONE', 'RESTRICT_SELECT_OFF'),
+                            ('NONE', 'RESTRICT_SELECT_ON'),
+                ]
+
+                sub = row.row(align=True)
+                sub.operator(
+                            "object.vertex_group_assign",
+                            text=row_labels[0][label_tog],
+                            icon=row_icons[0][label_tog]
+                            )
+                sub.operator(
+                            "object.vertex_group_remove_from",
+                            text=row_labels[1][label_tog],
+                            icon=row_icons[1][label_tog]
+                            )
+
+                sub = row.row(align=True)
+                sub.operator(
+                            "object.vertex_group_select",
+                            text=row_labels[2][label_tog],
+                            icon=row_icons[2][label_tog]
+                            )
+                sub.operator(
+                            "object.vertex_group_deselect",
+                            text=row_labels[3][label_tog],
+                            icon=row_icons[3][label_tog]
+                            )
+
+                row = ocol.row(align=True)
+                row.active = querb
+
+                row.prop(context.tool_settings, "vertex_group_weight", text="Weight")
+
+                ocol.separator()
+                row = ocol.row(align=True)
+                row.prop(active_obj.data, "use_outside")
 
             elif active_obj and active_obj.type == 'EMPTY':
                 ocol.label(text="Show:")
