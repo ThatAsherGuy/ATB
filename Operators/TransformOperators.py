@@ -50,6 +50,7 @@ class ATB_OT_RotateAroundPivot(bpy.types.Operator):
         bpy.context.area.tag_redraw()
         return {'FINISHED'}
 
+
 # Experimental stuff. Won't add this to the front end for a while yet.
 class ATB_OT_SnapAndAlignCursor(bpy.types.Operator):
     """Wrapper for transform.rotate"""

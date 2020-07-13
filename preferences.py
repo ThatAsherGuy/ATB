@@ -163,7 +163,6 @@ def unregister_keymaps(keymaps):
 
 def draw_keymap_items(kc, name, keylist, layout, debug=False):
     drawn = False
-    loist = []
 
     for item in keylist:
         keymap = item.get("keymap")
@@ -184,7 +183,6 @@ def draw_keymap_items(kc, name, keylist, layout, debug=False):
 
                 for kmitem in km.keymap_items:
                     if kmitem.idname == idname:
-                        loist.append(kmitem.idname)
                         properties = item.get("properties")
 
                         if properties:
@@ -201,15 +199,15 @@ def draw_keymap_items(kc, name, keylist, layout, debug=False):
             # draw keymap item
 
             if kmi:
-                box = layout.box()
+                box = layout.column()
                 if debug:
                     pre = box.column()
                     pre.label(text=str(kmi.idname))
                     pre.label(text=str(keymap))
 
-                row = box.row()
+                col = box.column()
 
-                rna_keymap_ui.draw_kmi(["ADDON", "USER", "DEFAULT"], kc, km, kmi, row, 0)
+                rna_keymap_ui.draw_kmi(["ADDON", "USER", "DEFAULT"], kc, km, kmi, col, 0)
 
                 drawn = True
 
@@ -229,25 +227,25 @@ def get_keymap_item(name, idname, key, alt=False, ctrl=False, shift=False):
     return False
 
 
-# def update_panel(self, context):
-#     message = "Asher's Custom Tools: Panel update has failed"
+def update_panel(self, context):
+    message = "Asher's Custom Tools: Panel update has failed"
 
-#     panels = (
-#             ATB_PT_ViewOverlaysPanel,
-#             )
+    panels = (
+            ATB_PT_ViewOverlaysPanel,
+            )
 
-#     try:
-#         for panel in panels:
-#             if "bl_rna" in panel.__dict__:
-#                 bpy.utils.unregister_class(panel)
+    try:
+        for panel in panels:
+            if "bl_rna" in panel.__dict__:
+                bpy.utils.unregister_class(panel)
 
-#         for panel in panels:
-#             panel.bl_category = context.preferences.addons[__name__].preferences.category
-#             bpy.utils.register_class(panel)
+        for panel in panels:
+            panel.bl_category = context.preferences.addons[__name__].preferences.category
+            bpy.utils.register_class(panel)
 
-#     except Exception as e:
-#         print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
-#         pass
+    except Exception as e:
+        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
+        pass
 
 
 class ATBAddonPreferences(bpy.types.AddonPreferences):
@@ -284,12 +282,12 @@ class ATBAddonPreferences(bpy.types.AddonPreferences):
                                 default="HUMANS",
                                 )
 
-    # category: bpy.props.StringProperty(
-    #         name="Tab Category",
-    #         description="Choose a name for the category of the panel",
-    #         default="Dev",
-    #         update=update_panel
-    #         )
+    category: bpy.props.StringProperty(
+            name="Tab Category",
+            description="Choose a name for the category of the panel",
+            default="Dev",
+            update=update_panel
+            )
 
     def draw_keymaps(self, layout, kmap=0, debug=False):
         wm = bpy.context.window_manager
@@ -457,19 +455,10 @@ class ATBAddonPreferences(bpy.types.AddonPreferences):
                           "")
 
     def draw_keymap_tab(self, box, debug=False):
-        # wm = bpy.context.window_manager
-        # kc = wm.keyconfigs.active
-
-        if debug:
-            fish = get_keys()
-            restore_keymaps(fish, True)
-            # for klist in fish:
-            #     for ilist in klist:
-            #         col.label(text=str(ilist))
 
         split = box.split()
         b = split.box()
-        self.draw_keymaps(b, 0, True)
+        self.draw_keymaps(b, 2, True)
 
     # def draw_about_tab(self, box):
     #     split = box.split()

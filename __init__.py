@@ -116,7 +116,7 @@ bl_info = {
     "author": "ThatAsherGuy",
     "description": "Asher's Toolbox",
     "blender": (2, 83, 0),
-    "version": (0, 0, 35),
+    "version": (0, 0, 55),
     "location": "View3D",
     "warning": "Alpha of all Alphas",
     "category": "Modeling"
