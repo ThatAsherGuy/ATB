@@ -18,6 +18,6 @@ While the fast panel does have a few tabs for future features, those tabs haven'
 
 ### In The Viewport Header: The Meta Panel
 
-The meta panel splits the difference between the overlays panel and the fast panel. It's more compact than the former, but more exhaustive than the latter, providing convenient access to transform settings, gizmo settings, viewport settings, and object data.
+The meta panel splits the difference between the overlays panel and the fast panel. It's more compact than the former, but more exhaustive than the latter, providing convenient access to transform settings, a camera manager, viewport shading, and active object properties.
 
-The object data tab is currently the most useful one, since it lets you manage vertex groups, curve settings, light settings, and so on, when you're working in full screen mode.
+The camera manager and the active object panel are currently the most feature-rich, with the former offering easy access to your scene's camera list, camera settings, and a handful of keying options, and the latter exposing contextual properties for meshes, curves, lights, probes, and so on.

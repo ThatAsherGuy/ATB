@@ -28,7 +28,8 @@ from bpy.props import (
     IntVectorProperty,
     EnumProperty,
     BoolProperty,
-    FloatProperty
+    FloatProperty,
+    PointerProperty
 )
 import bpy_extras
 import bmesh
@@ -1346,3 +1347,49 @@ class ATB_OT_Clear_Custom_Popover(bpy.types.Operator):
     def invoke(self, context, event):
 
         return context.window_manager.invoke_props_dialog(self)
+
+
+class ATB_OT_Frame_Object(bpy.types.Operator):
+    """Forces the Frame Selected operator to frame the object in edit mode"""
+    bl_idname = "act.frame_object"
+    bl_label = "ATB Frame Object"
+    bl_options = {'BLOCKING', 'UNDO', 'REGISTER'}
+
+    def invoke(self, context, event):
+
+        override = bpy.context.copy()
+        override['edit_object'] = None
+
+        bpy.ops.view3d.view_selected(
+                override,
+                'INVOKE_DEFAULT',
+                False,
+        )
+
+        return {'FINISHED'}
+
+
+class ATB_OT_Select_Object(bpy.types.Operator):
+    """A UI-Only Operator for setting the active object selection"""
+    bl_idname = "atb.object_select"
+    bl_label = "ATB Frame Object"
+    bl_options = {'BLOCKING', 'UNDO', 'REGISTER'}
+
+    target_object: StringProperty(
+                        name="Target Object",
+                        description="The object to select.",
+    )
+
+    def invoke(self, context, event):
+
+        for obj in bpy.context.view_layer.objects.selected:
+            obj.select_set(False)
+
+        obj = bpy.data.objects.get(self.target_object)
+
+        obj.select_set(True)
+
+        bpy.context.view_layer.objects.active = obj
+
+        return {'FINISHED'}
+

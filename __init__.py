@@ -53,7 +53,12 @@ from .Operators.wrappers import ATB_OT_drop_tool
 from .Operators.wrappers import ATB_OT_Set_Custom_Popover
 from .Operators.wrappers import ATB_OT_Clear_Custom_Popover
 from .Operators.wrappers import ATB_OT_TogglePhotoMode
+from .Operators.wrappers import ATB_OT_Frame_Object
+from .Operators.wrappers import ATB_OT_Select_Object
 
+from .Operators.CameraOps import ATB_OT_Zoop
+from .Operators.CameraOps import ATB_OT_Lock_Camera
+from .Operators.CameraOps import ATB_OT_Add_Camera_Keying_Set
 
 from .Operators.ViewportOps import ATB_OT_ViewAxis
 from .Operators.ViewportOps import ATB_OT_set_axis
@@ -202,6 +207,12 @@ classes = (
     ATB_OT_Set_Custom_Popover,
     ATB_OT_Clear_Custom_Popover,
     ATB_OT_TogglePhotoMode,
+    ATB_OT_Frame_Object,
+    ATB_OT_Select_Object,
+    # CameraOps.py,
+    ATB_OT_Zoop,
+    ATB_OT_Lock_Camera,
+    ATB_OT_Add_Camera_Keying_Set,
     # TransformOperators.py
     ATB_OT_RotateAroundPivot,
     ATB_PT_ViewOverlaysPanel,

@@ -26,7 +26,8 @@ from bpy.props import (
     BoolProperty,
     BoolVectorProperty,
     IntProperty,
-    StringProperty
+    StringProperty,
+    PointerProperty
 )
 # import math
 
@@ -325,7 +326,7 @@ class ObjectMatrixConversions(PropertyGroup):
 def metapanel_layout_items():
     items = [
         ('0', "Move", "Transformation Tab", 'OBJECT_ORIGIN', 1),
-        ('1', "Tools", "Gizmo Tab", 'GIZMO', 2),
+        ('1', "Tools", "Camera Manager Tab", 'OUTLINER_DATA_CAMERA', 2),
         ('2', "Draw", "Viewport Overlays", 'SHADING_RENDERED', 3),
         ('3', "Active", "Active Object Properties", 'OVERLAY', 4)
             ]
@@ -365,6 +366,12 @@ class MetaPanelTabs(PropertyGroup):
                             size=4,
                             options={'SKIP_SAVE'}
                              )
+
+    exp_objpointer: PointerProperty(
+        type=bpy.types.Object,
+        name="Reference Object",
+        description="MAGIC",
+    )
 
 # QUICK OPERATOR (MENU PANEL) PANEL
 

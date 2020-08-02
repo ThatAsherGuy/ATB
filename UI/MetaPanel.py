@@ -109,7 +109,7 @@ class VIEW3D_PT_meta_panel(Panel):
 
         tab_labels = [
                     ("Transforms", ""),
-                    ("Gizmos", ""),
+                    ("Cameras", ""),
                     ("Shading", ""),
                     ("Active", ""),
         ]
@@ -433,132 +433,334 @@ class VIEW3D_PT_meta_panel(Panel):
             row_2_r.prop(overlay, "show_axis_y", toggle=True, text="Y")
             row_2_r.prop(overlay, "show_axis_z", toggle=True, text="Z")
 
-        # $$Tools Tab
+        # $$CameraManager Tab
         if tabs.tab == '1':
-            col = bcol.column(align=False)
 
-            row = col.column(align=True)
-            row_row = row.row(align=True)
-            row_row.prop(
-                    context.space_data,
-                    "show_gizmo_object_translate",
-                    toggle=True,
-                    text="Move",
+            bcol.label(text="Scene Cameras:")
+
+            subcol = bcol.column(align=True)
+
+            for cam in bpy.data.cameras:
+                if cam.users > 0:
+                    row = subcol.row(align=True)
+                    row.prop(
+                        cam,
+                        "name",
+                        text=""
+                        )
+                    if bpy.context.view_layer.objects.active and bpy.context.view_layer.objects.active.name == cam.name:
+                        sel_icon = 'RESTRICT_SELECT_OFF'
+                    else:
+                        sel_icon = 'RESTRICT_SELECT_ON'
+
+                    if context.scene.camera and context.scene.camera.name == cam.name:
+                        icon = 'RADIOBUT_ON'
+                    else:
+                        icon = 'RADIOBUT_OFF'
+
+                    op = row.operator(
+                        "wm.context_set_id",
+                        text="",
+                        icon=icon
                     )
-            row_row.prop(
-                    context.space_data,
-                    "show_gizmo_object_rotate",
-                    toggle=True,
-                    text="Rotate",
+                    op.data_path = "scene.camera"
+                    op.value = str(cam.name)
+
+                    op = row.operator(
+                        "atb.zoop",
+                        text="",
+                        icon='SNAP_FACE_CENTER'
                     )
-            row_row.prop(
-                    context.space_data,
-                    "show_gizmo_object_scale",
-                    toggle=True,
-                    text="Scale",
+                    op.target_camera = str(cam.name)
+
+                    op = row.operator(
+                        "atb.object_select",
+                        text="",
+                        icon=sel_icon
+                    )
+                    op.target_object = str(cam.name)
+
+            if active_obj and active_obj.type == 'CAMERA':
+                camera = active_obj
+            elif context.space_data.region_3d.view_perspective == 'CAMERA':
+                camera = context.space_data.camera
+            else:
+                camera = None
+
+            if camera:
+                bcol.label(text="Selected Camera:")
+
+                if context.scene.camera and context.scene.camera.name == camera.name:
+                    icon = 'RADIOBUT_ON'
+                else:
+                    icon = 'RADIOBUT_OFF'
+
+                row = bcol.row(align=True)
+
+                # row.template_ID(context.view_layer.objects, "active", filter='AVAILABLE')
+
+                row.prop(
+                    camera,
+                    "name",
+                    text=""
                     )
 
-            row_row = row.row(align=True)
-            row_row.prop(scene.transform_orientation_slots[1], "type", text="")
-            row_row.prop(
-                context.preferences.view,
-                "gizmo_size",
-                text="Scale"
-            )
+                op = row.operator(
+                    "wm.context_set_id",
+                    text="",
+                    icon=icon
+                )
+                op.data_path = "scene.camera"
+                op.value = str(camera.name)
 
-            gz1_label = "Context Pie Gizmo"
-            if scene.act_gizmo_pick[0]:
-                gz1_label = ""
+                op = row.operator(
+                    "atb.zoop",
+                    text="",
+                    icon='SNAP_FACE_CENTER')
 
-            row = col.row(align=True)
-            row.prop(
-                scene,
-                "act_gizmo_pick",
-                text=gz1_label,
-                index=0,
-                toggle=True,
-                icon='PHYSICS'
-            )
-            if scene.act_gizmo_pick[0]:
-                row.prop(scene, "gz_scale", text="")
-                row.prop(scene, "gz_piv_enum", text="", icon_only=True)
-                row.prop(scene, "cp_mode_enum", text="", icon_only=True)
+                op.target_camera = str(camera.name)
 
-            # row = col.row(align=False)
-            # row_row = row.row(align=True)
-            # gz2_label = "Offset Rotate Gizmo"
-            # if scene.act_gizmo_pick[1]:
-            #     gz2_label = ""
+                # bcol.label(text="Show:")
 
-            # row_row.prop(
-            #     scene,
-            #     "act_gizmo_pick",
-            #     text=gz2_label,
-            #     index=1,
-            #     toggle=True,
-            #     icon='FORCE_CURVE'
-            # )
+                row = bcol.row(align=True)
 
-            if scene.act_gizmo_pick[1]:
-                row_row.prop(scene, "piv_gz_x", text="")
-                row_row.prop(scene, "piv_gz_y", text="")
-                row_row.prop(scene, "piv_gz_z", text="")
+                row.prop(
+                    camera.data,
+                    'show_limits',
+                    text="Limits",
+                    toggle=True
+                )
+                row.prop(
+                    camera.data,
+                    'show_mist',
+                    text="Mist",
+                    toggle=True
+                )
+                row.prop(
+                    camera.data,
+                    'show_sensor',
+                    text="Sensor",
+                    toggle=True
+                )
+                row.prop(
+                    camera.data,
+                    'show_name',
+                    text="Name",
+                    toggle=True
+                )
 
-            # col.separator()
+                row = bcol.row(align=True)
+                row.prop(
+                    camera.data,
+                    'display_size',
+                    text="Display Size",
+                )
 
-            # row = col.row(align=False)
-            # row_row = row.row(align=True)
+                sub = bcol.row(align=True)
+                sub.prop(
+                    camera.data,
+                    'show_passepartout',
+                    text="Dim Outer",
+                    toggle=True
+                )
+                sub.prop(
+                    camera.data,
+                    'passepartout_alpha',
+                    text="",
+                )
 
-            # gz2_label = "Cursor Gizmo"
-            # if scene.act_gizmo_pick[2]:
-            #     gz2_label = ""
+                bcol.label(text="Settings:")
 
-            # row_row.prop(
-            #     scene,
-            #     "act_gizmo_pick",
-            #     text=gz2_label,
-            #     index=2,
-            #     toggle=True,
-            #     icon='ORIENTATION_CURSOR'
-            # )
+                col = bcol.column(align=True)
 
-            # col.separator()
+                sub = col.row(align=True)
 
-            row = col.row(align=False)
-            row_row = row.row(align=True)
+                if camera.data.sensor_fit == 'AUTO':
+                    sub.prop(
+                        camera.data,
+                        'sensor_width',
+                        text="Sensor Size",
+                    )
+                elif camera.data.sensor_fit == 'HORIZONTAL':
+                    sub.prop(
+                        camera.data,
+                        'sensor_width',
+                        text="Sensor Width",
+                    )
+                elif camera.data.sensor_fit == 'VERTICAL':
+                    sub.prop(
+                        camera.data,
+                        'sensor_height',
+                        text="Sensor Height",
+                    )
 
-            gz3_label = "Mode Selector Gizmo"
-            # if scene.act_gizmo_pick[3]:
-            #     gz3_label = ""
+                op = sub.operator(
+                    "wm.context_cycle_enum",
+                    text="",
+                    icon='CON_SIZELIKE'
+                )
+                op.data_path = "object.data.sensor_fit"
+                op.wrap = True
 
-            row_row.prop(
-                scene,
-                "act_gizmo_pick",
-                text=gz3_label,
-                index=3,
-                toggle=True,
-                icon='GHOST_ENABLED'
-            )
+                sub = col.row(align=True)
 
-            # View Layer Stuff
-            # row = col.column(align=False)
-            # row.prop(context.view_layer, "objects")
-            # row.template_list(
-            #     "UI_UL_list",
-            #     "bacon",
-            #     context.scene,
-            #     "view_layers",
-            #     context,
-            #     "view_layer",
-            #     rows=4
-            #     )
-            # row.prop_search(
-            #     context, "view_layer",
-            #     context.scene, "view_layers")
-            # row.template_ID_preview(context.scene, "view_layers")
+                if camera.data.lens_unit == 'MILLIMETERS':
+                    sub.prop(
+                        camera.data,
+                        'lens',
+                    )
+                else:
+                    sub.prop(
+                        camera.data,
+                        'angle',
+                    )
 
-            # if scene.act_gizmo_pick[3]:
-            #     row_row.label(text="Du Hast")
+                op = sub.operator(
+                    "wm.context_toggle_enum",
+                    text="",
+                    icon='OUTLINER_OB_CAMERA'
+                )
+                op.data_path = str(camera.data.lens_unit)
+                op.value_1 = 'FOV'
+                op.value_2 = 'MILLIMETERS'
+
+                col = bcol.column(align=True)
+                sub = col.row(align=True)
+
+                sub.prop(
+                    camera.data,
+                    'clip_start'
+                )
+
+                sub.prop(
+                    camera.data,
+                    'clip_end'
+                )
+
+                bcol.label(text="Actions:")
+
+                col = bcol.column(align=True)
+                sub = col.row(align=True)
+
+                if context.scene.keying_sets.active:
+                    # sub.prop(
+                    #     context.scene.keying_sets.active,
+                    #     "bl_label",
+                    #     text="",
+                    #     expand=True
+                    # )
+                    sub.prop_search(
+                        context.scene.keying_sets,
+                        "active",
+                        context.scene,
+                        "keying_sets",
+                        text="",
+                        )
+
+                sub.operator(
+                    'atb.add_camera_keyset',
+                    text='',
+                    icon='KEYINGSET'
+                )
+                sub.operator(
+                    'anim.keyframe_insert',
+                    text='',
+                    icon='KEY_HLT'
+                )
+                sub.operator(
+                    'anim.keyframe_delete',
+                    text='',
+                    icon='KEY_DEHLT'
+                )
+
+                sub = col.row(align=True)
+
+                sub.prop(
+                    context.space_data,
+                    'lock_camera',
+                    text="Track Camera to View",
+                    toggle=True
+                )
+
+                sub = col.row(align=True)
+
+                sub.operator(
+                    "view3d.zoom_camera_1_to_1",
+                    text="1:1"
+                )
+                sub.operator(
+                    "view3d.view_center_camera",
+                    text="Recenter"
+                )
+
+                if False in camera.lock_location or False in camera.lock_rotation:
+                    op_text = "Lock"
+                    tog = False
+                else:
+                    op_text = "Unlock"
+                    tog = True
+
+                subsub = sub.row(align=True)
+                subsub.alert = tog
+
+                op = subsub.operator(
+                    "atb.lock_camera",
+                    text=op_text,
+                    # depress=tog
+                )
+                op.target_object = str(camera.name)
+
+                sub = col.row(align=True)
+                sub.operator(
+                    "view3d.view_selected",
+                    text="Zoop",
+                )
+                sub.operator(
+                    "view3d.zoom_border",
+                    text="Zoom"
+                )
+                sub.operator(
+                    "view3d.walk",
+                    text="Walk"
+                )
+
+                col = bcol.column(align=True)
+                col.scale_y = 0.75
+                col.prop(
+                    camera,
+                    'location',
+                )
+
+                col = bcol.column(align=True)
+                col.scale_y = 0.75
+                col.prop(
+                    camera,
+                    'rotation_euler',
+                )
+
+                bcol.label(text="Overlays:")
+
+                col = bcol.column(align=True)
+                sub = col.row(align=True)
+
+                sub.prop(
+                    camera.data,
+                    'show_composition_thirds',
+                    text="Thirds",
+                    toggle=True
+                )
+                sub.prop(
+                    camera.data,
+                    'show_composition_center',
+                    text="Center",
+                    toggle=True
+                )
+                sub.prop(
+                    camera.data,
+                    'show_composition_golden',
+                    text="Phi",
+                    toggle=True
+                )
 
         # $$Display Tab
         if tabs.tab == '2':
@@ -874,7 +1076,7 @@ class VIEW3D_PT_meta_panel(Panel):
             # ico = ('CHECKBOX_HLT' if shading.show_backface_culling else 'CHECKBOX_DEHLT')
             # split_l.prop(shading, "show_backface_culling", icon=ico, emboss=False)
 
-        # $$Overlay Tab
+        # $$Active Object Tab
         if tabs.tab == '3':
             # active_obj = context.active_object
             shading = self.get_shading(context)
@@ -883,6 +1085,9 @@ class VIEW3D_PT_meta_panel(Panel):
             ocol = bcol.column(align=True)
             row = ocol.row(align=True)
             row.template_ID(context.view_layer.objects, "active", filter='AVAILABLE')
+
+            row = ocol.row(align=True)
+            # row.prop(tabs, "exp_objpointer")
 
             if active_obj and (active_obj.type == 'MESH'):
 
@@ -1771,7 +1976,9 @@ class VIEW3D_PT_meta_panel(Panel):
                     col.prop(context.object, "show_empty_image_only_axis_aligned")
 
             elif active_obj and active_obj.type == 'CAMERA':
+
                 ocol.label(text="Show:")
+
                 row = ocol.row(align=True)
                 row.prop(
                     context.object.data,
@@ -1802,8 +2009,166 @@ class VIEW3D_PT_meta_panel(Panel):
                 row.prop(
                     context.object.data,
                     'display_size',
-                    text="Size",
+                    text="Display Size",
                 )
+
+                ocol.label(text="Settings:")
+
+                col = ocol.column(align=True)
+
+                sub = col.row(align=True)
+
+                if context.object.data.sensor_fit == 'AUTO':
+                    sub.prop(
+                        context.object.data,
+                        'sensor_width',
+                        text="Sensor Size",
+                    )
+                elif context.object.data.sensor_fit == 'HORIZONTAL':
+                    sub.prop(
+                        context.object.data,
+                        'sensor_width',
+                        text="Sensor Width",
+                    )
+                elif context.object.data.sensor_fit == 'VERTICAL':
+                    sub.prop(
+                        context.object.data,
+                        'sensor_height',
+                        text="Sensor Height",
+                    )
+
+                op = sub.operator(
+                    "wm.context_cycle_enum",
+                    text="",
+                    icon='CON_SIZELIKE'
+                )
+                op.data_path = "object.data.sensor_fit"
+                op.wrap = True
+
+                sub = col.row(align=True)
+
+                if context.object.data.lens_unit == 'MILLIMETERS':
+                    sub.prop(
+                        context.object.data,
+                        'lens',
+                    )
+                else:
+                    sub.prop(
+                        context.object.data,
+                        'angle',
+                    )
+
+                op = sub.operator(
+                    "wm.context_toggle_enum",
+                    text="",
+                    icon='OUTLINER_OB_CAMERA'
+                )
+                op.data_path = "object.data.lens_unit"
+                op.value_1 = 'FOV'
+                op.value_2 = 'MILLIMETERS'
+
+                col = ocol.column(align=True)
+                sub = col.row(align=True)
+
+                sub.prop(
+                    context.object.data,
+                    'clip_start'
+                )
+
+                sub.prop(
+                    context.object.data,
+                    'clip_end'
+                )
+
+                ocol.label(text="Stuffs:")
+
+                col = ocol.column(align=True)
+                sub = col.row(align=True)
+
+                sub.prop(
+                    context.space_data,
+                    'lock_camera',
+                    toggle=True
+                )
+
+                sub = col.row(align=True)
+                sub.prop(
+                    context.object.data,
+                    'show_passepartout',
+                    text="Dim Outer",
+                    toggle=True
+                )
+                sub.prop(
+                    context.object.data,
+                    'passepartout_alpha',
+                    text="",
+                )
+
+                # ocol.separator()
+
+                col = ocol.column(align=True)
+                col.scale_y = 0.75
+                col.prop(
+                    context.object,
+                    'location',
+                )
+
+                ocol.label(text="Overlays:")
+
+                col = ocol.column(align=True)
+                sub = col.row(align=True)
+
+                sub.prop(
+                    context.object.data,
+                    'show_composition_thirds',
+                    text="Thirds",
+                    toggle=True
+                )
+                sub.prop(
+                    context.object.data,
+                    'show_composition_center',
+                    text="Center",
+                    toggle=True
+                )
+                sub.prop(
+                    context.object.data,
+                    'show_composition_golden',
+                    text="Phi",
+                    toggle=True
+                )
+
+                # RETURN HERE
+
+                ocol.label(text="Scene Cameras:")
+
+                for cam in bpy.data.cameras:
+                    if cam.users > 0:
+                        row = ocol.row(align=True)
+                        row.prop(
+                            cam,
+                            "name",
+                            text=""
+                            )
+
+                        if context.scene.camera and context.scene.camera.name == cam.name:
+                            icon = 'OUTLINER_OB_CAMERA'
+                        else:
+                            icon = 'OUTLINER_DATA_CAMERA'
+
+                        op = row.operator(
+                            "wm.context_set_id",
+                            text="",
+                            icon=icon
+                        )
+                        op.data_path = "scene.camera"
+                        op.value = str(cam.name)
+
+                        op = row.operator(
+                            "atb.zoop",
+                            text="",
+                            icon='LIGHT'
+                        )
+                        op.target_camera = str(cam.name)
 
             elif active_obj and active_obj.type == 'LIGHT':
                 ocol.label(text="Show:")
