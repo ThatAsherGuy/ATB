@@ -8,7 +8,7 @@ ATB is, at its core, a pile of interfaces. Here are the main ones you'll interac
 
 ### In The Sidebar: The Overlays Panel
 
-![ATB Overlays Panel](https://i.imgur.com/SMJmaBR.png)
+![ATB Overlays Panel](https://i.imgur.com/SMJmaBR.png) 
 
 The overlays panel is a more-or-less straight remix of the shading and overlay popovers in the viewport header, with a few object display and theme settings thrown in for good measure. This panel has been designed to work with a fairly narrow column width, which makes it great for situations where you're toggling overlays off and on and you don't want to deal with popovers.
 
