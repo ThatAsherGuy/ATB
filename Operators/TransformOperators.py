@@ -364,7 +364,7 @@ class ATB_OT_CreateNamedOrientation(bpy.types.Operator):
     """Wrapper for custom orientations"""
     bl_idname = "act.make_named_orientation"
     bl_label = "ATB Custom Orientation"
-    bl_description = "Wrapper for transform.rotate"
+    bl_description = "Set/Update Orientation Quick Slot"
     bl_options = {'REGISTER', 'UNDO'}
 
     slot_enum = [
@@ -372,6 +372,8 @@ class ATB_OT_CreateNamedOrientation(bpy.types.Operator):
         ("SLOT_B", "Green", "", 2),
         ("SLOT_C", "Blue", "", 3),
         ("SLOT_D", "Yellow", "", 4),
+        ("SLOT_E", "Cyan", "", 5),
+        ("SLOT_F", "Fuchsia", "", 6),
     ]
 
     transform_slot: EnumProperty(
@@ -383,7 +385,7 @@ class ATB_OT_CreateNamedOrientation(bpy.types.Operator):
 
     def invoke(self, context, event):
         debug = False
-        slots = context.workspace.custom_transforms
+        # slots = context.workspace.custom_transforms
 
         if self.transform_slot == 'SLOT_A':
             slot = context.workspace.custom_transforms.transformA
@@ -393,6 +395,10 @@ class ATB_OT_CreateNamedOrientation(bpy.types.Operator):
             slot = context.workspace.custom_transforms.transformC
         elif self.transform_slot == 'SLOT_D':
             slot = context.workspace.custom_transforms.transformD
+        elif self.transform_slot == 'SLOT_E':
+            slot = context.workspace.custom_transforms.transformE
+        elif self.transform_slot == 'SLOT_F':
+            slot = context.workspace.custom_transforms.transformF
 
         modifiers = [False, False, False]
 
@@ -463,6 +469,10 @@ class ATB_OT_CreateNamedOrientation(bpy.types.Operator):
             context.workspace.custom_transforms.transformC = [b for a in slot.to_3x3() for b in a]
         elif self.transform_slot == 'SLOT_D':
             context.workspace.custom_transforms.transformD = [b for a in slot.to_3x3() for b in a]
+        elif self.transform_slot == 'SLOT_E':
+            context.workspace.custom_transforms.transformE = [b for a in slot.to_3x3() for b in a]
+        elif self.transform_slot == 'SLOT_F':
+            context.workspace.custom_transforms.transformF = [b for a in slot.to_3x3() for b in a]
 
         bpy.ops.transform.select_orientation(
                             'EXEC_DEFAULT',
@@ -515,9 +525,175 @@ class ATB_OT_CursorToOrientation(bpy.types.Operator):
 
 
     def invoke(self, context, event):
-        custom = False
         if bpy.context.scene.transform_orientation_slots[0].custom_orientation:
             self.custom = True
 
         self.execute(context)
+        return {'FINISHED'}
+
+
+class ATB_OT_SetOrigin(bpy.types.Operator):
+    bl_idname = "act.set_origin"
+    bl_label = "ATB Set Origin"
+    bl_description = "Moves the object origin to your selection. Works in edit mode"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def invoke(self, context, event):
+        CursorMatrix = bpy.context.scene.cursor.matrix.copy()
+        print(str(bpy.context.mode))
+        
+        if bpy.context.mode == 'EDIT_MESH':
+            bpy.ops.view3d.snap_cursor_to_selected()
+            bpy.ops.object.editmode_toggle()
+            for obj in context.selected_editable_objects:
+                if not obj == bpy.context.active_object:
+                    bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
+            bpy.ops.object.editmode_toggle()
+        else:
+            bpy.ops.view3d.snap_cursor_to_active()
+            bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
+
+        bpy.context.scene.cursor.matrix = CursorMatrix
+        bpy.context.scene.frame_current = bpy.context.scene.frame_current
+        return {'FINISHED'}
+
+
+class ATB_OT_SetOriginToBBox(bpy.types.Operator):
+    bl_idname = "act.origin_to_bbox"
+    bl_label = "ATB Set Origin To Bounding Box"
+    bl_description = "Moves the object origin to a point on its bounding box"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    mode_enum = [
+        ("POINT", "Snap To Box Corner", "", 1),
+        ("FACE", "Snap To Box Face", "", 2),
+    ]
+
+    box_mode: EnumProperty(
+        items=mode_enum,
+        name="Snap Mode",
+        description="Which transform slot to set/get/update",
+        default='POINT'
+    )
+
+    point_enum = [
+        ("XNEG_YNEG_ZNEG", "-X -Y -Z Corner", "", 1),
+        ("XNEG_YNEG_ZPOS", "-X -Y +Z Corner", "", 2),
+        ("XNEG_YPOS_ZPOS", "-X +Y +Z Corner", "", 3),
+        ("XNEG_YPOS_ZNEG", "-X +Y -Z Corner", "", 4),
+        ("XPOS_YNEG_ZNEG", "+X -Y -Z Corner", "", 5),
+        ("XPOS_YNEG_ZPOS", "+X -Y +Z Corner", "", 6),
+        ("XPOS_YPOS_ZPOS", "+X +Y +Z Corner", "", 7),
+        ("XPOS_YPOS_ZNEG", "+X +Y -Z Corner", "", 8),
+    ]
+
+    box_point: EnumProperty(
+        items=point_enum,
+        name="Box Point",
+        description="Which transform slot to set/get/update",
+        default='XNEG_YNEG_ZNEG'
+    )
+
+    face_enum = [
+        ("XPOS", "+X Face", "", 1),
+        ("XNEG", "-X Face", "", 2),
+        ("YPOS", "+Y Face", "", 3),
+        ("YNEG", "-Y Face", "", 4),
+        ("ZPOS", "+Z Face", "", 5),
+        ("ZNEG", "-Z Face", "", 6),
+        ("CENTER", "Bounding Box Center", "", 7),
+    ]
+
+    box_face: EnumProperty(
+        items=face_enum,
+        name="Box Face",
+        description="Which transform slot to set/get/update",
+        default='ZNEG'
+    )
+
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object or context.selected_objects
+
+    def invoke(self, context, event):
+        cursor = bpy.context.scene.cursor
+        CursorMatrix = bpy.context.scene.cursor.matrix.copy()
+
+        obj = context.active_object
+        obj_rot = obj.matrix_world.to_quaternion()
+        obj_loc = obj.location.copy()
+        raw_bounds = obj.bound_box
+
+        bounds = []
+        for point in raw_bounds:
+            bounds.append(Vector(point))
+
+        snap_point = Vector((0,0,0))
+        snap_type = 'ORIGIN_CURSOR'
+
+        modifiers = [False, False, False]
+
+        if event.shift:
+            modifiers[0] = True
+        if event.ctrl:
+            modifiers[1] = True
+        if event.alt:
+            modifiers[2] = True
+
+        if self.box_mode == 'POINT':
+            if self.box_point == "XNEG_YNEG_ZNEG":
+                snap_point = bounds[0]
+            elif self.box_point == "XNEG_YNEG_ZPOS":
+                snap_point = bounds[1]
+            elif self.box_point == "XNEG_YPOS_ZPOS":
+                snap_point = bounds[2]
+            elif self.box_point == "XNEG_YPOS_ZNEG":
+                snap_point = bounds[3]
+            elif self.box_point == "XPOS_YNEG_ZNEG":
+                snap_point = bounds[4]
+            elif self.box_point == "XPOS_YNEG_ZPOS":
+                snap_point = bounds[5]
+            elif self.box_point == "XPOS_YPOS_ZPOS":
+                snap_point = bounds[6]
+            elif self.box_point == "XPOS_YPOS_ZNEG":
+                snap_point = bounds[7]
+            else:
+                print("SHIT")
+        elif self.box_mode == 'FACE':
+            if self.box_face == "XPOS":
+                snap_point = (bounds[4] + bounds[5] + bounds[6] + bounds[7])/(4.0)
+            elif self.box_face == "XNEG":
+                snap_point = (bounds[0] + bounds[1] + bounds[2] + bounds[3])/(4.0)
+            elif self.box_face == "YPOS":
+                snap_point = (bounds[2] + bounds[3] + bounds[6] + bounds[7])/(4.0)
+            elif self.box_face == "YNEG":
+                snap_point = (bounds[0] + bounds[1] + bounds[4] + bounds[5])/(4.0)
+            elif self.box_face == "ZPOS":
+                snap_point = (bounds[1] + bounds[2] + bounds[5] + bounds[6])/(4.0)
+            elif self.box_face == "ZNEG":
+                snap_point = (bounds[0] + bounds[3] + bounds[4] + bounds[7])/(4.0)
+            elif self.box_face == "CENTER":
+                # snap_point = Vector(snap_point)
+                for point in bounds:
+                    snap_point += point
+                snap_type = 'ORIGIN_GEOMETRY'
+
+        snap_point.rotate(obj_rot)
+
+        cursor.location = snap_point + obj.location
+
+        if bpy.context.mode == 'EDIT_MESH':
+            bpy.ops.object.editmode_toggle()
+            bpy.ops.object.origin_set(type=snap_type, center='MEDIAN')
+            bpy.ops.object.editmode_toggle()
+        else:
+            bpy.ops.object.origin_set(type=snap_type, center='MEDIAN')
+
+        bpy.context.scene.cursor.matrix = CursorMatrix
+        bpy.context.scene.frame_current = bpy.context.scene.frame_current
+
+        if modifiers[2]:
+            if (self.box_mode == "POINT") or not (self.box_face == "CENTER"):
+                obj.location -= snap_point
         return {'FINISHED'}

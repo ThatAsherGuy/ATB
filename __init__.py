@@ -67,6 +67,8 @@ from .Operators.ViewportOps import ATB_OT_set_axis
 from .Operators.TransformOperators import ATB_OT_RotateAroundPivot
 from .Operators.TransformOperators import ATB_OT_CreateNamedOrientation
 from .Operators.TransformOperators import ATB_OT_CursorToOrientation
+from .Operators.TransformOperators import ATB_OT_SetOrigin
+from .Operators.TransformOperators import ATB_OT_SetOriginToBBox
 
 from .Operators.ThemeOps import ATB_OT_set_color
 from .Operators.ThemeOps import ATB_OT_store_wire_color
@@ -204,6 +206,8 @@ classes = (
     ATB_OT_RotateAroundPivot,
     ATB_OT_CreateNamedOrientation,
     ATB_OT_CursorToOrientation,
+    ATB_OT_SetOrigin,
+    ATB_OT_SetOriginToBBox,
     # Other Stuff
     ATB_PT_ViewOverlaysPanel,
     ATB_PT_viewport_transform_settings,

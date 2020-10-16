@@ -160,7 +160,7 @@ class VIEW3D_PT_meta_panel(Panel):
     bl_region_type = 'UI'
     bl_category = "ATB"
     bl_label = "Meta Panel"
-    bl_options = {'DRAW_BOX'}
+    bl_options = {'DRAW_BOX', 'HEADER_LAYOUT_EXPAND',  }
 
     bl_ui_units_x = 12
 
@@ -196,6 +196,45 @@ class VIEW3D_PT_meta_panel(Panel):
             return view.shading
         else:
             return context.scene.display.shading
+
+    # def draw_header(self, context):
+    #     layout = self.layout
+    #     wm = bpy.context.window_manager
+    #     tabs = wm.metapanel_tabs
+    #     rrow = layout.column(align=True)
+    #     rrow.alignment = 'RIGHT'
+
+    #     if not tabs.tab:
+    #         tabs.tab = '0'
+
+    #     tb_row = rrow.row(align=True)
+    #     tb_row.alignment = 'RIGHT'
+
+    #     tb_row.prop_enum(
+    #                     tabs,
+    #                     'tab',
+    #                     '0',
+    #                     text=""
+    #     )
+    #     tb_row.prop_enum(
+    #                     tabs,
+    #                     'tab',
+    #                     '1',
+    #                     text=""
+    #     )
+    #     tb_row.prop_enum(
+    #                     tabs,
+    #                     'tab',
+    #                     '2',
+    #                     text=""
+    #     )
+    #     tb_row.prop_enum(
+    #                     tabs,
+    #                     'tab',
+    #                     '3',
+    #                     text=""
+    #     )
+
 
     def draw(self, context):
 
@@ -266,94 +305,93 @@ class VIEW3D_PT_meta_panel(Panel):
 
         # $$Move Tab
         if tabs.tab == '0':
-
             orient_slot = scene.transform_orientation_slots[0]
-            orientation = orient_slot.custom_orientation
+            # orientation = orient_slot.custom_orientation
+
+            # g_1 = bcol.column(align=True)
 
             # Group 1 - Transform Orientation and Pivot
-            bcol.label(text="Orientation and Pivot")
+            bcol.label(text="Orientation")
 
-            g1_r = bcol.row(align=True)
+            g1_r = bcol.grid_flow(align=True)
+            # g1_r.alignment = 'CENTER'
+
             g1_r.prop_enum(
                         orient_slot,
                         "type",
                         'GLOBAL',
-                        text=" "
+                        text=""
                         )
             g1_r.prop_enum(
                         orient_slot,
                         "type",
                         'LOCAL',
-                        text=" "
+                        text=""
                         )
             g1_r.prop_enum(
                         orient_slot,
                         "type",
                         'NORMAL',
-                        text=" "
+                        text=""
                         )
             g1_r.prop_enum(
                         orient_slot,
                         "type",
                         'CURSOR',
-                        text=" "
+                        text=""
                         )
             g1_r.prop_enum(
                         orient_slot,
                         "type",
                         'GIMBAL',
-                        text=" "
+                        text=""
                         )
             g1_r.prop_enum(
                         orient_slot,
                         "type",
                         'VIEW',
-                        text=" "
+                        text=""
                         )
 
-            flow = bcol.grid_flow(columns=2, align=True)
-            g_1 = flow.column(align=True)
-
-            g_1_r_1 = g_1.row(align=True)
+            g_1_r_1 = bcol.grid_flow(align=True)
+            # g_1_r_1.scale_y = 0.5
 
             g_1_r_1.operator(
                 "act.make_named_orientation",
-                text="A",
+                text="",
+                icon='EVENT_A'
             ).transform_slot = 'SLOT_A'
             g_1_r_1.operator(
                 "act.make_named_orientation",
-                text="B",
+                text="",
+                icon='EVENT_B'
             ).transform_slot = 'SLOT_B'
             g_1_r_1.operator(
                 "act.make_named_orientation",
-                text="C",
+                text="",
+                icon='EVENT_C'
             ).transform_slot = 'SLOT_C'
             g_1_r_1.operator(
                 "act.make_named_orientation",
-                text="D",
-            ).transform_slot = 'SLOT_D'
-
-
-            # if orientation:
-            #     g_1_r_1.prop(orientation, "name", text="")
-
-            # g_1_r_1.operator(
-            #     "transform.create_orientation",
-            #     text="",
-            #     icon="ADD"
-            # ).use = True
-            # g_1_r_1.operator(
-            #     "transform.delete_orientation",
-            #     text="",
-            #     icon="REMOVE"
-            # )
-            g_1_r_1.operator(
-                "transform.transform",
                 text="",
-                icon="OUTLINER_DATA_EMPTY"
-            ).mode = 'ALIGN'
+                icon='EVENT_D'
+            ).transform_slot = 'SLOT_D'
+            g_1_r_1.operator(
+                "act.make_named_orientation",
+                text="",
+                icon='EVENT_E'
+            ).transform_slot = 'SLOT_E'
+            g_1_r_1.operator(
+                "act.make_named_orientation",
+                text="",
+                icon='EVENT_F'
+            ).transform_slot = 'SLOT_E'
 
-            g_1_r_2 = g_1.row(align=True)
+            bcol.separator()
+            # Group 2 - Pivot
+            bcol.label(text="Pivot")
+
+            g_1_r_2 = bcol.row(align=True)
             g_1_r_2.prop(
                 tool_settings,
                 "transform_pivot_point",
@@ -382,13 +420,73 @@ class VIEW3D_PT_meta_panel(Panel):
                 toggle=True
             )
 
-            g_1_r_3 = g_1.row(align=True)
+            g_1_r_3 = bcol.row(align=True)
 
             g_1_r_3.operator(
                 "act.align_cursor_to_orientation",
-                text="ALIGN CURSOR",
-                icon='CURSOR',
+                text="Do Cursor",
             )
+
+            g_1_r_3.operator_context = 'EXEC_REGION_WIN'
+
+            op = g_1_r_3.operator(
+                "transform.transform",
+                text="Do Object",
+            )
+            op.mode = 'ALIGN'
+            # op.orient_type = bpy.context.scene.transform_orientation_slots[0].type
+            # op.orient_matrix_type = bpy.context.scene.transform_orientation_slots[0].type
+
+            g_1_r_1.operator_context = 'INVOKE_DEFAULT'
+
+            bcol.separator()
+            bcol.label(text="Quick Origin")
+
+            grid = bcol.grid_flow(columns=2, row_major=True, align=True, even_columns=True, even_rows=False)
+            grid.scale_y = 0.75
+
+            op = grid.operator(
+                "act.origin_to_bbox",
+                text='Front Left',
+            )
+            op.box_mode = 'POINT'
+            op.box_point = 'XNEG_YPOS_ZNEG'
+
+            op = grid.operator(
+                "act.origin_to_bbox",
+                text='Front Right',
+            )
+            op.box_mode = 'POINT'
+            op.box_point = 'XPOS_YPOS_ZNEG'
+
+            op = grid.operator(
+                "act.origin_to_bbox",
+                text='Back Left',
+            )
+            op.box_mode = 'POINT'
+            op.box_point = 'XNEG_YNEG_ZNEG'
+
+            op = grid.operator(
+                "act.origin_to_bbox",
+                text='Back Right',
+            )
+            op.box_mode = 'POINT'
+            op.box_point = 'XPOS_YNEG_ZNEG'
+
+            op = grid.operator(
+                "act.origin_to_bbox",
+                text='Bottom',
+            )
+            op.box_mode = 'FACE'
+            op.box_face = 'ZNEG'
+
+            op = grid.operator(
+                "act.origin_to_bbox",
+                text='Center',
+            )
+            op.box_mode = 'FACE'
+            op.box_face = 'CENTER'
+            
 
             # Group 2 - Proportional Editing
 

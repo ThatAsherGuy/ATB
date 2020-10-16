@@ -450,6 +450,24 @@ class CustomTransforms(PropertyGroup):
         default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
     )
 
+    transformE: FloatVectorProperty(
+        name='',
+        description='A persistent custom transform orientation',
+        subtype='MATRIX',
+        # unit='ROTATION',
+        size=9,
+        default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
+    )
+
+    transformF: FloatVectorProperty(
+        name='',
+        description='A persistent custom transform orientation',
+        subtype='MATRIX',
+        # unit='ROTATION',
+        size=9,
+        default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
+    )
+
 # WIRE COLORS
 
 
