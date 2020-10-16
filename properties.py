@@ -20,6 +20,7 @@
 
 import bpy
 from bpy.types import PropertyGroup
+from mathutils import Matrix
 from bpy.props import (
     EnumProperty,
     FloatVectorProperty,
@@ -373,6 +374,14 @@ class MetaPanelTabs(PropertyGroup):
         description="MAGIC",
     )
 
+    cam_index: IntProperty(
+        name="Camera Index",
+        default=0
+    )
+
+    # cams = bpy.data.cameras
+    # filtered_cams = list(filter(lambda x: x.users > 0, cams))
+
 # QUICK OPERATOR (MENU PANEL) PANEL
 
 
@@ -397,6 +406,48 @@ class QuickOpMenus(PropertyGroup):
         name='',
         description='Current Menu',
         items=stuff
+    )
+
+
+class CustomTransforms(PropertyGroup):
+
+    def get_matrix(self, value):
+        return 0
+
+    transformA: FloatVectorProperty(
+        name='',
+        description='A persistent custom transform orientation',
+        subtype='MATRIX',
+        # unit='ROTATION',
+        size=9,
+        default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
+    )
+
+    transformB: FloatVectorProperty(
+        name='',
+        description='A persistent custom transform orientation',
+        subtype='MATRIX',
+        # unit='ROTATION',
+        size=9,
+        default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
+    )
+
+    transformC: FloatVectorProperty(
+        name='',
+        description='A persistent custom transform orientation',
+        subtype='MATRIX',
+        # unit='ROTATION',
+        size=9,
+        default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
+    )
+
+    transformD: FloatVectorProperty(
+        name='',
+        description='A persistent custom transform orientation',
+        subtype='MATRIX',
+        # unit='ROTATION',
+        size=9,
+        default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
     )
 
 # WIRE COLORS

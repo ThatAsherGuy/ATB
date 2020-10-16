@@ -17,6 +17,15 @@ import rna_keymap_ui
 from . dicts import keys as keysdict
 from . dicts import keys_for_humans as humankeysdict
 
+# These (redundant) imports are for sidebar tab management
+from .UI.ViewPanel import ATB_PT_ViewOverlaysPanel
+from .UI.MetaPanel import VIEW3D_PT_meta_panel
+
+panels = (
+        ATB_PT_ViewOverlaysPanel,
+        VIEW3D_PT_meta_panel,
+)
+
 # Keymap stuff stolen from MESHmachine
 # Get Machine's addons, they're awesome!
 
@@ -230,9 +239,7 @@ def get_keymap_item(name, idname, key, alt=False, ctrl=False, shift=False):
 def update_panel(self, context):
     message = "Asher's Custom Tools: Panel update has failed"
 
-    panels = (
-            ATB_PT_ViewOverlaysPanel,
-            )
+    cat = context.preferences.addons[__package__].preferences.category
 
     try:
         for panel in panels:
@@ -240,11 +247,16 @@ def update_panel(self, context):
                 bpy.utils.unregister_class(panel)
 
         for panel in panels:
-            panel.bl_category = context.preferences.addons[__name__].preferences.category
+            if cat == "":
+                panel.bl_region_type = 'WINDOW'
+                panel.bl_category = ""
+            else:
+                panel.bl_region_type = 'UI'
+                panel.bl_category = context.preferences.addons[__package__].preferences.category
             bpy.utils.register_class(panel)
 
     except Exception as e:
-        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
+        print("\n[{}]\n{}\n\nError:\n{}".format(__package__, message, e))
         pass
 
 
@@ -279,13 +291,13 @@ class ATBAddonPreferences(bpy.types.AddonPreferences):
     baseKeymap: bpy.props.EnumProperty(
                                 name="Tabs",
                                 items=prefs_baseKeymap_items,
-                                default="HUMANS",
+                                default="ASHER",
                                 )
 
     category: bpy.props.StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
-            default="Dev",
+            default="ATB",
             update=update_panel
             )
 
@@ -353,24 +365,24 @@ class ATBAddonPreferences(bpy.types.AddonPreferences):
 
         labelrow = col.row(align=True)
         labelrow.alignment = 'CENTER'
-        labelrow.label(text="ATB Sidebar Tab:"
+        labelrow.prop(self, "category", text="")
+        labelrow.label(text=" Sidebar Tab:"
                             ""
                             ""
                             "")
 
         subcol = col.column(align=True)
-
         subrow = subcol.split(factor=0.2)
         subrow.label(text="Overlays:")
         subrow.label(text="A massive panel "
                           "with (almost) every overlay "
                           "setting")
 
-        subrow = subcol.split(factor=0.2)
-        subrow.label(text="Fast Panel:")
-        subrow.label(text="A tabbed panel with "
-                          "common viewport settings"
-                          "")
+        # subrow = subcol.split(factor=0.2)
+        # subrow.label(text="Fast Panel:")
+        # subrow.label(text="A tabbed panel with "
+        #                   "common viewport settings"
+        #                   "")
 
         subrow = subcol.split(factor=0.2)
         subrow.label(text="Meta Panel:")

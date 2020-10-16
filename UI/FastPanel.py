@@ -24,9 +24,10 @@ from bpy.types import (
 
 class VIEW3D_PT_view3d_fast_panel(Panel):
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "ATB"
+    bl_region_type = 'WINDOW'
+    # bl_category = "ATB"
     bl_label = "Fast Panel"
+    bl_options = {'DRAW_BOX'}
 
     @classmethod
     def get_shading(cls, context):

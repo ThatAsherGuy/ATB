@@ -359,3 +359,165 @@ class CursorToSelected(bpy.types.Operator):
         origin, quat, _ = mx.decompose()
 
         set_cursor(origin, quat)
+
+class ATB_OT_CreateNamedOrientation(bpy.types.Operator):
+    """Wrapper for custom orientations"""
+    bl_idname = "act.make_named_orientation"
+    bl_label = "ATB Custom Orientation"
+    bl_description = "Wrapper for transform.rotate"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    slot_enum = [
+        ("SLOT_A", "Red", "", 1),
+        ("SLOT_B", "Green", "", 2),
+        ("SLOT_C", "Blue", "", 3),
+        ("SLOT_D", "Yellow", "", 4),
+    ]
+
+    transform_slot: EnumProperty(
+        items=slot_enum,
+        name="Slot",
+        description="Which transform slot to set/get/update",
+        default='SLOT_A'
+    )
+
+    def invoke(self, context, event):
+        debug = False
+        slots = context.workspace.custom_transforms
+
+        if self.transform_slot == 'SLOT_A':
+            slot = context.workspace.custom_transforms.transformA
+        elif self.transform_slot == 'SLOT_B':
+            slot = context.workspace.custom_transforms.transformB
+        elif self.transform_slot == 'SLOT_C':
+            slot = context.workspace.custom_transforms.transformC
+        elif self.transform_slot == 'SLOT_D':
+            slot = context.workspace.custom_transforms.transformD
+
+        modifiers = [False, False, False]
+
+        if event.shift:
+            print("SHIFT")
+            modifiers[0] = True
+        if event.ctrl:
+            print("CTRL")
+            modifiers[1] = True
+        if event.alt:
+            print("ALT")
+            modifiers[2] = True
+
+        blank = Matrix.Identity(4).to_3x3()
+
+        atb_slot = True
+
+        if not bpy.context.scene.transform_orientation_slots[0].type == 'ATB':
+            try:
+                bpy.ops.transform.select_orientation(
+                                    'EXEC_DEFAULT',
+                                    False,
+                                    orientation='ATB'
+                )
+            except Exception as inst:
+                if debug:
+                    print(str(inst))
+                atb_slot = False
+
+        if slot == blank:
+
+            if not atb_slot:
+                bpy.ops.transform.create_orientation(
+                                'EXEC_DEFAULT',
+                                False,
+                                name="ATB",
+                                use=True,
+                                use_view=False)
+
+            obj_mat = bpy.context.active_object.matrix_world.to_3x3()
+            new = bpy.context.scene.transform_orientation_slots[0].custom_orientation.matrix = obj_mat
+            slot = new
+        else:
+            obj_mat = bpy.context.active_object.matrix_world.to_3x3()
+
+            if modifiers[0]:
+                new = bpy.context.scene.transform_orientation_slots[0].custom_orientation.matrix = obj_mat
+                slot = new
+
+            if not atb_slot:
+                bpy.ops.transform.create_orientation(
+                                'EXEC_DEFAULT',
+                                False,
+                                name="ATB",
+                                use=True,
+                                use_view=False)
+
+            bpy.context.scene.transform_orientation_slots[0].custom_orientation.matrix = slot.to_3x3()
+            print(str(slot))
+
+        slot = slot.inverted_safe()
+
+        if self.transform_slot == 'SLOT_A':
+            context.workspace.custom_transforms.transformA = [b for a in slot.to_3x3() for b in a]
+        elif self.transform_slot == 'SLOT_B':
+            context.workspace.custom_transforms.transformB = [b for a in slot.to_3x3() for b in a]
+        elif self.transform_slot == 'SLOT_C':
+            context.workspace.custom_transforms.transformC = [b for a in slot.to_3x3() for b in a]
+        elif self.transform_slot == 'SLOT_D':
+            context.workspace.custom_transforms.transformD = [b for a in slot.to_3x3() for b in a]
+
+        bpy.ops.transform.select_orientation(
+                            'EXEC_DEFAULT',
+                            False,
+                            orientation='ATB'
+        )
+
+        return {'FINISHED'}
+
+class ATB_OT_CursorToOrientation(bpy.types.Operator):
+    """Aligns the 3D Cursor to the active orientation. Doesn't fuck with mesh data"""
+    bl_idname = "act.align_cursor_to_orientation"
+    bl_label = "ATB Align Cursor to Orientation"
+    bl_description = "Aligns the 3d cursor to the active transform orientation"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    custom = False
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object or context.selected_objects
+
+
+    def execute(self, context):
+        cursor = bpy.context.scene.cursor
+
+        if self.custom:
+            cursor.matrix = cursor.matrix @ bpy.context.scene.transform_orientation_slots[0].custom_orientation.matrix.to_4x4()
+        else:
+            orient_type = bpy.context.scene.transform_orientation_slots[0].type
+
+            if orient_type == 'GLOBAL':
+                loc = cursor.matrix.to_translation()
+                cursor.matrix = Matrix.Translation(loc)
+                # Pass
+            elif orient_type == 'LOCAL' or orient_type == 'NORMAL':
+                rot = context.active_object.matrix_world.to_quaternion().to_matrix().to_4x4().inverted_safe()
+                loc = Matrix.Translation(cursor.matrix.to_translation())
+                mat = loc @ rot 
+                cursor.matrix = mat
+            elif orient_type == 'VIEW':
+                rot = bpy.context.region_data.view_matrix.to_quaternion().to_matrix().to_4x4().inverted_safe()
+                loc = Matrix.Translation(cursor.matrix.to_translation())
+                mat = loc @ rot 
+                cursor.matrix = mat
+
+        bpy.context.scene.frame_current = bpy.context.scene.frame_current
+
+        return {'FINISHED'}
+
+
+    def invoke(self, context, event):
+        custom = False
+        if bpy.context.scene.transform_orientation_slots[0].custom_orientation:
+            self.custom = True
+
+        self.execute(context)
+        return {'FINISHED'}

@@ -83,6 +83,7 @@ class ATB_MT_MiscOverlaysMenu(bpy.types.Menu):
 class ATB_PT_MiscOverlaysPanel(View3DPanel_hidden, bpy.types.Panel):
     bl_idname = "ATB_PT_MiscOverlaysPanel"
     bl_label = "Miscellaneous Overlays"
+    # bl_options = {'DRAW_BOX'}
     bl_ui_units_x = 8
 
     def draw(self, context):
@@ -133,6 +134,7 @@ class ATB_PT_MiscOverlaysPanel(View3DPanel_hidden, bpy.types.Panel):
 class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
     bl_idname = "ATB_PT_ViewOverlaysPanel"
     bl_label = "Overlays"
+    bl_options = {'DEFAULT_CLOSED', 'DRAW_BOX'}
 
     @classmethod
     def get_shading(cls, context):

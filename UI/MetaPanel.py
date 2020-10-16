@@ -42,11 +42,125 @@ def active_tool():
     return view3d_tools.tool_active_from_context(bpy.context)
 
 
+class CUSTOM_UL_camera_list(bpy.types.UIList):
+    EMPTY = 1 << 0
+
+    use_filter_empty: bpy.props.BoolProperty(
+        name="Filter Unused",
+        default=True,
+        options=set(),
+        description="Whether to filter cameras with zero users",
+    )
+    use_filter_empty_reverse: bpy.props.BoolProperty(
+        name="Reverse Empty",
+        default=False,
+        options=set(),
+        description="Reverse empty filtering",
+    )
+    use_filter_name_reverse: bpy.props.BoolProperty(
+        name="Reverse Name",
+        default=False,
+        options=set(),
+        description="Reverse name filtering",
+    )
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+
+        split = layout.row(align=True)
+
+        user = None
+        for obj in bpy.data.objects:
+            if obj.data == item:
+                user = obj
+                break
+
+        name = split.row(align=True)
+
+        if user:
+            name.prop(
+                user,
+                "name",
+                text=""
+                )
+
+            if bpy.context.view_layer.objects.active and bpy.context.view_layer.objects.active.name == user.name:
+                sel_icon = 'RESTRICT_SELECT_OFF'
+            else:
+                sel_icon = 'RESTRICT_SELECT_ON'
+
+            if context.scene.camera and context.scene.camera.name == user.name:
+                icon = 'RADIOBUT_ON'
+            else:
+                icon = 'RADIOBUT_OFF'
+
+            buttons = split.row(align=True)
+
+            op = buttons.operator(
+                "wm.context_set_id",
+                text="",
+                icon=icon
+            )
+            op.data_path = "scene.camera"
+            op.value = str(user.name)
+
+            op = buttons.operator(
+                "atb.zoop",
+                text="",
+                icon='SNAP_FACE_CENTER'
+            )
+            op.target_camera = str(user.name)
+
+            op = buttons.operator(
+                "atb.object_select",
+                text="",
+                icon=sel_icon
+            )
+            op.target_object = str(user.name)
+
+    def draw_filter(self, context, layout):
+        # Nothing much to say here, it's usual UI code...
+        row = layout.row()
+        row.alignment = 'RIGHT'
+
+    def filter_items(self, context, data, propname):
+
+        cams_datablocks = getattr(data, propname)
+        flt_flags = []
+        flt_neworder = []
+
+        helper_funcs = bpy.types.UI_UL_list
+
+        cams = []
+        for obj in bpy.data.objects:
+            for cam in cams_datablocks:
+                if obj.data == cam:
+                    cams.append(obj)
+                    # break
+
+        if self.filter_name:
+            flt_flags = helper_funcs.filter_items_by_name(self.filter_name, self.bitflag_filter_item, cams_datablocks, "name",
+                                                          reverse=self.use_filter_name_reverse)
+        if not flt_flags:
+            flt_flags = [self.bitflag_filter_item] * len(cams_datablocks)
+
+        # Filter by emptiness.
+        if self.use_filter_empty:
+            for i, cam in enumerate(cams_datablocks):
+                if cam.users < 1:
+                    flt_flags[i] |= ~self.EMPTY
+
+        if not flt_flags:
+            flt_flags = [self.bitflag_filter_item] * len(cams_datablocks)
+
+        return flt_flags, flt_neworder
+
+
 class VIEW3D_PT_meta_panel(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "ATB"
     bl_label = "Meta Panel"
+    bl_options = {'DRAW_BOX'}
 
     bl_ui_units_x = 12
 
@@ -164,51 +278,79 @@ class VIEW3D_PT_meta_panel(Panel):
                         orient_slot,
                         "type",
                         'GLOBAL',
-                        text=""
+                        text=" "
                         )
             g1_r.prop_enum(
                         orient_slot,
                         "type",
                         'LOCAL',
-                        text=""
+                        text=" "
                         )
             g1_r.prop_enum(
                         orient_slot,
                         "type",
                         'NORMAL',
-                        text=""
+                        text=" "
                         )
             g1_r.prop_enum(
                         orient_slot,
                         "type",
                         'CURSOR',
-                        text=""
+                        text=" "
                         )
-            g1_r.prop(orient_slot, "type", text="")
+            g1_r.prop_enum(
+                        orient_slot,
+                        "type",
+                        'GIMBAL',
+                        text=" "
+                        )
+            g1_r.prop_enum(
+                        orient_slot,
+                        "type",
+                        'VIEW',
+                        text=" "
+                        )
 
             flow = bcol.grid_flow(columns=2, align=True)
             g_1 = flow.column(align=True)
 
             g_1_r_1 = g_1.row(align=True)
-            g_1_r_1.prop(orient_slot, "type", text="")
-
-            if orientation:
-                g_1_r_1.prop(orientation, "name", text="")
 
             g_1_r_1.operator(
-                "transform.create_orientation",
-                text="",
-                icon="ADD"
-            ).use = True
+                "act.make_named_orientation",
+                text="A",
+            ).transform_slot = 'SLOT_A'
             g_1_r_1.operator(
-                "transform.delete_orientation",
-                text="",
-                icon="REMOVE"
-            )
+                "act.make_named_orientation",
+                text="B",
+            ).transform_slot = 'SLOT_B'
+            g_1_r_1.operator(
+                "act.make_named_orientation",
+                text="C",
+            ).transform_slot = 'SLOT_C'
+            g_1_r_1.operator(
+                "act.make_named_orientation",
+                text="D",
+            ).transform_slot = 'SLOT_D'
+
+
+            # if orientation:
+            #     g_1_r_1.prop(orientation, "name", text="")
+
+            # g_1_r_1.operator(
+            #     "transform.create_orientation",
+            #     text="",
+            #     icon="ADD"
+            # ).use = True
+            # g_1_r_1.operator(
+            #     "transform.delete_orientation",
+            #     text="",
+            #     icon="REMOVE"
+            # )
             g_1_r_1.operator(
                 "transform.transform",
                 text="",
-                icon="ORIENTATION_VIEW"
+                icon="OUTLINER_DATA_EMPTY"
             ).mode = 'ALIGN'
 
             g_1_r_2 = g_1.row(align=True)
@@ -222,7 +364,7 @@ class VIEW3D_PT_meta_panel(Panel):
                 tool_settings,
                 "use_transform_data_origin",
                 text="",
-                icon='MESH_DATA',
+                icon='TRANSFORM_ORIGINS',
                 toggle=True
             )
             g_1_r_2.prop(
@@ -238,6 +380,14 @@ class VIEW3D_PT_meta_panel(Panel):
                 text="",
                 icon='CON_CHILDOF',
                 toggle=True
+            )
+
+            g_1_r_3 = g_1.row(align=True)
+
+            g_1_r_3.operator(
+                "act.align_cursor_to_orientation",
+                text="ALIGN CURSOR",
+                icon='CURSOR',
             )
 
             # Group 2 - Proportional Editing
@@ -438,47 +588,8 @@ class VIEW3D_PT_meta_panel(Panel):
 
             bcol.label(text="Scene Cameras:")
 
-            subcol = bcol.column(align=True)
-
-            for cam in bpy.data.cameras:
-                if cam.users > 0:
-                    row = subcol.row(align=True)
-                    row.prop(
-                        cam,
-                        "name",
-                        text=""
-                        )
-                    if bpy.context.view_layer.objects.active and bpy.context.view_layer.objects.active.name == cam.name:
-                        sel_icon = 'RESTRICT_SELECT_OFF'
-                    else:
-                        sel_icon = 'RESTRICT_SELECT_ON'
-
-                    if context.scene.camera and context.scene.camera.name == cam.name:
-                        icon = 'RADIOBUT_ON'
-                    else:
-                        icon = 'RADIOBUT_OFF'
-
-                    op = row.operator(
-                        "wm.context_set_id",
-                        text="",
-                        icon=icon
-                    )
-                    op.data_path = "scene.camera"
-                    op.value = str(cam.name)
-
-                    op = row.operator(
-                        "atb.zoop",
-                        text="",
-                        icon='SNAP_FACE_CENTER'
-                    )
-                    op.target_camera = str(cam.name)
-
-                    op = row.operator(
-                        "atb.object_select",
-                        text="",
-                        icon=sel_icon
-                    )
-                    op.target_object = str(cam.name)
+            row = bcol.row(align=True)
+            row.template_list("CUSTOM_UL_camera_list", "", context.blend_data, "cameras", tabs, "cam_index", rows=1, maxrows=4)
 
             if active_obj and active_obj.type == 'CAMERA':
                 camera = active_obj

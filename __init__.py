@@ -29,6 +29,7 @@ from . properties import FastPanelProps
 from . properties import ObjectMatrixConversions
 from . properties import MetaPanelTabs
 from . properties import QuickOpMenus
+from . properties import CustomTransforms
 from . properties import ATBWireColors
 from . properties import FastSnapProps
 from . properties import CustomPopoverProps
@@ -64,6 +65,8 @@ from .Operators.ViewportOps import ATB_OT_ViewAxis
 from .Operators.ViewportOps import ATB_OT_set_axis
 
 from .Operators.TransformOperators import ATB_OT_RotateAroundPivot
+from .Operators.TransformOperators import ATB_OT_CreateNamedOrientation
+from .Operators.TransformOperators import ATB_OT_CursorToOrientation
 
 from .Operators.ThemeOps import ATB_OT_set_color
 from .Operators.ThemeOps import ATB_OT_store_wire_color
@@ -80,6 +83,7 @@ from .Gizmos.VPCursorGizmo import ATVPCursorGizmo
 from .Gizmos.VPCursorGizmo import ATCursorTool
 
 from .UI.MetaPanel import VIEW3D_PT_meta_panel
+from .UI.MetaPanel import CUSTOM_UL_camera_list
 
 from .UI.ViewportAppends import popover
 # from .UI.ViewportAppends import info_space_buttons
@@ -121,32 +125,15 @@ bl_info = {
     "author": "ThatAsherGuy",
     "description": "Asher's Toolbox",
     "blender": (2, 83, 0),
-    "version": (0, 0, 55),
+    "version": (0, 0, 65),
     "location": "View3D",
     "warning": "Alpha of all Alphas",
     "category": "Modeling"
 }
 
-
 panels = (
         ATB_PT_ViewOverlaysPanel,
         )
-
-
-def update_panel(self, context):
-    message = "Asher's Custom Tools: Panel update has failed"
-    try:
-        for panel in panels:
-            if "bl_rna" in panel.__dict__:
-                bpy.utils.unregister_class(panel)
-
-        for panel in panels:
-            panel.bl_category = context.preferences.addons[__name__].preferences.category
-            bpy.utils.register_class(panel)
-
-    except Exception as e:
-        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
-        pass
 
 
 # class ATBAddonPreferences(bpy.types.AddonPreferences):
@@ -215,6 +202,9 @@ classes = (
     ATB_OT_Add_Camera_Keying_Set,
     # TransformOperators.py
     ATB_OT_RotateAroundPivot,
+    ATB_OT_CreateNamedOrientation,
+    ATB_OT_CursorToOrientation,
+    # Other Stuff
     ATB_PT_ViewOverlaysPanel,
     ATB_PT_viewport_transform_settings,
     ATB_MT_MeshShadingMenu,
@@ -231,6 +221,7 @@ classes = (
     ATVertexGizmoGroup,
     ATPivotGizmoGroup,
     VIEW3D_PT_meta_panel,
+    CUSTOM_UL_camera_list,
     ATVPCursorGizmo,
     AxisGizmo,
     # ViewportOps.py
@@ -251,6 +242,7 @@ classes = (
     # Property Groups
     MetaPanelTabs,
     QuickOpMenus,
+    CustomTransforms,
     ATBWireColors,
     FastPanelProps,
     ObjectMatrixConversions,
@@ -275,6 +267,7 @@ def register():
 
     WindowManager.metapanel_tabs = PointerProperty(type=MetaPanelTabs)
     WindowManager.quick_op_menus = PointerProperty(type=QuickOpMenus)
+    WorkSpace.custom_transforms = PointerProperty(type=CustomTransforms)
     WindowManager.fp_props = PointerProperty(type=FastPanelProps)
     WindowManager.mat_convert = PointerProperty(type=ObjectMatrixConversions)
     WorkSpace.temp_wires = PointerProperty(type=ATBWireColors)
