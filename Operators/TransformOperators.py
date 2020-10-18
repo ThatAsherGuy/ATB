@@ -538,19 +538,47 @@ class ATB_OT_SetOrigin(bpy.types.Operator):
     bl_description = "Moves the object origin to your selection. Works in edit mode"
     bl_options = {'REGISTER', 'UNDO'}
 
+    mode_enum = [
+        ("SELECTION", "Snap To Selection", "", 1),
+        ("CURSOR", "Snap To 3D Cursor", "", 2),
+    ]
+
+    snap_mode: EnumProperty(
+        items=mode_enum,
+        name="Snap Mode",
+        description="Which transform slot to set/get/update",
+        default='SELECTION'
+    )
+
     def invoke(self, context, event):
         CursorMatrix = bpy.context.scene.cursor.matrix.copy()
-        print(str(bpy.context.mode))
+
+        modifiers = [False, False, False]
+
+        if event.shift:
+            modifiers[0] = True
+        if event.ctrl:
+            modifiers[1] = True
+        if event.alt:
+            modifiers[2] = True
         
         if bpy.context.mode == 'EDIT_MESH':
-            bpy.ops.view3d.snap_cursor_to_selected()
+            if self.snap_mode == 'SELECTION':
+                bpy.ops.view3d.snap_cursor_to_selected()
+
             bpy.ops.object.editmode_toggle()
-            for obj in context.selected_editable_objects:
-                if not obj == bpy.context.active_object:
-                    bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
+
+            if len(context.selected_editable_objects) > 1:
+                for obj in context.selected_editable_objects:
+                    if not obj == bpy.context.active_object:
+                        bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
+            else:
+                bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
+
             bpy.ops.object.editmode_toggle()
         else:
-            bpy.ops.view3d.snap_cursor_to_active()
+            if self.snap_mode == 'SELECTION':
+                bpy.ops.view3d.snap_cursor_to_active()
             bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
 
         bpy.context.scene.cursor.matrix = CursorMatrix

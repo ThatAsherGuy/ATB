@@ -486,6 +486,18 @@ class VIEW3D_PT_meta_panel(Panel):
             )
             op.box_mode = 'FACE'
             op.box_face = 'CENTER'
+
+            op = grid.operator(
+                "act.set_origin",
+                text='Selected',
+            )
+            op.snap_mode = 'SELECTION'
+
+            op = grid.operator(
+                "act.set_origin",
+                text='Cursor',
+            )
+            op.snap_mode = 'CURSOR'
             
 
             # Group 2 - Proportional Editing
