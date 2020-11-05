@@ -300,6 +300,11 @@ class ATBAddonPreferences(bpy.types.AddonPreferences):
             default="ATB",
             update=update_panel
             )
+    
+    tablet_modal: bpy.props.BoolProperty(
+        name="In Tablet Modal",
+        default = False
+    )
 
     def draw_keymaps(self, layout, kmap=0, debug=False):
         wm = bpy.context.window_manager

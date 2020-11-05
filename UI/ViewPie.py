@@ -329,3 +329,84 @@ class VIEW3D_MT_PIE_view_utilities(Menu):
         # TOP RIGHT
         # BOTTOM LEFT
         # BOTTOM RIGHT
+
+class VIEW3D_MT_ATB_origin_pie(Menu):
+    bl_label = "ATB Origin Pie"
+    bl_description = "A pie for moving object origins"
+
+
+    def draw(self, context):
+        tool_settings = context.scene.tool_settings
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        # LEFT
+        pie.prop(
+            tool_settings,
+            "use_transform_data_origin",
+            text="Move Origins",
+            # icon='TRANSFORM_ORIGINS',
+            toggle=True
+        )
+        # RIGHT
+        op = pie.operator(
+            "act.set_origin",
+            text='Cursor',
+        )
+        op.snap_mode = 'CURSOR'
+        # BOTTOM
+        op = pie.operator(
+            "act.origin_to_bbox",
+            text='Bottom',
+        )
+        op.box_mode = 'FACE'
+        op.box_face = 'ZNEG'
+        # TOP
+        op = pie.operator(
+            "act.origin_to_bbox",
+            text='Center',
+        )
+        op.box_mode = 'FACE'
+        op.box_face = 'CENTER'
+        # TOP LEFT
+        pie.separator()
+        # TOP RIGHT
+        pie.separator()
+        # BOTTOM LEFT
+        pie.separator()
+        # BOTTOM RIGHT
+
+
+class VIEW3D_MT_ATB_tablet_pie(Menu):
+    bl_label = "ATB Tablet Pie"
+    bl_description = "A pie for pen tablet stuff"
+
+
+    def draw(self, context):
+        # region = context.region_data
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        # LEFT
+        op = pie.operator("wm.call_menu_pie", text="Origin")
+        op.name = "VIEW3D_MT_ATB_origin_pie"
+        # RIGHT
+        op = pie.operator("wm.call_menu_pie", text="Cursor")
+        op.name = "VIEW3D_MT_ATB_cursor_pie"
+        # BOTTOM
+        if context.mode == "OBJECT":
+            op = pie.operator("act.group_select", text="Select Hierachy")
+        else:
+            op = pie.operator("act.super_select", text="Select Topology")
+            op.action = "0"
+        # TOP
+        op = pie.operator("wm.call_menu_pie", text="View")
+        op.name = "VIEW3D_MT_ATB_view_pie"
+        # TOP LEFT
+        pie.separator()
+        # TOP RIGHT
+        pie.separator()
+        # BOTTOM LEFT
+        pie.separator()
+        # BOTTOM RIGHT
+        op = pie.operator("view3d.object_mode_pie_or_toggle", text="Editor Mode")

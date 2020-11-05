@@ -34,8 +34,40 @@ from bpy.props import (
 
 # Root Properties
 
-# Fast Panel Stuff
 
+class ModalProps(PropertyGroup):
+    tablet_modal: BoolProperty(
+                                name="Layout Toggle",
+                                default=False
+                             )
+
+    edit_modal: BoolProperty(
+                                name="Pivot Toggle",
+                                default=False
+                            )
+
+    transform_modal: BoolProperty(
+                                name="Snapping Toggle",
+                                default=False
+                           )
+
+    mirror_modal: BoolProperty(
+                                name="Mirror Modal",
+                                default=False
+                           )
+
+    mm_use_cursor: BoolProperty(
+                                name="Mirror Modal",
+                                default=False
+                           )
+
+    mm_use_cursor_location: BoolProperty(
+                                name="Mirror Modal",
+                                default=False
+                           )
+
+
+# Fast Panel Stuff
 
 class FastPanelProps(PropertyGroup):
     layout_bool: BoolProperty(

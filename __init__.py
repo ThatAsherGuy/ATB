@@ -33,6 +33,7 @@ from . properties import CustomTransforms
 from . properties import ATBWireColors
 from . properties import FastSnapProps
 from . properties import CustomPopoverProps
+from . properties import ModalProps
 
 from . preferences import ATBAddonPreferences
 from . preferences import register_keymaps, unregister_keymaps
@@ -76,6 +77,12 @@ from .Operators.ThemeOps import ATB_OT_store_wire_color
 from .Operators.SelectOps import ATB_OT_SuperContextMenu
 from .Operators.SelectOps import ATB_OT_SelectThrough
 
+from .Operators.TabletOps import ATB_OT_SuperTabletPie
+
+from .Operators.MeshOps import ATB_OT_QuickSymmetry
+
+from .Operators.ModifierOps import ATB_OT_AddModifier
+
 from .Utilities.GizmoUtils import ATBPrintVerts
 
 from .Gizmos.VertPieGizmo import ATVertexGizmoGroup
@@ -83,6 +90,8 @@ from .Gizmos.PivotGizmo import ATPivotGizmoGroup
 from .Gizmos.AxisGizmo import AxisGizmo
 from .Gizmos.VPCursorGizmo import ATVPCursorGizmo
 from .Gizmos.VPCursorGizmo import ATCursorTool
+from .Gizmos.TabletGizmo import ATB_TabletGizmoGroup
+from .Gizmos.MirrorGizmo import ATB_MirrorGizmoGroup
 
 from .UI.MetaPanel import VIEW3D_PT_meta_panel
 from .UI.MetaPanel import CUSTOM_UL_camera_list
@@ -112,6 +121,8 @@ from .UI.ViewPie import VIEW3D_MT_ATB_view_pie
 from .UI.ViewPie import VIEW3D_MT_ATB_cursor_pie
 from .UI.ViewPie import VIEW3D_MT_PIE_view_utilities
 from .UI.ViewPie import VIEW3D_PT_viewport_rotation_panel
+from .UI.ViewPie import VIEW3D_MT_ATB_tablet_pie
+from .UI.ViewPie import VIEW3D_MT_ATB_origin_pie
 
 from .UI.EditMenu import VIEW3D_MT_actc_root
 from .UI.EditMenu import VIEW3D_MT_actc_sub_edges
@@ -228,12 +239,20 @@ classes = (
     CUSTOM_UL_camera_list,
     ATVPCursorGizmo,
     AxisGizmo,
+    ATB_TabletGizmoGroup,
+    ATB_MirrorGizmoGroup,
     # ViewportOps.py
     ATB_OT_ViewAxis,
     ATB_OT_set_axis,
     # SelectOps.py
     ATB_OT_SuperContextMenu,
     ATB_OT_SelectThrough,
+    # TabletOps.py
+    ATB_OT_SuperTabletPie,
+    # Mesh Ops
+    ATB_OT_QuickSymmetry,
+    # Modifier Ops
+    ATB_OT_AddModifier,
     # GizmoUtils.py
     ATBPrintVerts,
     # Pies
@@ -242,6 +261,8 @@ classes = (
     VIEW3D_MT_PIE_view_utilities,
     VIEW3D_MT_PIE_quick_snap,
     VIEW3D_MT_PIE_quick_orientation,
+    VIEW3D_MT_ATB_tablet_pie,
+    VIEW3D_MT_ATB_origin_pie,
     VIEW3D_PT_viewport_rotation_panel,
     # Property Groups
     MetaPanelTabs,
@@ -252,6 +273,7 @@ classes = (
     ObjectMatrixConversions,
     FastSnapProps,
     CustomPopoverProps,
+    ModalProps,
     # Quick FavoritesMenu
     VIEW3D_MT_actc_root,
     VIEW3D_MT_actc_sub_edges,
@@ -276,6 +298,8 @@ def register():
     WindowManager.mat_convert = PointerProperty(type=ObjectMatrixConversions)
     WorkSpace.temp_wires = PointerProperty(type=ATBWireColors)
     WorkSpace.customPops = PointerProperty(type=CustomPopoverProps)
+
+    WorkSpace.modals = PointerProperty(type=ModalProps)
 
     WindowManager.snap_state = PointerProperty(type=FastSnapProps)
 

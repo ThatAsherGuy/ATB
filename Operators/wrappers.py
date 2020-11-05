@@ -633,7 +633,7 @@ class ATB_OT_EnhancedSelect(bpy.types.Operator):
             pie = self.layout.menu_pie()
             pie.operator_context = 'EXEC_DEFAULT'
             global action
-            print(str(action))
+            # print(str(action))
 
             if action == '0':
 

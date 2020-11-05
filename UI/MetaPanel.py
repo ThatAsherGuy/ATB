@@ -24,19 +24,24 @@ from bpy.types import (
     Curve,
     SurfaceCurve
 )
+
 from ..Utilities.WidthFunc import (
     get_breakpoints,
     # get_width_factor,
     check_width,
     get_break_full
 )
+
+from ..Utilities.DeepInspect import (
+    isModalRunning,
+    peekKeyQueue,
+    isTablet,
+)
+
 from bl_ui.space_toolsystem_toolbar import (
     VIEW3D_PT_tools_active as view3d_tools
 )
 from bpy_extras.node_utils import find_node_input
-
-# from .. Icons import get_icon_id, initialize_icons_collection
-
 
 def active_tool():
     return view3d_tools.tool_active_from_context(bpy.context)
@@ -197,45 +202,6 @@ class VIEW3D_PT_meta_panel(Panel):
         else:
             return context.scene.display.shading
 
-    # def draw_header(self, context):
-    #     layout = self.layout
-    #     wm = bpy.context.window_manager
-    #     tabs = wm.metapanel_tabs
-    #     rrow = layout.column(align=True)
-    #     rrow.alignment = 'RIGHT'
-
-    #     if not tabs.tab:
-    #         tabs.tab = '0'
-
-    #     tb_row = rrow.row(align=True)
-    #     tb_row.alignment = 'RIGHT'
-
-    #     tb_row.prop_enum(
-    #                     tabs,
-    #                     'tab',
-    #                     '0',
-    #                     text=""
-    #     )
-    #     tb_row.prop_enum(
-    #                     tabs,
-    #                     'tab',
-    #                     '1',
-    #                     text=""
-    #     )
-    #     tb_row.prop_enum(
-    #                     tabs,
-    #                     'tab',
-    #                     '2',
-    #                     text=""
-    #     )
-    #     tb_row.prop_enum(
-    #                     tabs,
-    #                     'tab',
-    #                     '3',
-    #                     text=""
-    #     )
-
-
     def draw(self, context):
 
         active_obj = context.view_layer.objects.active
@@ -389,7 +355,17 @@ class VIEW3D_PT_meta_panel(Panel):
 
             bcol.separator()
             # Group 2 - Pivot
-            bcol.label(text="Pivot")
+            labeltext = "Pivot"
+
+            if isModalRunning():
+                labeltext = "In Modal"
+
+            tablet = isTablet()
+
+            if tablet == 1:
+                labeltext = "Tablet"
+
+            bcol.label(text=labeltext)
 
             g_1_r_2 = bcol.row(align=True)
             g_1_r_2.prop(
