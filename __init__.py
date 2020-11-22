@@ -57,6 +57,8 @@ from .Operators.wrappers import ATB_OT_Clear_Custom_Popover
 from .Operators.wrappers import ATB_OT_TogglePhotoMode
 from .Operators.wrappers import ATB_OT_Frame_Object
 from .Operators.wrappers import ATB_OT_Select_Object
+from .Operators.wrappers import ATB_OT_Nuke_Panel
+from .Operators.wrappers import  ATB_OT_Set_Object_Display
 
 from .Operators.CameraOps import ATB_OT_Zoop
 from .Operators.CameraOps import ATB_OT_Lock_Camera
@@ -82,6 +84,7 @@ from .Operators.TabletOps import ATB_OT_SuperTabletPie
 from .Operators.MeshOps import ATB_OT_QuickSymmetry
 
 from .Operators.ModifierOps import ATB_OT_AddModifier
+from .Operators.ModifierOps import ATB_OT_Modifier_Pie
 
 from .Utilities.GizmoUtils import ATBPrintVerts
 
@@ -95,6 +98,7 @@ from .Gizmos.MirrorGizmo import ATB_MirrorGizmoGroup
 
 from .UI.MetaPanel import VIEW3D_PT_meta_panel
 from .UI.MetaPanel import CUSTOM_UL_camera_list
+from .UI.MetaPanel import VIEW3D_MT_set_origin
 
 from .UI.ViewportAppends import popover
 # from .UI.ViewportAppends import info_space_buttons
@@ -121,6 +125,7 @@ from .UI.ViewPie import VIEW3D_MT_ATB_view_pie
 from .UI.ViewPie import VIEW3D_MT_ATB_cursor_pie
 from .UI.ViewPie import VIEW3D_MT_PIE_view_utilities
 from .UI.ViewPie import VIEW3D_PT_viewport_rotation_panel
+from .UI.ViewPie import VIEW3D_PT_viewport_orbit_panel
 from .UI.ViewPie import VIEW3D_MT_ATB_tablet_pie
 from .UI.ViewPie import VIEW3D_MT_ATB_origin_pie
 
@@ -209,6 +214,8 @@ classes = (
     ATB_OT_TogglePhotoMode,
     ATB_OT_Frame_Object,
     ATB_OT_Select_Object,
+    ATB_OT_Nuke_Panel,
+    ATB_OT_Set_Object_Display,
     # CameraOps.py,
     ATB_OT_Zoop,
     ATB_OT_Lock_Camera,
@@ -235,7 +242,9 @@ classes = (
     VIEW3D_PT_draw_ribbon,
     ATVertexGizmoGroup,
     ATPivotGizmoGroup,
+    # MetaPanel.py
     VIEW3D_PT_meta_panel,
+    VIEW3D_MT_set_origin,
     CUSTOM_UL_camera_list,
     ATVPCursorGizmo,
     AxisGizmo,
@@ -253,6 +262,7 @@ classes = (
     ATB_OT_QuickSymmetry,
     # Modifier Ops
     ATB_OT_AddModifier,
+    ATB_OT_Modifier_Pie,
     # GizmoUtils.py
     ATBPrintVerts,
     # Pies
@@ -264,6 +274,7 @@ classes = (
     VIEW3D_MT_ATB_tablet_pie,
     VIEW3D_MT_ATB_origin_pie,
     VIEW3D_PT_viewport_rotation_panel,
+    VIEW3D_PT_viewport_orbit_panel,
     # Property Groups
     MetaPanelTabs,
     QuickOpMenus,

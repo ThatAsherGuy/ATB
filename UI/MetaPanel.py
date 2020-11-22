@@ -16,8 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# Hell is other people's code.
 
-# import rna_prop_ui
 import bpy
 from bpy.types import (
     Panel,
@@ -166,8 +166,15 @@ class VIEW3D_PT_meta_panel(Panel):
     bl_category = "ATB"
     bl_label = "Meta Panel"
     bl_options = {'DRAW_BOX', 'HEADER_LAYOUT_EXPAND',  }
+    bl_owner_id = "Franklin"
+    # bl_parent_id = "KIMMY"
 
     bl_ui_units_x = 12
+
+    @classmethod
+    def poll(cls, context):
+        if context.view_layer.objects.active:
+            return True
 
     @staticmethod
     def _active_context_member(context):
@@ -239,7 +246,6 @@ class VIEW3D_PT_meta_panel(Panel):
 
         tb_row = root.row(align=True)
         tb_row.alignment = 'RIGHT'
-        # tb_row.prop(tabs, 'tab', expand=True, icon_only=tb_ico_only)
 
         tb_row.prop_enum(
                         tabs,
@@ -270,17 +276,14 @@ class VIEW3D_PT_meta_panel(Panel):
         bcol = rbox.column(align=True)
 
         # $$Move Tab
+        # TODO: ALL of this naming needs to be updated
         if tabs.tab == '0':
             orient_slot = scene.transform_orientation_slots[0]
-            # orientation = orient_slot.custom_orientation
-
-            # g_1 = bcol.column(align=True)
 
             # Group 1 - Transform Orientation and Pivot
             bcol.label(text="Orientation")
 
             g1_r = bcol.grid_flow(align=True)
-            # g1_r.alignment = 'CENTER'
 
             g1_r.prop_enum(
                         orient_slot,
@@ -354,16 +357,17 @@ class VIEW3D_PT_meta_panel(Panel):
             ).transform_slot = 'SLOT_E'
 
             bcol.separator()
+
             # Group 2 - Pivot
             labeltext = "Pivot"
 
-            if isModalRunning():
-                labeltext = "In Modal"
+            # if isModalRunning():
+            #     labeltext = "In Modal"
 
-            tablet = isTablet()
+            # tablet = isTablet()
 
-            if tablet == 1:
-                labeltext = "Tablet"
+            # if tablet == 1:
+            #     labeltext = "Tablet"
 
             bcol.label(text=labeltext)
 
@@ -410,13 +414,14 @@ class VIEW3D_PT_meta_panel(Panel):
                 text="Do Object",
             )
             op.mode = 'ALIGN'
-            # op.orient_type = bpy.context.scene.transform_orientation_slots[0].type
-            # op.orient_matrix_type = bpy.context.scene.transform_orientation_slots[0].type
 
             g_1_r_1.operator_context = 'INVOKE_DEFAULT'
 
             bcol.separator()
-            bcol.label(text="Quick Origin")
+            header_row = bcol.row(align=True)
+            header_row.label(text="Quick Origin")
+            header_row.menu("VIEW3D_MT_set_origin", icon='PROPERTIES', text="")
+            # bcol.label(text="Quick Origin")
 
             grid = bcol.grid_flow(columns=2, row_major=True, align=True, even_columns=True, even_rows=False)
             grid.scale_y = 0.75
@@ -587,7 +592,6 @@ class VIEW3D_PT_meta_panel(Panel):
 
             bcol_row1_sub1 = bcol_rg1.grid_flow(columns=8, align=True)
             exec(snp_elem)
-            # bcol_row1_sub1.prop(tool_settings, "use_snap", text="")
 
             bcol_rg2 = rr_1.row(align=True)
 
@@ -694,8 +698,6 @@ class VIEW3D_PT_meta_panel(Panel):
 
                 row = bcol.row(align=True)
 
-                # row.template_ID(context.view_layer.objects, "active", filter='AVAILABLE')
-
                 row.prop(
                     camera,
                     "name",
@@ -716,8 +718,6 @@ class VIEW3D_PT_meta_panel(Panel):
                     icon='SNAP_FACE_CENTER')
 
                 op.target_camera = str(camera.name)
-
-                # bcol.label(text="Show:")
 
                 row = bcol.row(align=True)
 
@@ -840,12 +840,6 @@ class VIEW3D_PT_meta_panel(Panel):
                 sub = col.row(align=True)
 
                 if context.scene.keying_sets.active:
-                    # sub.prop(
-                    #     context.scene.keying_sets.active,
-                    #     "bl_label",
-                    #     text="",
-                    #     expand=True
-                    # )
                     sub.prop_search(
                         context.scene.keying_sets,
                         "active",
@@ -960,15 +954,14 @@ class VIEW3D_PT_meta_panel(Panel):
                 )
 
         # $$Display Tab
+        # TODO: FIX NAMING
         if tabs.tab == '2':
-            # active_obj = context.active_object
             shading = self.get_shading(context)
             overlay = context.space_data.overlay
 
             if active_obj:
                 if active_obj.type == 'MESH':
                     active_mat = active_obj.active_material
-                    # active_mesh = context.active_object.data
 
             g2 = bcol.column(align=True)
             g2.active = (True if shading.type in {'SOLID'} else False)
@@ -977,7 +970,7 @@ class VIEW3D_PT_meta_panel(Panel):
             g2_r1 = g2.row(align=True)
             g2_r1_c1 = g2_r1.column(align=True)
             g2_r1_c1.ui_units_x = 3.75
-            # g2_r1_c1.label(text="Shading")
+
             g2_r1_c1.prop(shading, "light", expand=True)
             if shading.light == 'MATCAP':
                 g2_r1_c1_sub = g2_r1_c1.row(align=True)
@@ -1011,30 +1004,7 @@ class VIEW3D_PT_meta_panel(Panel):
                 scale=asdasd_scale,
                 scale_popup=3
             )
-            # g2_r1_c2_sub = g2_r1_c2.row(align=True)
-            # g2_r1_c2_sub.scale_y = 1
-            # if shading.light == 'MATCAP':
-            #     g2_r1_c2_sub.operator(
-            #                         "view3d.toggle_matcap_flip",
-            #                         text="Flip",
-            #                         icon='ARROW_LEFTRIGHT'
-            #                         )
-            #     g2_r1_c2_sub.operator("preferences.studiolight_show", text="", icon='PREFERENCES')
-            # if shading.light == 'STUDIO':
-            #     g2_r1_c2_sub.prop(
-            #                     shading,
-            #                     "use_world_space_lighting",
-            #                     text="",
-            #                     toggle=True,
-            #                     icon='WORLD'
-            #                     )
-            #     g2_r1_c2_sub.prop(
-            #                     shading,
-            #                     "studiolight_rotate_z",
-            #                     text="Rotation"
-            #                     )
 
-            # bcol.separator()
             bcol.label(text="Color")
 
             g1 = bcol.split(factor=0.75, align=True)
@@ -1073,7 +1043,6 @@ class VIEW3D_PT_meta_panel(Panel):
             if shading.type == 'WIREFRAME':
                 if shading.wireframe_color_type == 'SINGLE':
                     g1_c2.prop(v3dtheme, "wire", text="")
-                    # g1_c2.prop(shading, "single_color", text="")
                 elif (shading.wireframe_color_type == 'OBJECT'
                         and active_obj.type == 'MESH'):
                     g1_c2.prop(active_obj, "color", text="")
@@ -1146,6 +1115,7 @@ class VIEW3D_PT_meta_panel(Panel):
             row = c_col.row(align=True)
 
             ico = ('RESTRICT_VIEW_OFF' if metapanel.cavity_toggle[0] else 'RESTRICT_VIEW_ON')
+
             op = row.operator("act.bool_to_enum", text="", icon=ico, depress=press2)
             op.bool_prop = 'window_manager.metapanel_tabs.cavity_toggle'
             op.enum_prop_path = 'space_data.shading.cavity_type'
@@ -1159,11 +1129,15 @@ class VIEW3D_PT_meta_panel(Panel):
 
             # $$Lighting
             bcol.label(text="Shadow")
+
             row = bcol.row(align=True)
             row.prop(shading, "show_shadows", text="", icon='LIGHT_HEMI')
+
             sub_row = row.row(align=True)
             sub_row.active = shading.show_shadows
+
             sub_row.prop(shading, "shadow_intensity", text="Shadow Intensity")
+
             sub_row.popover(
                 panel="VIEW3D_PT_shading_options_shadow",
                 icon='PREFERENCES',
@@ -1171,6 +1145,7 @@ class VIEW3D_PT_meta_panel(Panel):
             )
 
             # $$Background Color
+            # TODO: Fix Naming
             bcol.label(text="Background")
 
             if shading.background_type == 'VIEWPORT':
@@ -1186,6 +1161,7 @@ class VIEW3D_PT_meta_panel(Panel):
             if shading.background_type == 'THEME':
 
                 bck_row = bcol.split(factor=0.75, align=True)
+
                 bck_row_left = bck_row.row(align=True)
                 bck_row_left.prop(shading, "background_type", expand=True)
 
@@ -1203,6 +1179,7 @@ class VIEW3D_PT_meta_panel(Panel):
                 bck_row_left.prop(shading, "background_type", expand=True)
 
                 bck_row_right = bck_row.row(align=True)
+
                 wrld_row = bcol.column(align=True)
                 wrld_row.prop(world, "use_nodes", text="↓ Use Nodes ↓", toggle=True)
                 wrld_row.separator()
@@ -1225,7 +1202,6 @@ class VIEW3D_PT_meta_panel(Panel):
 
             # $$Options
             bcol.label(text="Options")
-            # row = bcol.row(align=True)
 
             split = bcol.split(factor=0.725, align=True)
 
@@ -1270,12 +1246,10 @@ class VIEW3D_PT_meta_panel(Panel):
                         emboss=False
                         )
 
-            # ico = ('CHECKBOX_HLT' if shading.show_backface_culling else 'CHECKBOX_DEHLT')
-            # split_l.prop(shading, "show_backface_culling", icon=ico, emboss=False)
 
         # $$Active Object Tab
         if tabs.tab == '3':
-            # active_obj = context.active_object
+
             shading = self.get_shading(context)
             overlay = context.space_data.overlay
 
@@ -1284,7 +1258,6 @@ class VIEW3D_PT_meta_panel(Panel):
             row.template_ID(context.view_layer.objects, "active", filter='AVAILABLE')
 
             row = ocol.row(align=True)
-            # row.prop(tabs, "exp_objpointer")
 
             if active_obj and (active_obj.type == 'MESH'):
 
@@ -1312,7 +1285,7 @@ class VIEW3D_PT_meta_panel(Panel):
                     label_tog = 1
 
                 row = ocol.row(align=True)
-                # row.prop(context.object, 'display_type', expand=True)
+
                 row.prop_enum(
                             context.object,
                             'display_type',
@@ -1320,6 +1293,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             text=row_labels[0][label_tog],
                             icon=row_icons[0][label_tog]
                             )
+
                 row.prop_enum(
                             context.object,
                             'display_type',
@@ -1327,6 +1301,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             text=row_labels[1][label_tog],
                             icon=row_icons[1][label_tog]
                             )
+
                 row.prop_enum(
                             context.object,
                             'display_type',
@@ -1334,6 +1309,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             text=row_labels[2][label_tog],
                             icon=row_icons[2][label_tog]
                             )
+
                 row.prop_enum(
                             context.object,
                             'display_type',
@@ -1341,6 +1317,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             text=row_labels[3][label_tog],
                             icon=row_icons[3][label_tog]
                             )
+
                 row = ocol.row(align=True)
 
                 shade_mode = "space_data.shading.color_type"
@@ -1380,9 +1357,6 @@ class VIEW3D_PT_meta_panel(Panel):
                         text="",
                         expand=False
                     )
-                    # op = row.operator("wm.context_cycle_enum", text=label)
-                    # op.data_path = shade_mode
-                    # op.wrap = True
 
                     if (shading.color_type == 'OBJECT'):
                         row.prop(
@@ -1407,38 +1381,15 @@ class VIEW3D_PT_meta_panel(Panel):
                                 active_obj, "active_material",
                                 context.blend_data, "materials")
 
-                            # row.prop_search(
-                            #     active_obj, "active_material",
-                            #     context.blend_data, "materials",
-                            #     text=" ")
                         else:
                             row.template_ID(
                                 active_obj,
                                 "active_material",
-                                # new="material.new"
                             )
                             row.prop_search(
                                 active_obj, "active_material",
                                 context.blend_data, "materials",
                                 text=" ")
-
-                            # row.operator(
-                            #     "material.new",
-                            #     text="",
-                            #     icon='PLUS'
-                            # )
-
-                # if shading.type == ('SOLID' or 'WIREFRAME'):
-                #     op = row.operator("wm.context_toggle_enum", text=label)
-                #     op.data_path = shade_mode
-                #     op.value_1 = 'SINGLE'
-                #     op.value_2 = 'OBJECT'
-
-                #     row.prop(
-                #         context.object,
-                #         'color',
-                #         text="",
-                #     )
 
                 ocol.label(text="Show:")
                 y_scale_1 = 0.8
@@ -1499,41 +1450,6 @@ class VIEW3D_PT_meta_panel(Panel):
                     toggle=True,
                 )
 
-                # Measures Row
-                # label_row = ocol.row(align=True)
-                # label_row.label(text="Measures:")
-
-                # row = ocol.row(align=True)
-
-                # row.prop(
-                #     overlay,
-                #     "show_extra_edge_length",
-                #     text=" ",
-                #     icon='EDGESEL',
-                #     toggle=True
-                # )
-                # row.prop(
-                #     overlay,
-                #     "show_extra_edge_angle",
-                #     text=" ",
-                #     icon='DRIVER_ROTATIONAL_DIFFERENCE',
-                #     toggle=True
-                # )
-                # row.prop(
-                #     overlay,
-                #     "show_extra_face_area",
-                #     text=" ",
-                #     icon='FACESEL',
-                #     toggle=True
-                # )
-                # row.prop(
-                #     overlay,
-                #     "show_extra_face_angle",
-                #     text=" ",
-                #     icon='LIGHT_AREA',
-                #     toggle=True
-                # )
-
                 label_row = ocol.row(align=True)
 
                 label_row.label(text="Vertex Groups")
@@ -1546,7 +1462,7 @@ class VIEW3D_PT_meta_panel(Panel):
                 if group:
                     rows = 4
 
-                obj_collection = context.view_layer.objects
+                # obj_collection = context.view_layer.objects
 
                 row = ocol.row(align=True)
 
@@ -1561,6 +1477,9 @@ class VIEW3D_PT_meta_panel(Panel):
                                 )
 
                 col = row.column(align=True)
+
+                # TODO: Fix this horrific naming 
+
                 _row = col.row(align=True)
                 _row.menu("MESH_MT_vertex_group_context_menu", icon='PROPERTIES', text="")
 
@@ -1624,6 +1543,7 @@ class VIEW3D_PT_meta_panel(Panel):
                 ]
 
                 sub = row.row(align=True)
+
                 sub.operator(
                             "object.vertex_group_assign",
                             text=row_labels[0][label_tog],
@@ -1636,6 +1556,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             )
 
                 sub = row.row(align=True)
+
                 sub.operator(
                             "object.vertex_group_select",
                             text=row_labels[2][label_tog],
@@ -1657,21 +1578,24 @@ class VIEW3D_PT_meta_panel(Panel):
 
                 # Parenting Info
                 row = ocol.split(factor=0.65, align=True)
-                # row.use_property_split = True
                 row.prop(active_obj, 'parent', text="")
+
                 subrow = row.row(align=True)
+
                 subrow.prop(active_obj, 'parent_type', text="")
                 subrow.prop(tabs, 'activeObjectPanel_Toggles', index=1, text="", icon='DOWNARROW_HLT')
 
                 if active_obj and active_obj.parent:
                     if tabs.activeObjectPanel_Toggles[1]:
+
                         section = ocol.column(align=True)
+
                         row = section.row(align=True)
+
                         row.operator("object.select_more", text="Family")
                         row.operator("object.select_grouped", text="Siblings").type = 'SIBLINGS'
-                        # row.operator("object.collection_objects_select", text="Collection")
+
                         row = section.column(align=True)
-                        # row.prop(active_obj.parent, 'location', text="")
 
                 ocol.label(text="Data")
 
@@ -1680,7 +1604,6 @@ class VIEW3D_PT_meta_panel(Panel):
                     obj_data = active_obj.data
                     row.prop(obj_data, "use_customdata_edge_bevel", text="Store Bevel")
                     row.prop(obj_data, "use_customdata_edge_crease", text="Store Crease")
-                # row.prop()
 
                 ocol.label(text="Visibility")
 
@@ -1722,8 +1645,6 @@ class VIEW3D_PT_meta_panel(Panel):
             elif active_obj and active_obj.type == 'CURVE':
                 curve = active_obj.data
                 act_spline = curve.splines.active
-                # is_surf = type(curve) is SurfaceCurve
-                # is_poly = (act_spline.type == 'POLY')
 
                 if act_spline.type == 'BEZIER':
 
@@ -1735,8 +1656,10 @@ class VIEW3D_PT_meta_panel(Panel):
 
                     if active_point:
                         ocol.label(text="Active Point:")
+
                         row = ocol.row(align=True)
                         col = row.column(align=True)
+
                         col.prop(
                             active_point,
                             'radius')
@@ -1849,12 +1772,10 @@ class VIEW3D_PT_meta_panel(Panel):
                 ocol.label(text="Spline Settings")
 
                 row = ocol.row(align=True)
-                # row.alignment='CENTER'
                 col = row.column(align=True)
                 col.alignment = 'EXPAND'
 
                 subrow = col.row(align=True)
-                # subrow.alignment = 'CENTER'
                 subrow.prop(
                     context.object.data,
                     'fill_mode',
@@ -1876,6 +1797,7 @@ class VIEW3D_PT_meta_panel(Panel):
 
                 row = ocol.row(align=True)
                 row.scale_y = 0.75
+
                 row.prop(
                     act_spline,
                     'use_cyclic_u',
@@ -1903,6 +1825,7 @@ class VIEW3D_PT_meta_panel(Panel):
 
                 row = ocol.row(align=True)
                 row.scale_y = 0.75
+
                 row.prop(
                     context.object.data,
                     'use_deform_bounds',
@@ -1960,7 +1883,7 @@ class VIEW3D_PT_meta_panel(Panel):
                 if group:
                     rows = 4
 
-                obj_collection = context.view_layer.objects
+                # obj_collection = context.view_layer.objects
 
                 row = ocol.row(align=True)
 
@@ -2000,22 +1923,18 @@ class VIEW3D_PT_meta_panel(Panel):
                     text=""
                     ).direction = 'DOWN'
 
-                if (
-                        active_obj.vertex_groups and
-                        (
-                            active_obj.mode == 'EDIT' or
-                                                         (
-                                                             active_obj.mode == 'WEIGHT_PAINT'
-                                                             and active_obj.type == 'MESH'
-                                                             and active_obj.data.use_paint_mask_vertex
-                                                         )
-                        )
-                ):
-                    querb = True
+                if (active_obj.vertex_groups and (active_obj.mode == 'EDIT' 
+                                                  or  (
+                                                      active_obj.mode == 'WEIGHT_PAINT'
+                                                      and active_obj.type == 'MESH'
+                                                      and active_obj.data.use_paint_mask_vertex
+                                                      )
+                                                  )):
+                    do = True
 
                 ocol.separator(factor=0.5)
                 row = ocol.row(align=True)
-                row.active = querb
+                row.active = do
 
                 row_width_check = check_width('UI', 9, 1, 440)
 
@@ -2144,7 +2063,9 @@ class VIEW3D_PT_meta_panel(Panel):
                     row = ocol.row(align=True)
 
                     sub = row.column(align=True)
+
                     sub.label(text="Offset:")
+
                     sub.prop(context.object, "empty_image_offset", text="X", index=0)
                     sub.prop(context.object, "empty_image_offset", text="Y", index=1)
 
@@ -2301,8 +2222,6 @@ class VIEW3D_PT_meta_panel(Panel):
                     text="",
                 )
 
-                # ocol.separator()
-
                 col = ocol.column(align=True)
                 col.scale_y = 0.75
                 col.prop(
@@ -2391,10 +2310,13 @@ class VIEW3D_PT_meta_panel(Panel):
                 )
 
                 ocol.label(text="Settings")
+
                 row = ocol.row(align=True)
+
                 row.prop(context.object.data, "type", expand=True)
 
                 row = ocol.split(factor=0.75, align=True)
+
                 row.prop(context.object.data, "energy", expand=False)
                 row.prop(context.object.data, "color", text="", expand=False)
 
@@ -2414,14 +2336,18 @@ class VIEW3D_PT_meta_panel(Panel):
                     row = ocol.split(align=True)
 
                     sub = row.row(align=True)
+
                     sub.prop(context.object.data, "show_cone", text="", icon='LIGHT_SPOT')
                     sub.prop(context.object.data, "spot_size", text="Size", expand=False)
 
                     sub = row.row(align=True)
+
                     sub.prop(context.object.data, "spot_blend", text="Blend", expand=False)
                 elif context.object.data.type == 'AREA':
                     ocol.separator()
+
                     row = ocol.row(align=True)
+
                     row.prop(context.object.data, "size", text="X", expand=False)
                     if not context.object.data.shape == 'DISK':
                         row.prop(context.object.data, "size_y", text="Y", expand=False)
@@ -2442,11 +2368,13 @@ class VIEW3D_PT_meta_panel(Panel):
 
                 col = row.column(align=True)
                 col.active = context.object.data.use_shadow
+
                 col.prop(
                         context.object.data,
                         "shadow_buffer_clip_start",
                         text="Clip Start",
                         )
+
                 col.prop(
                         context.object.data,
                         "shadow_buffer_bias",
@@ -2610,6 +2538,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             text="Falloff",
                             )
                     row = ocol.row(align=True)
+
                     row.prop(
                             probe,
                             "influence_distance",
@@ -2617,6 +2546,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             )
 
                     row = ocol.row(align=True)
+
                     row.prop(
                             probe,
                             "clip_start",
@@ -2624,6 +2554,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             )
 
                     row = ocol.row(align=True)
+
                     row.prop(
                             probe,
                             "clip_end",
@@ -2634,8 +2565,10 @@ class VIEW3D_PT_meta_panel(Panel):
                     row.label(text="Custom Paralax")
 
                     row = ocol.row(align=True)
+
                     col = row.column(align=True)
                     col.scale_y = 2
+
                     ico = 'OUTLINER_DATA_LIGHTPROBE'
                     if probe.use_custom_parallax:
                         ico = 'OUTLINER_OB_LIGHTPROBE'
@@ -2741,17 +2674,16 @@ class VIEW3D_PT_meta_panel(Panel):
                 row.prop(field, "type", text="")
 
                 if field.type == 'NONE':
-                    return  # nothing to draw.
+                    pass
 
                 elif field.type == 'GUIDE':
                     col = bcol.column(align=True)
+
                     col.prop(field, "guide_minimum")
                     col.prop(field, "guide_free")
                     col.prop(field, "falloff_power")
                     col.prop(field, "use_guide_path_add")
                     col.prop(field, "use_guide_path_weight")
-
-                    # col.separator()
 
                     col = bcol.column(align=True)
                     col.prop(field, "guide_clump_amount", text="Clumping amount")
@@ -2867,3 +2799,64 @@ class VIEW3D_PT_meta_panel(Panel):
         # footer_col.template_icon(icon_value=T1, scale=8)
         # footer_col.template_icon(icon_value=T2, scale=8)
         # footer_col.template_icon(icon_value=T4, scale=8)
+
+
+class VIEW3D_MT_set_origin(bpy.types.Menu):
+    bl_label = "ATB Set Origin"
+
+    def draw(self, context):
+        layout = self.layout
+
+        op = layout.operator(
+            "act.origin_to_bbox",
+            text='Origin to Front Left',
+        )
+        op.box_mode = 'POINT'
+        op.box_point = 'XNEG_YPOS_ZNEG'
+
+        op = layout.operator(
+            "act.origin_to_bbox",
+            text='Origin to Front Right',
+        )
+        op.box_mode = 'POINT'
+        op.box_point = 'XPOS_YPOS_ZNEG'
+
+        op = layout.operator(
+            "act.origin_to_bbox",
+            text='Origin to Back Left',
+        )
+        op.box_mode = 'POINT'
+        op.box_point = 'XNEG_YNEG_ZNEG'
+
+        op = layout.operator(
+            "act.origin_to_bbox",
+            text='Origin to Back Right',
+        )
+        op.box_mode = 'POINT'
+        op.box_point = 'XPOS_YNEG_ZNEG'
+
+        op = layout.operator(
+            "act.origin_to_bbox",
+            text='Origin to Bottom',
+        )
+        op.box_mode = 'FACE'
+        op.box_face = 'ZNEG'
+
+        op = layout.operator(
+            "act.origin_to_bbox",
+            text='Origin to Center',
+        )
+        op.box_mode = 'FACE'
+        op.box_face = 'CENTER'
+
+        op = layout.operator(
+            "act.set_origin",
+            text='Origin to Selected',
+        )
+        op.snap_mode = 'SELECTION'
+
+        op = layout.operator(
+            "act.set_origin",
+            text='Origin to Cursor',
+        )
+        op.snap_mode = 'CURSOR'

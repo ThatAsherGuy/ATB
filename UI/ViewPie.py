@@ -80,11 +80,11 @@ class VIEW3D_MT_ATB_view_pie(Menu):
                     context_op.def_op_args = "'INVOKE_DEFAULT', True,"
                     context_op.def_op_props = ""
             else:
-                context_op.def_op = "view3d.camera_to_view"
+                context_op.def_op = "view3d.view_camera"
                 context_op.def_op_args = "'INVOKE_DEFAULT', True,"
                 context_op.def_op_props = ""
 
-                context_op.ctrl_op = "view3d.view_camera"
+                context_op.ctrl_op = "view3d.camera_to_view"
                 context_op.ctrl_op_args = "'INVOKE_DEFAULT', True,"
                 context_op.ctrl_op_props = ""
 
@@ -159,7 +159,13 @@ class VIEW3D_MT_ATB_view_pie(Menu):
         if context.preferences.inputs.use_rotate_around_active:
             orbit_center_label = "Disable Orbit Selected"
 
-        op = pie.operator("wm.context_toggle", text=orbit_center_label)
+        col = pie.row(align=True)
+        col.emboss = 'NORMAL'
+        col.alignment = 'LEFT'
+        col.use_property_split = True
+        col.scale_y = 1.5
+
+        op = col.operator("wm.context_toggle", text=orbit_center_label)
         op.data_path = "preferences.inputs.use_rotate_around_active"
 
         # BOTTOM RIGHT
@@ -205,6 +211,26 @@ class VIEW3D_PT_viewport_rotation_panel(Panel):
             col.prop(context.preferences.inputs, "view_rotate_sensitivity_turntable")
 
 
+class VIEW3D_PT_viewport_orbit_panel(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'WINDOW'
+    # bl_category = "META"
+    bl_label = "View Rotation"
+
+    # bl_ui_units_x = 12
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+
+        orbit_center_label = "Enable Orbit Selected"
+        if context.preferences.inputs.use_rotate_around_active:
+            orbit_center_label = "Disable Orbit Selected"
+
+        op = col.operator("wm.context_toggle", text=orbit_center_label)
+        op.data_path = "preferences.inputs.use_rotate_around_active"
+
+
 class VIEW3D_MT_ATB_cursor_pie(Menu):
     bl_label = "ATB Cursor Pie"
 
@@ -227,22 +253,30 @@ class VIEW3D_MT_ATB_cursor_pie(Menu):
         context_op.ctrl_op = "view3d.snap_cursor_to_active"
         context_op.ctrl_op_args = "'INVOKE_DEFAULT', True"
 
-        # RIGHT
-        context_op = pie.operator(
-            "act.context_op",
-            text="Reset Cursor",
-            icon='CURSOR'
-        )
-        context_op.def_op = "view3d.snap_cursor_to_center"
-        context_op.def_op_props = ""
+        context_op.alt_op = "view3d.snap_cursor_to_selected"
+        context_op.alt_op_args = "'INVOKE_DEFAULT', True"
+        context_op.alt_op_props = "{'use_offset': False}"
 
-        context_op.ctrl_op = "view3d.snap_cursor_to_active"
-        context_op.ctrl_op_props = ""
+        # RIGHT
+
+        op = pie.operator("wm.call_menu_pie", text="Origin")
+        op.name = "VIEW3D_MT_ATB_origin_pie"
+
+        # context_op = pie.operator(
+        #     "act.context_op",
+        #     text="Reset Cursor",
+        #     icon='CURSOR'
+        # )
+        # context_op.def_op = "view3d.snap_cursor_to_center"
+        # context_op.def_op_props = ""
+
+        # context_op.ctrl_op = "view3d.snap_cursor_to_active"
+        # context_op.ctrl_op_props = ""
 
         # BOTTOM
         context_op = pie.operator(
             "act.context_op",
-            text="Cursor to Selected | Active",
+            text="Cursor to Selected | Active | Transform",
             icon='PIVOT_CURSOR'
         )
         context_op.def_op = "view3d.snap_cursor_to_selected"
@@ -253,10 +287,15 @@ class VIEW3D_MT_ATB_cursor_pie(Menu):
         context_op.ctrl_op_args = "'INVOKE_DEFAULT', True"
         context_op.ctrl_op_props = ""
 
+        context_op.alt_op = "transform.translate"
+        context_op.alt_op_args = "'INVOKE_DEFAULT', True"
+        context_op.alt_op_props = ("{'cursor_transform': True}")
+
         # TOP
         context_op = pie.operator(
             "act.context_op",
-            text="Selected to Cursor | Active"
+            text="Selected to Cursor | Active",
+            icon='CUBE',
         )
         context_op.def_op = "view3d.snap_selected_to_cursor"
         context_op.def_op_props = "{'use_offset': True}"
@@ -351,20 +390,20 @@ class VIEW3D_MT_ATB_origin_pie(Menu):
         # RIGHT
         op = pie.operator(
             "act.set_origin",
-            text='Cursor',
+            text='To Cursor',
         )
         op.snap_mode = 'CURSOR'
         # BOTTOM
         op = pie.operator(
             "act.origin_to_bbox",
-            text='Bottom',
+            text='Bounding Box Bottom',
         )
         op.box_mode = 'FACE'
         op.box_face = 'ZNEG'
         # TOP
         op = pie.operator(
             "act.origin_to_bbox",
-            text='Center',
+            text='To Geometry Center',
         )
         op.box_mode = 'FACE'
         op.box_face = 'CENTER'

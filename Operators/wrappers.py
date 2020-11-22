@@ -29,15 +29,14 @@ from bpy.props import (
     EnumProperty,
     BoolProperty,
     FloatProperty,
+    FloatVectorProperty,
+    IntVectorProperty,
     PointerProperty
 )
 import bpy_extras
 import bmesh
 import math
-
-# Standard Blender operators, re-wrapped in a way
-# that exposes more functionality in menu layouts
-
+import types
 
 # For header buttons, doesn't push an undo
 class ATB_OT_BoolToEnum(bpy.types.Operator):
@@ -177,7 +176,7 @@ class ATB_OT_SetEnum(bpy.types.Operator):
         # bpy.context.area.tag_redraw() <-- Might re-enable this later on
         return {'FINISHED'}
 
-
+# TODO: I should be able to finesse this with some **kwargs shenanigans
 # A general-purpose dynamic operator operator.
 class ATB_OT_ContextOp(bpy.types.Operator):
     """Root Operator for checking modifer key status on operator invocation"""
@@ -350,6 +349,7 @@ class ATB_OT_ContextOp(bpy.types.Operator):
         return {'FINISHED'}
 
 
+# TODO: Do I actually use this operator? Might be able to nix it.
 class ATB_OT_MouseContextOp(bpy.types.Operator):
     """Root Operator for checking mouse button status on operator invocation"""
     bl_idname = "act.mouse_context_op"
@@ -515,6 +515,7 @@ class ATB_OT_MouseContextOp(bpy.types.Operator):
         return {'FINISHED'}
 
 
+# TODO: Set this up to send reports, instead of printing
 # Enables Fullscreen, hides overlays, headers, gizmos, etc
 class ATB_OT_TogglePhotoMode(bpy.types.Operator):
     """Wrapper for context_cycle_enum that updates the 3d viewport"""
@@ -537,9 +538,6 @@ class ATB_OT_TogglePhotoMode(bpy.types.Operator):
             bpy.ops.wm.window_fullscreen_toggle('INVOKE_DEFAULT', False)
         else:
             print("WRONG")
-
-        # bpy.ops.screen.region_toggle(region_type='HEADER')
-        # bpy.ops.screen.region_toggle(region_type='TOOL_HEADER')
 
         bpy.context.area.tag_redraw()
         return {'FINISHED'}
@@ -631,69 +629,109 @@ class ATB_OT_EnhancedSelect(bpy.types.Operator):
 
         def draw_pie(self, context):
             pie = self.layout.menu_pie()
-            pie.operator_context = 'EXEC_DEFAULT'
+            pie.operator_context = 'INVOKE_DEFAULT'
             global action
             # print(str(action))
 
-            if action == '0':
+            if context.mode == 'OBJECT':
 
                 # LEFT
-                op = pie.operator("mesh.loop_to_region", text="Inner")
-
-                # RIGHT
-                op = pie.operator("mesh.region_to_loop", text="Outer")
-
-                # BOTTOM
-                op = pie.operator("view3d.select", text="Select")
-                op.location = m_loc
-                op.extend = True
-
-                # TOP
-                op = pie.operator("mesh.faces_select_linked_flat", text="Surface")
-
-                # TOP LEFT
+                pie.operator_context = 'EXEC_DEFAULT'
                 op = pie.operator("view3d.select", text="Deselect")
                 op.location = m_loc
                 op.deselect = True
 
-                # TOP RIGHT
-                op = pie.operator("mesh.loop_multi_select", text="Mult-Loops")
-
-                # BOTTOM LEFT
-                op = pie.operator("mesh.select_face_by_sides", text="Ngons")
-                op.number = 4
-                op.type = 'GREATER'
-
-                # BOTTOM RIGHT
-                op = pie.operator("mesh.vert_connect_path", text="Connect Path")
-
-            elif action == '1':
-
-                # LEFT
-                op = pie.operator("mesh.select_less", text="Less")
-
                 # RIGHT
-                op = pie.operator("mesh.select_more", text="More")
+                op = pie.operator("view3d.select", text="Select")
+                op.location = m_loc
+                op.extend = True
 
                 # BOTTOM
-                op = pie.operator("mesh.select_axis", text="Select Axis")
+                pie.operator_context = 'INVOKE_DEFAULT'
+                op = pie.operator("act.group_select", text="Select Hierachy")
+                op.location = m_loc
 
                 # TOP
-                op = pie.operator("mesh.shortest_path_select", text="Tag Between")
-                op.edge_mode = 'BEVEL'
+                op = pie.operator("atb.obj_display", text="Toggle Display")
+                op.location = m_loc
+                op.do_toggle = True
+                op.mode = 'BOUNDS'
 
                 # TOP LEFT
-                op = pie.operator("mesh.select_linked", text="Extend To...")
-                op.delimit = {'SEAM'}
+                pie.separator()
 
                 # TOP RIGHT
-                op = pie.operator("mesh.edges_select_sharp", text="Select Sharp")
+                pie.separator()
 
                 # BOTTOM LEFT
-                op = pie.operator("mesh.select_prev_item", text="Prev")
+                pie.operator_context = 'EXEC_DEFAULT'
+                op = pie.operator("object.select_all", text="Deselect All")
+                op.action = 'DESELECT'
 
                 # BOTTOM RIGHT
-                op = pie.operator("mesh.select_next_item", text="Next")
+                op = pie.operator("object.select_all", text="Select All")
+                op.action = 'SELECT'
+            else:
+                pie.operator_context = 'EXEC_DEFAULT'
+                if action == '0':
+
+                    # LEFT
+                    op = pie.operator("mesh.loop_to_region", text="Inner")
+
+                    # RIGHT
+                    op = pie.operator("mesh.region_to_loop", text="Outer")
+
+                    # BOTTOM
+                    op = pie.operator("view3d.select", text="Select")
+                    op.location = m_loc
+                    op.extend = True
+
+                    # TOP
+                    op = pie.operator("mesh.faces_select_linked_flat", text="Surface")
+
+                    # TOP LEFT
+                    op = pie.operator("view3d.select", text="Deselect")
+                    op.location = m_loc
+                    op.deselect = True
+
+                    # TOP RIGHT
+                    op = pie.operator("mesh.loop_multi_select", text="Mult-Loops")
+
+                    # BOTTOM LEFT
+                    op = pie.operator("mesh.select_face_by_sides", text="Ngons")
+                    op.number = 4
+                    op.type = 'GREATER'
+
+                    # BOTTOM RIGHT
+                    op = pie.operator("mesh.vert_connect_path", text="Connect Path")
+
+                elif action == '1':
+
+                    # LEFT
+                    op = pie.operator("mesh.select_less", text="Less")
+
+                    # RIGHT
+                    op = pie.operator("mesh.select_more", text="More")
+
+                    # BOTTOM
+                    op = pie.operator("mesh.select_axis", text="Select Axis")
+
+                    # TOP
+                    op = pie.operator("mesh.shortest_path_select", text="Tag Between")
+                    op.edge_mode = 'BEVEL'
+
+                    # TOP LEFT
+                    op = pie.operator("mesh.select_linked", text="Extend To...")
+                    op.delimit = {'SEAM'}
+
+                    # TOP RIGHT
+                    op = pie.operator("mesh.edges_select_sharp", text="Select Sharp")
+
+                    # BOTTOM LEFT
+                    op = pie.operator("mesh.select_prev_item", text="Prev")
+
+                    # BOTTOM RIGHT
+                    op = pie.operator("mesh.select_next_item", text="Next")
 
         wm = context.window_manager
         wm.popup_menu_pie(event, draw_func=draw_pie, title="", icon='NONE')
@@ -838,13 +876,28 @@ class ATB_OT_GroupSelect(bpy.types.Operator):
     bl_label = "ATB Group Select"
     bl_description = "Jesus on a pogo stick"
 
+    location: IntVectorProperty(
+        name="Screen Location",
+        size=2,
+        default=(0, 0),
+    )
+
     def execute(self, context):
         # print("Test", self)
         return {'FINISHED'}
 
     def invoke(self, context, event):
+        stored_selection = context.selected_objects
         _obj_mode = (True if context.mode == 'OBJECT' else False)
+
         self.family = []
+
+        bpy.ops.view3d.select(
+            'EXEC_DEFAULT',
+            True,
+            extend=False,
+            location = self.location)
+
         self.root = context.active_object
 
         def recurse_up(self, ob, debug=False):
@@ -866,12 +919,6 @@ class ATB_OT_GroupSelect(bpy.types.Operator):
                     self.family.append(child)
                     if child.children:
                         recurse_down(self, child)
-
-        # if obj_mode:
-        bpy.ops.view3d.select(
-            'INVOKE_DEFAULT',
-            True,
-            extend=False)
 
         active = context.active_object
         if active:
@@ -1058,7 +1105,7 @@ class ATB_OT_FastSnap(bpy.types.Operator):
             state_string = "No Snapping"
 
         else:
-
+            elements = {""}
             if mode == "VERTEX":
                 elements = {'EDGE_MIDPOINT', 'VERTEX'}
             elif mode == "EDGE":
@@ -1219,7 +1266,7 @@ class ATB_OT_context_modal_mouse(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-
+# TODO: There are still a few edge cases for this one that I need to solve
 class ATB_OT_drop_tool(bpy.types.Operator):
     """Changes the active tool to a contextually-appropriate 'default tool'"""
     bl_idname = "act.drop_tool"
@@ -1368,7 +1415,7 @@ class ATB_OT_Frame_Object(bpy.types.Operator):
 
         return {'FINISHED'}
 
-
+# TODO: Add a poll function that'll keep me from calling it where I shouldn't
 class ATB_OT_Select_Object(bpy.types.Operator):
     """A UI-Only Operator for setting the active object selection"""
     bl_idname = "atb.object_select"
@@ -1393,3 +1440,82 @@ class ATB_OT_Select_Object(bpy.types.Operator):
 
         return {'FINISHED'}
 
+
+def nuke(cls, context):
+    return False
+
+class ATB_OT_Nuke_Panel(bpy.types.Operator):
+    """A UI-Only Operator for setting the active object selection"""
+    bl_idname = "atb.nuke_panel"
+    bl_label = "ATB Nuke Panel"
+
+    show: BoolProperty(
+        name="Show Panel",
+        default=False
+    )
+
+    def invoke(self, context, event):
+
+        panel = bpy.types.VIEW3D_PT_meta_panel
+
+        if event.ctrl:
+            panel.poll = panel.poll
+        else:
+            panel.poll = types.MethodType(nuke, panel)
+
+        return {'FINISHED'}
+
+
+class ATB_OT_Set_Object_Display(bpy.types.Operator):
+    """A Macro that selects an object, sets its display mode, then deselects it"""
+    bl_idname = "atb.obj_display"
+    bl_label = "ATB Set Object Display Mode"
+    bl_description = "Takes a BoolVector and an Enum, makes them play nice"
+
+    location: IntVectorProperty(
+        name="Show Panel",
+        size=2,
+        default=(0, 0),
+    )
+
+    mode_items = [
+        ("BOUNDS", "Bounds", "", 1),
+        ("WIRE", "Wire", "", 2),
+        ("SOLID", "Solid", "", 3),
+        ("TEXTURED", "Textured", "", 4),
+    ]
+
+    mode: EnumProperty(
+        name="Display Mode",
+        items=mode_items,
+        description="The display mode to set",
+        default='BOUNDS',
+    )
+
+    do_toggle: BoolProperty(
+        name="Toggle",
+        default= False,
+    )
+
+    def invoke(self, context, event):
+
+        stored_selection = context.selected_objects
+
+        bpy.ops.view3d.select('EXEC_DEFAULT', False, location=self.location)
+
+        obj = context.active_object
+
+        if self.do_toggle:
+            if not obj.display_type == 'TEXTURED':
+                obj.display_type = 'TEXTURED'
+            else:
+                obj.display_type = self.mode
+        else:
+            obj.display_type = self.mode
+
+        obj.select_set(False)
+
+        for thing in stored_selection:
+            thing.select_set(True)
+
+        return {'FINISHED'}

@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# Hell is other people's code.
+
 import bpy
 from bpy.types import (
     Panel,
@@ -47,9 +49,6 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
         shading = VIEW3D_PT_view3d_fast_panel.get_shading(context)
         active_obj = context.active_object
 
-        # use_shrink = False
-        # base_scale_y = 0.85
-
         # Fast Panel Property Group
         wm = bpy.context.window_manager
         fp = wm.fp_props
@@ -70,8 +69,7 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
 
         root.scale_y = 1
 
-        # ignoring Blender's variable naming conventions for UI layouts
-        # because it's bad and you should feel bad for using it
+        # TODO: Clean up naming conventions
         col_1 = root.column(align=True)
         tab_row = col_1.row(align=False)
         tab_row.alignment = 'EXPAND'
@@ -82,6 +80,7 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
 
         tb_r = tab_row.row(align=True)
         tb_r.alignment = 'RIGHT'
+
         # tab_row.prop(fp, "layout_bool", text="", icon="KEYFRAME_HLT")
         tb_r.prop(fp, "fast_panel_tabs", expand=True, icon_only=True)
 
@@ -369,10 +368,8 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
         # Overlays Row
         if fp.fast_panel_tabs == 'OVERLAYS':
             but_box = col_1.box()
-            # but_box.scale_y = 0.85
             but_box_inner_col = but_box.column(align=True)
             but_row = but_box_inner_col.row(align=True)
-            # but_row.scale_x = 0.5
 
             but_row.prop(
                 overlay,
@@ -404,7 +401,6 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
             )
 
             but_row = but_box_inner_col.row(align=True)
-            # but_row.scale_x = 0.5
 
             but_row.prop(
                 overlay,
@@ -431,14 +427,12 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
         # Normals Row
         if fp.fast_panel_tabs == 'NORMALS':
             but_box = col_1.box()
-            # but_box.scale_y = 0.85
+
             but_box_inner_col = but_box.column(align=True)
             but_row = but_box_inner_col.row(align=True)
-            # but_row.scale_x = 0.35
+
 
             but_row.prop(overlay, "normals_length", text="Normals")
-
-            # but_row = but_box_inner_col.row(align=True)
             but_row.prop(
                 overlay,
                 "show_vertex_normals",
@@ -467,7 +461,6 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
             )
 
             but_row = but_box_inner_col.row(align=True)
-            # but_row.scale_x = 0.65
             but_row.prop(
                 shading,
                 "show_backface_culling",
@@ -508,10 +501,8 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
         # Gizmo Row
         if fp.fast_panel_tabs == 'GIZMOS':
             but_box = col_1.box()
-            # but_box.scale_y = 0.85
             but_box_inner_col = but_box.column(align=True)
             but_row = but_box_inner_col.row(align=True)
-            # but_row.scale_x = 0.65
             but_row.prop(scene.transform_orientation_slots[1], "type", text="")
             but_row.prop(
                 view,
@@ -602,14 +593,6 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
 
             if (context.active_object and context.active_object.type == 'MESH'):
                 but_row.prop(context.object, 'display_type', expand=True)
-
-                # if context.object.display_type == 'BOUNDS':
-                #     but_row = but_box_inner_col.row(align=True)
-                #     but_row.prop(
-                #         context.object,
-                #         'display_bounds_type',
-                #         text="",
-                #     )
 
                 but_row = but_box_inner_col.split(factor=0.65, align=True)
 
@@ -731,7 +714,6 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
 class VIEW3D_PT_grid_ribbon(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
-    # bl_category = "Ribbons"
     bl_label = "Grid Ribbon"
     text = "Bacon"
 
@@ -1047,22 +1029,10 @@ class VIEW3D_PT_draw_ribbon(Panel):
 
         root = layout.column(align=True)
 
+        # TODO: Make an iterator for this stuff
+
         if region_width_int >= 12:
             tog_row_cols = 5
-            # tog_row_labels = (
-            #     'Measures',
-            #     'Overlays',
-            #     'Normals',
-            #     'Gizmos',
-            #     'Display'
-            # )
-            # tog_row_icons = (
-            #     'NONE',
-            #     'NONE',
-            #     'NONE',
-            #     'NONE',
-            #     'NONE',
-            # )
             cols_8_8_8_4_2 = 8
             cols_4_4_4_2_1 = 4
             cols_4_4_2_2_1 = 4
@@ -1072,20 +1042,6 @@ class VIEW3D_PT_draw_ribbon(Panel):
 
         if region_width_int < 12:
             tog_row_cols = 5
-            # _tog_row_labels = (
-            #     '',
-            #     '',
-            #     '',
-            #     '',
-            #     ''
-            # )
-            # _tog_row_icons = (
-            #     'CON_SIZELIMIT',
-            #     'OVERLAY',
-            #     'NORMALS_VERTEX_FACE',
-            #     'GIZMO',
-            #     'OBJECT_DATA',
-            # )
             cols_8_8_8_4_2 = 8
             cols_4_4_4_2_1 = 4
             cols_4_4_2_2_1 = 4
@@ -1138,8 +1094,6 @@ class VIEW3D_PT_draw_ribbon(Panel):
         root = layout.column(align=True)
         root.scale_y = 1
 
-        # ignoring Blender's variable naming conventions for UI layouts
-        # because it's bad and you should feel bad for using it
         tab_row = root.grid_flow(columns=tog_row_cols, align=True)
         tab_row.prop(fp, "fast_panel_tabs", expand=True)
 

@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# Hell is other people's code.
+
 import bpy
 from ..Utilities.WidthFunc import (
     get_breakpoints,
@@ -28,7 +30,6 @@ from ..Utilities.WidthFunc import (
 class View3DPanel_hidden:
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
-    # bl_category = "Dev"
 
     @classmethod
     def poll(cls, context):
@@ -83,7 +84,6 @@ class ATB_MT_MiscOverlaysMenu(bpy.types.Menu):
 class ATB_PT_MiscOverlaysPanel(View3DPanel_hidden, bpy.types.Panel):
     bl_idname = "ATB_PT_MiscOverlaysPanel"
     bl_label = "Miscellaneous Overlays"
-    # bl_options = {'DRAW_BOX'}
     bl_ui_units_x = 8
 
     def draw(self, context):
@@ -93,6 +93,8 @@ class ATB_PT_MiscOverlaysPanel(View3DPanel_hidden, bpy.types.Panel):
 
         col = layout.column_flow(align=True)
         col.alignment = 'LEFT'
+
+        # TODO: Turn these toggle-icons into functions so I can use them anywhere
 
         ico = ("CHECKBOX_HLT" if overlay.show_text else "CHECKBOX_DEHLT")
         col.prop(overlay, "show_text", icon=ico)
@@ -452,13 +454,6 @@ class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
             brow = bcol.row(align=True)
 
             brow.prop(mesh_anal, "type", text="")
-            # brow.prop(
-            #     overlay,
-            #     "show_statvis",
-            #     text="",
-            #     icon='X',
-            #     toggle=True
-            # )
 
             OHang_F1_T = (2, 3, 6, 8)
             OHang_F1_V = (1, 2, 3, 6)
@@ -569,28 +564,6 @@ class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         op = row.operator("wm.call_panel", text="Extras")
         op.name = "ATB_PT_MiscOverlaysPanel"
 
-        # row = col.row(align=True)
-
-        # if active_obj and active_obj.type == 'MESH':
-        #     if not active_mesh.use_auto_smooth:
-        #         row.prop(active_mesh, "use_auto_smooth", toggle=True)
-        #     if active_mesh.use_auto_smooth:
-        #         # row.scale_x = 0.85
-
-        #         row.prop(active_mesh, "auto_smooth_angle", text="")
-        #         # row = col.row(align=True)
-        #         # row.emboss = 'PULLDOWN_MENU'
-        #         row.menu("ATB_MT_MeshShadingMenu")
-        #         row.prop(
-        #             active_mesh,
-        #             "use_auto_smooth",
-        #             text="",
-        #             icon="MOD_SMOOTH",
-        #             toggle=True
-        #         )
-        #         # row.operator("object.shade_smooth", text="Smooth")
-        #         # row.operator("object.shade_flat", text="Flat")
-
         # $$Edge_Overlays
 
         thresholds = (4, 6, 10, 14)
@@ -601,12 +574,6 @@ class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         col = root.column(align=True)
         col.scale_y = y_scale
 
-        # col.label(
-        #         text="Edge Overlays: "
-        #         + str(EO_Col[0])
-        #         + ":"
-        #         + str(EO_Col[1])
-        # )
         col.label(text="Edges:")
 
         row = col.grid_flow(
@@ -651,12 +618,6 @@ class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         col = root.column(align=True)
         col.scale_y = y_scale
 
-        # col.label(
-        #         text="Face Overlays: "
-        #         + str(full_breaks[2])
-        #         + ":"
-        #         + str(full_breaks[3])
-        # )
         col.label(text="Faces:")
 
         ##
@@ -691,6 +652,8 @@ class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         )
 
         # Geometry
+
+        # TODO: What the hell is up with this naming?
 
         # Flow_1
         GeC_F1_T = (2, 8)
@@ -744,8 +707,6 @@ class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
                 # row.scale_x = 0.85
 
                 row.prop(active_mesh, "auto_smooth_angle", text="")
-                # row = col.row(align=True)
-                # row.emboss = 'PULLDOWN_MENU'
                 row.menu("ATB_MT_MeshShadingMenu")
 
         flow_3 = col.grid_flow(columns=GeC_F3[0], align=True, row_major=True)
@@ -831,7 +792,6 @@ class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         col = root.column(align=True)
         col.scale_y = y_scale
 
-        # col.label(text="Grid: " + str(GC_F3[0]) + ":" + str(GC_F3[1]))
         col.label(text="Grid:")
 
         ##
@@ -870,26 +830,15 @@ class ATB_PT_ViewOverlaysPanel(View3DPanel, bpy.types.Panel):
         flow_3.prop(units, "length_unit", text="")
 
 
+# TODO: MIGRATE
+
 class ATB_PT_viewport_transform_settings(View3DPanel_hidden, bpy.types.Panel):
     bl_idname = "ATB_PT_viewport_transform_settings"
     bl_label = "Quick Transforms"
 
     def draw(self, context):
         scene = context.scene
-        # units = scene.unit_settings
-
-        # overlay = context.space_data.overlay
-        # shading = ATB_PT_ViewOverlaysPanel.get_shading(context)
-
-        # active_obj = context.active_object
-        # active_mat = context.active_object.active_material
-        # active_mesh = context.active_object.data
-
-        # mesh_anal = context.scene.tool_settings.statvis
         tool_settings = context.scene.tool_settings
-        # motion_tracking = context.space_data.show_reconstruction
-        # space_data = context.space_data
-        # v3dtheme = context.preferences.themes[0].view_3d
 
         y_scale = 0.85
         x_scale = 0.75
@@ -1153,6 +1102,7 @@ class ATB_PT_viewport_transform_settings(View3DPanel_hidden, bpy.types.Panel):
                 toggle=True
             )
 
+# TODO: Migrate these to somewhere logical
 
 class ATB_PT_quick_operators(View3DPanel, bpy.types.Panel):
     bl_idname = "ATB_PT_quick_operators"

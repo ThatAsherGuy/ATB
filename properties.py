@@ -111,6 +111,7 @@ class FastPanelProps(PropertyGroup):
         items=fast_panel_tab_items
     )
 
+# TODO: The hell is this formatting?
 
 # Quick Transforms Stuff
 bpy.types.Scene.snap_cycle = bpy.props.IntProperty(
@@ -411,9 +412,6 @@ class MetaPanelTabs(PropertyGroup):
         default=0
     )
 
-    # cams = bpy.data.cameras
-    # filtered_cams = list(filter(lambda x: x.users > 0, cams))
-
 # QUICK OPERATOR (MENU PANEL) PANEL
 
 
@@ -450,7 +448,6 @@ class CustomTransforms(PropertyGroup):
         name='',
         description='A persistent custom transform orientation',
         subtype='MATRIX',
-        # unit='ROTATION',
         size=9,
         default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
     )
@@ -459,7 +456,6 @@ class CustomTransforms(PropertyGroup):
         name='',
         description='A persistent custom transform orientation',
         subtype='MATRIX',
-        # unit='ROTATION',
         size=9,
         default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
     )
@@ -468,7 +464,6 @@ class CustomTransforms(PropertyGroup):
         name='',
         description='A persistent custom transform orientation',
         subtype='MATRIX',
-        # unit='ROTATION',
         size=9,
         default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
     )
@@ -477,7 +472,6 @@ class CustomTransforms(PropertyGroup):
         name='',
         description='A persistent custom transform orientation',
         subtype='MATRIX',
-        # unit='ROTATION',
         size=9,
         default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
     )
@@ -486,7 +480,7 @@ class CustomTransforms(PropertyGroup):
         name='',
         description='A persistent custom transform orientation',
         subtype='MATRIX',
-        # unit='ROTATION',
+  
         size=9,
         default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
     )
@@ -495,7 +489,6 @@ class CustomTransforms(PropertyGroup):
         name='',
         description='A persistent custom transform orientation',
         subtype='MATRIX',
-        # unit='ROTATION',
         size=9,
         default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
     )

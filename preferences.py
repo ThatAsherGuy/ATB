@@ -383,12 +383,6 @@ class ATBAddonPreferences(bpy.types.AddonPreferences):
                           "with (almost) every overlay "
                           "setting")
 
-        # subrow = subcol.split(factor=0.2)
-        # subrow.label(text="Fast Panel:")
-        # subrow.label(text="A tabbed panel with "
-        #                   "common viewport settings"
-        #                   "")
-
         subrow = subcol.split(factor=0.2)
         subrow.label(text="Meta Panel:")
         subrow.label(text="A tabbed panel/popover with "
@@ -476,8 +470,3 @@ class ATBAddonPreferences(bpy.types.AddonPreferences):
         split = box.split()
         b = split.box()
         self.draw_keymaps(b, 2, True)
-
-    # def draw_about_tab(self, box):
-    #     split = box.split()
-    #     b = split.box()
-    #     self.draw_keymaps(b)

@@ -51,12 +51,6 @@ class ATB_OT_SuperContextMenu(bpy.types.Operator):
                 if not obj.data == ed_obj.data:
                     override['edit_object'] = None
 
-        # bpy.ops.object.editmode_toggle(
-        #     override,
-        #     'INVOKE_REGION_WIN',
-        #     False,
-        # )
-
         def draw_menu(self, context):
             menu = self.layout
             menu.operator_context = 'INVOKE_DEFAULT'
@@ -94,12 +88,6 @@ class ATB_OT_SelectThrough(bpy.types.Operator):
             )
 
         if event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
-            # bpy.ops.mesh.select_mode(
-            #     'INVOKE_REGION_WIN',
-            #     False,
-            #     type='FACE',
-            #     use_expand=True
-            # )
             bpy.app.timers.register(bpy.ops.mesh.select_mode, first_interval=1)
             return {'FINISHED', 'PASS_THROUGH'}
         return {'PASS_THROUGH'}

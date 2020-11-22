@@ -18,6 +18,10 @@
 
 # Hell is other people's code.
 
+# These dictionaries are what I use to store the 'default' keymaps.
+# I'll eventually use some sort of JSON format for this.
+# You can (and should) modify them to fit your needs.
+
 keys = {"PIES": [{"label": "3D View Global",
                   "keymap": "3D View",
                   "space_type": "VIEW_3D",
@@ -47,6 +51,15 @@ keys = {"PIES": [{"label": "3D View Global",
                   "space_type": "VIEW_3D",
                   "idname": "act.super_tablet_pie",
                   "type": "LEFTMOUSE",
+                  "alt": True,
+                  "shift": True,
+                  "value": "DOUBLE_CLICK"},
+
+                 {"label": "3D View Global",
+                  "keymap": "3D View",
+                  "space_type": "VIEW_3D",
+                  "idname": "act.mod_pie",
+                  "type": "RIGHTMOUSE",
                   "alt": True,
                   "shift": True,
                   "value": "DOUBLE_CLICK"},
@@ -92,9 +105,9 @@ keys = {"PIES": [{"label": "3D View Global",
                        "value": "PRESS",
                        },
 
-                      {"label": "3D View Edit Mesh",
-                       "keymap": "Mesh",
-                       "space_type": "EMPTY",
+                      {"label": "3D View Global",
+                       "keymap": "3D View",
+                       "space_type": "VIEW_3D",
                        "idname": "act.super_select",
                        "type": "F15",
                        "value": "PRESS"},

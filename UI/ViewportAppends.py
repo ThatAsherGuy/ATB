@@ -23,17 +23,6 @@ import math
 
 
 def popover(self, context):
-    # tool_settings = context.tool_settings
-    # shading = context.space_data.shading
-    # overlay = context.space_data.overlay
-    # wm = bpy.context.window_manager
-    # fp = wm.fp_props
-
-    # if fp.layout_bool:
-    #     ico = 'KEYFRAME_HLT'
-    # else:
-    #     ico = 'KEYFRAME'
-
     layout = self.layout
     row = layout.row(align=True)
     row.popover(
@@ -41,12 +30,6 @@ def popover(self, context):
         text="",
         icon='OPTIONS'
     )
-    # row.prop(scene, "fp_layout_bool", text="", icon=ico)
-    # row.popover(
-    #     "VIEW3D_PT_view3d_fast_panel",
-    #     text="",
-    #     icon='RESTRICT_VIEW_OFF'
-    # )
 
 
 def custom_popovers(self, context):
@@ -113,13 +96,6 @@ def transform_pop(self, context):
     layout = self.layout
     row = layout.row(align=True)
     row.scale_x = region_width_factor_quad
-
-    # op_text = "Search Menu"
-    # op_icon = 'NONE'
-
-    # if region_width_int < 50:
-    #     op_text = ""
-    #     op_icon = 'VIEWZOOM'
 
     row.operator("wm.search_menu", text=str(region_width_factor_quad))
 
@@ -311,10 +287,6 @@ def info_space_buttons(self, context):
 
     layout = self.layout
 
-    # col = layout.column(align=True)
-    # col.use_property_split = False
-    # col.label(text=str(region_height_raw))
-
     if region_height_int < 1:
         row = layout.row(align=True)
         row.prop(
@@ -378,11 +350,8 @@ def info_space_buttons(self, context):
 
 def navbar_extras(self, context):
     layout = self.layout
-    # tool_settings = context.scene.tool_settings
 
     wm = bpy.context.window_manager
     metapanel = wm.metapanel_tabs
 
-    # layout.scale_x = 1.4
-    # layout.scale_y = 1.4
     layout.prop_tabs_enum(metapanel, "tab", icon_only=True)

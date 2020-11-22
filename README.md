@@ -1,6 +1,6 @@
 # Asher's Toolbox
 
-Asher's Toolbox (ATB) is a Blender add-on that re-shuffles and re-wraps existing Blender features, aiming to speed up common tasks without enforcing a particular workflow or overloading the user's keymap.
+Asher's Toolbox (ATB) is a Blender add-on that re-shuffles and re-wraps existing Blender features, aiming to speed up common tasks without enforcing a particular workflow or overloading the user's keymap. There are a bunch of nifty (and niche) operators buried in here, but they aren't all enabled by default. The core features are described below.
 
 ## Main Interfaces
 
@@ -27,3 +27,9 @@ While the fast panel does have a few tabs for future features, those tabs haven'
 The meta panel splits the difference between the overlays panel and the fast panel. It's more compact than the former, but more exhaustive than the latter, providing convenient access to transform settings, a camera manager, viewport shading, and active object properties.
 
 The camera manager and the active object panel are currently the most feature-rich, with the former offering easy access to your scene's camera list, camera settings, and a handful of keying options, and the latter exposing contextual properties for meshes, curves, lights, probes, and so on.
+
+### In The Viewport: Gizmos!
+
+![ATB Gizmos](https://TAKEASCREENSHOT.png)
+
+This adds a handful of gizmos, with associated pie menus and operators. Some of these gizmos are straight-forward (the symmetry gizmo is for, *gasp,* symmetrizing meshes), while others (like the tablet gizmo) have a few layers to them.

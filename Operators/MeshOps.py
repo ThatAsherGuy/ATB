@@ -63,7 +63,6 @@ class ATB_OT_QuickSymmetry(bpy.types.Operator):
         if bpy.context.workspace.modals.mirror_modal == False:
             context.area.header_text_set(None)
             bpy.context.window_manager.gizmo_group_type_unlink_delayed("atb_mirror_gizmo_group")
-            # print("Fin")
             return {'FINISHED'}
 
         if (event.type in {'LEFT_SHIFT', 'RIGHT_SHIFT', 'SPACE'}) and (event.value == 'PRESS'):
