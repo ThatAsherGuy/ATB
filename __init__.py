@@ -78,6 +78,7 @@ from .Operators.ThemeOps import ATB_OT_store_wire_color
 
 from .Operators.SelectOps import ATB_OT_SuperContextMenu
 from .Operators.SelectOps import ATB_OT_SelectThrough
+from .Operators.SelectOps import ATB_OT_ProximitySelect
 
 from .Operators.TabletOps import ATB_OT_SuperTabletPie
 
@@ -256,6 +257,7 @@ classes = (
     # SelectOps.py
     ATB_OT_SuperContextMenu,
     ATB_OT_SelectThrough,
+    ATB_OT_ProximitySelect,
     # TabletOps.py
     ATB_OT_SuperTabletPie,
     # Mesh Ops
