@@ -224,6 +224,7 @@ def calc_distance(vec_a, vec_b, dist):
     """
     return (vec_b - vec_a).magnitude
 
+
 def refine_tree(obj, tree, radius, dist, iters=5):
     """
     Takes in a KD Tree of objects and performs a two-step distance filter. \n
@@ -276,8 +277,8 @@ class ATB_OT_ProximitySelect(bpy.types.Operator):
     bl_description = "Magic"
 
     mode_items = [
-        ("ACTIVE", "Selects items near the active object", "", 1),
-        ("CURSOR", "Selects items near the 3D cursor", "", 2),
+        ("ACTIVE", "Near Active", "Selects items based on their proximity to the active object", 1),
+        ("CURSOR", "Near Cursor", "Selects items based on their proximity to the 3D cursor", 2),
     ]
 
     mode: EnumProperty(
@@ -288,9 +289,20 @@ class ATB_OT_ProximitySelect(bpy.types.Operator):
     )
 
     radius: FloatProperty(
+        name="Sample Radius",
         description="The search radius to find objects in",
         default=15,
     )
+
+    dist: FloatProperty(
+        name="Refinement Distance",
+        description="The refinement distance",
+        default=10,
+    )
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
 
     def execute(self, context):
         size = len(bpy.context.selectable_objects)
@@ -304,32 +316,22 @@ class ATB_OT_ProximitySelect(bpy.types.Operator):
         if self.mode == 'CURSOR':
             loc = context.scene.cursor.location
 
-            for (co, index, dist) in tree.find_range(loc, self.radius):
+            for (co, index, dist) in tree.find_range(loc, (self.radius * context.scene.unit_settings.scale_length)):
                 bpy.context.selectable_objects[index].select_set(True)
 
             return {'FINISHED'}
         else:
-            # loc = context.active_object.location
-        
-            bm = bmesh.new()
-            bm.from_object(context.active_object, context.evaluated_depsgraph_get())
-            coords = []
-
-            for v in bm.verts:
-                coords.append(v.co)
-
             raw_bounds = context.active_object.bound_box         
 
             bounds = []
             for point in raw_bounds:
                 bounds.append(mathutils.Vector(point).magnitude)
-            
 
-            base_radius = max(bounds)/1.25
+            # TODO: Remove magic number
+            scaled_radius = max(bounds)/1.25 + (self.radius * context.scene.unit_settings.scale_length)
+            scaled_distance = self.dist * context.scene.unit_settings.scale_length
 
-            scaled_distance = 75 * context.scene.unit_settings.scale_length
-
-            objs = refine_tree(context.active_object, tree, base_radius, scaled_distance, 1)
+            objs = refine_tree(context.active_object, tree, scaled_radius, scaled_distance, 1)
             for ob in objs:
                 ob.select_set(True)
             return {'FINISHED'}
