@@ -27,7 +27,8 @@ import statistics
 import numpy
 from bpy.props import (
     FloatProperty,
-    EnumProperty
+    EnumProperty,
+    BoolProperty,
 )
 
 
@@ -225,28 +226,30 @@ def calc_distance(vec_a, vec_b, dist):
     return (vec_b - vec_a).magnitude
 
 
-def refine_tree(obj, tree, radius, dist, iters=5):
+def refine_tree(obj, tree, radius, dist, refine=True):
     """
     Takes in a KD Tree of objects and performs a two-step distance filter. \n
 
     First it gets the objects with origins within (float) radius distance of (object) obj, 
-    then it refines that list to those with geometry that is within (float) dist distance of obj's geometry. 
+    then it (optionally) refines that list to those with geometry that is within (float) dist distance of obj's geometry. 
     """
 
-    objs = []
-
+    # Lazy bounding box center, so objects with offset origins don't produce weird results
     vec_sum = mathutils.Vector((0.0, 0.0, 0.0))
     for vec in obj.bound_box:
         vec_sum += mathutils.Vector(vec)
 
-    vec_sum = vec_sum/8.0
+    bbox_center = obj.location + (vec_sum/8.0)
 
-    for (co, index, rad) in tree.find_range(vec_sum, radius):
+    # The tree only contains vectors and indicies.
+    # This gives us a list of objects within the search radius.
+    objs = []
+    for (co, index, rad) in tree.find_range(bbox_center, radius):
         ob = bpy.context.selectable_objects[index]
         if (ob.type == 'MESH') and not (ob == obj):
             objs.append(bpy.context.selectable_objects[index])
 
-    if iters == 0:
+    if not refine:
         print("SKIP")
         return objs
 
@@ -288,16 +291,28 @@ class ATB_OT_ProximitySelect(bpy.types.Operator):
         default='ACTIVE',
     )
 
+    refine: BoolProperty(
+        name="Refine Search",
+        description="Whether to use the Refinement Distance "
+                    "to refine the selection based on the distance "
+                    "from the object's geometry.",
+        default=True,
+    )
+
     radius: FloatProperty(
         name="Sample Radius",
         description="The search radius to find objects in",
-        default=15,
+        default=10,
+        unit = 'LENGTH',
+        subtype = 'DISTANCE',
     )
 
     dist: FloatProperty(
         name="Refinement Distance",
         description="The refinement distance",
-        default=10,
+        default=1,
+        unit = 'LENGTH',
+        subtype = 'DISTANCE',
     )
 
     def invoke(self, context, event):
@@ -316,7 +331,7 @@ class ATB_OT_ProximitySelect(bpy.types.Operator):
         if self.mode == 'CURSOR':
             loc = context.scene.cursor.location
 
-            for (co, index, dist) in tree.find_range(loc, (self.radius * context.scene.unit_settings.scale_length)):
+            for (co, index, dist) in tree.find_range(loc, self.radius):
                 bpy.context.selectable_objects[index].select_set(True)
 
             return {'FINISHED'}
@@ -328,10 +343,10 @@ class ATB_OT_ProximitySelect(bpy.types.Operator):
                 bounds.append(mathutils.Vector(point).magnitude)
 
             # TODO: Remove magic number
-            scaled_radius = max(bounds)/1.25 + (self.radius * context.scene.unit_settings.scale_length)
-            scaled_distance = self.dist * context.scene.unit_settings.scale_length
+            scaled_radius = max(bounds)/1.25 + self.radius
+            scaled_distance = self.dist
 
-            objs = refine_tree(context.active_object, tree, scaled_radius, scaled_distance, 1)
+            objs = refine_tree(context.active_object, tree, scaled_radius, scaled_distance, self.refine)
             for ob in objs:
                 ob.select_set(True)
             return {'FINISHED'}
