@@ -34,7 +34,7 @@ from bpy.props import (
 
 class ATB_OT_SuperContextMenu(bpy.types.Operator):
     """Edit Mode Context menu for out-of-mode objects"""
-    bl_idname = "act.moar_context"
+    bl_idname = "atb.moar_context"
     bl_label = "ATB Moar Context"
     bl_description = "I heard you like context menus, so I put some context in your context menu"
 
@@ -65,13 +65,13 @@ class ATB_OT_SuperContextMenu(bpy.types.Operator):
             menu = self.layout
             menu.operator_context = 'INVOKE_DEFAULT'
 
-            op = menu.operator("act.add_to_mode", text="Add to Mode")
+            op = menu.operator("atb.add_to_mode", text="Add to Mode")
             op.mouse_loc = m_loc
 
-            op = menu.operator("act.move_cursor", text="Cursor to Origin")
+            op = menu.operator("atb.move_cursor", text="Cursor to Origin")
             op.move_mode = 'RED'
 
-            op = menu.operator("act.move_cursor", text="FUCK YOUR ORIGIN")
+            op = menu.operator("atb.move_cursor", text="FUCK YOUR ORIGIN")
             op.move_mode = 'GREEN'
 
         wm = context.window_manager
@@ -81,7 +81,7 @@ class ATB_OT_SuperContextMenu(bpy.types.Operator):
 
 class ATB_OT_SelectThrough(bpy.types.Operator):
     """Wrapper for editmode_toggle that uses overrides to enable mode expansion"""
-    bl_idname = "act.select_through"
+    bl_idname = "atb.select_through"
     bl_label = "ATB Select Through"
     bl_description = "Give your balls a tug, Shorsey"
 
@@ -265,7 +265,6 @@ def refine_tree(obj, tree, radius, dist, refine=True):
             print("ERROR")
 
         raw_dist = calc_distance(point_a, point_b, dist)
-        converted_dist = bpy.utils.units.to_string('METRIC', 'LENGTH', raw_dist)
 
         if raw_dist <= dist:
             filtered_objs.append(ob)
@@ -275,7 +274,7 @@ def refine_tree(obj, tree, radius, dist, refine=True):
 
 class ATB_OT_ProximitySelect(bpy.types.Operator):
     """A select operator that uses a KD Tree to find objects near the 3D Cursor"""
-    bl_idname = "act.prox_select"
+    bl_idname = "atb.prox_select"
     bl_label = "ATB Proximity Select"
     bl_description = "Magic"
 

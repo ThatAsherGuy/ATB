@@ -76,7 +76,7 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
 
         tb_l = tab_row.row(align=True)
         tb_l.alignment = 'LEFT'
-        tb_l.operator("act.toggle_photo_mode", text="", icon='FULLSCREEN_ENTER')
+        tb_l.operator("atb.toggle_photo_mode", text="", icon='FULLSCREEN_ENTER')
 
         tb_r = tab_row.row(align=True)
         tb_r.alignment = 'RIGHT'

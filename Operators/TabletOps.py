@@ -39,7 +39,7 @@ from ..Utilities.DeepInspect_Alt import isModalRunning_Alt
 
 class ATB_OT_SuperTabletPie(bpy.types.Operator):
     """A pie menu for tablet users, wrapped in an operator so we can do input event processing"""
-    bl_idname = "act.super_tablet_pie"
+    bl_idname = "atb.super_tablet_pie"
     bl_label = "ATB Super Tablet Pie"
     bl_description = """Fancy Things"""
     bl_options = {'REGISTER'}

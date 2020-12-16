@@ -35,6 +35,30 @@ from bpy.props import (
 # Root Properties
 
 
+# QUICK OPERATOR (MENU PANEL) PANEL
+def quick_ops_items():
+    items = [
+        ('EDIT', "Edit Menu", "Edit Mesh", 'NONE', 1),
+        ('ADD', "Add Menu", "Add Mesh", 'NONE', 2),
+        ('UV', 'UV Map Menu', "UV Map Options", 'NONE', 3),
+        ('CONTEXT', "Context Menu", "Right-Click Menu", 'NONE', 4),
+        ('VERTEX', "Vertex Menu", "Vertex Operators", 'NONE', 5),
+        ('EDGE', "Edge Menu", "Edge Operators", 'NONE', 6),
+        ('FACE', "Face Menu", "FAce Operators", 'NONE', 7)
+            ]
+
+    return items
+
+
+class QuickOpMenus(PropertyGroup):
+    stuff = quick_ops_items()
+
+    menus: EnumProperty(
+        name='',
+        description='Current Menu',
+        items=stuff
+    )
+
 class ModalProps(PropertyGroup):
     tablet_modal: BoolProperty(
                                 name="Layout Toggle",
@@ -70,16 +94,20 @@ class ModalProps(PropertyGroup):
 # Fast Panel Stuff
 
 class FastPanelProps(PropertyGroup):
+
+    # Unused
     layout_bool: BoolProperty(
                                 name="Layout Toggle",
                                 default=False
                              )
 
+    # Unused
     pivot_bool: BoolProperty(
                                 name="Pivot Toggle",
                                 default=False
                             )
 
+    # Unused
     snap_bool: BoolProperty(
                                 name="Snapping Toggle",
                                 default=False
@@ -112,7 +140,7 @@ class FastPanelProps(PropertyGroup):
     )
 
 # TODO: The hell is this formatting?
-
+# TODO: These should be assigned and cleared in the register/unregister functions
 # Quick Transforms Stuff
 bpy.types.Scene.snap_cycle = bpy.props.IntProperty(
                                                    name="Snapping Toggle",
@@ -236,9 +264,6 @@ bpy.types.Scene.piv_gz_z = bpy.props.FloatProperty(
 
 # This layout-switcher setup is based on HopsButtonOptions from  HardOps
 
-# METAPANEL
-
-
 class ObjectMatrixConversions(PropertyGroup):
 
     def set_float(self, value):
@@ -357,88 +382,6 @@ class ObjectMatrixConversions(PropertyGroup):
                                 )
 
 
-def metapanel_layout_items():
-    items = [
-        ('0', "Move", "Transformation Tab", 'OBJECT_ORIGIN', 1),
-        ('1', "Tools", "Camera Manager Tab", 'OUTLINER_DATA_CAMERA', 2),
-        ('2', "Draw", "Viewport Overlays", 'SHADING_RENDERED', 3),
-        ('3', "Active", "Active Object Properties", 'OVERLAY', 4)
-            ]
-
-    return items
-
-
-class MetaPanelTabs(PropertyGroup):
-    stuff = metapanel_layout_items()
-
-    tab: EnumProperty(
-        name='',
-        description='Current Tab',
-        items=stuff
-    )
-
-    debug: BoolVectorProperty(
-                            name="Debug Switches",
-                            description="ATB Gizmo Toolbox",
-                            default=(False, False, False, False),
-                            size=4,
-                            options={'SKIP_SAVE'}
-                             )
-
-    cavity_toggle: BoolVectorProperty(
-                                    name="Cavity Shading",
-                                    description="ATB Cavity Toggles",
-                                    default=(False, False),
-                                    size=2,
-                                    options={'SKIP_SAVE'}
-                                     )
-
-    activeObjectPanel_Toggles: BoolVectorProperty(
-                            name="Active Object Panel Sub-Section Toggles",
-                            description="ATB Gizmo Toolbox",
-                            default=(False, False, False, False),
-                            size=4,
-                            options={'SKIP_SAVE'}
-                             )
-
-    exp_objpointer: PointerProperty(
-        type=bpy.types.Object,
-        name="Reference Object",
-        description="MAGIC",
-    )
-
-    cam_index: IntProperty(
-        name="Camera Index",
-        default=0
-    )
-
-# QUICK OPERATOR (MENU PANEL) PANEL
-
-
-def quick_ops_items():
-    items = [
-        ('EDIT', "Edit Menu", "Edit Mesh", 'NONE', 1),
-        ('ADD', "Add Menu", "Add Mesh", 'NONE', 2),
-        ('UV', 'UV Map Menu', "UV Map Options", 'NONE', 3),
-        ('CONTEXT', "Context Menu", "Right-Click Menu", 'NONE', 4),
-        ('VERTEX', "Vertex Menu", "Vertex Operators", 'NONE', 5),
-        ('EDGE', "Edge Menu", "Edge Operators", 'NONE', 6),
-        ('FACE', "Face Menu", "FAce Operators", 'NONE', 7)
-            ]
-
-    return items
-
-
-class QuickOpMenus(PropertyGroup):
-    stuff = quick_ops_items()
-
-    menus: EnumProperty(
-        name='',
-        description='Current Menu',
-        items=stuff
-    )
-
-
 class CustomTransforms(PropertyGroup):
 
     def get_matrix(self, value):
@@ -492,6 +435,90 @@ class CustomTransforms(PropertyGroup):
         size=9,
         default=[b for a in Matrix.Identity(4).to_3x3() for b in a]
     )
+
+
+
+def metapanel_layout_items():
+    items = [
+        ('0', "Move", "Transformation Tab", 'OBJECT_ORIGIN', 1),
+        ('1', "Tools", "Camera Manager Tab", 'OUTLINER_DATA_CAMERA', 2),
+        ('2', "Draw", "Viewport Overlays", 'SHADING_RENDERED', 3),
+        ('3', "Active", "Active Object Properties", 'OVERLAY', 4)
+            ]
+
+    return items
+
+
+class ATB_SceneProperties(PropertyGroup):
+    debug: BoolProperty(
+                            name="Debug",
+                            description="ATB Debug Mode",
+                            default=True,
+                            options={'SKIP_SAVE'}
+                             )
+
+    mode_flag: IntProperty(
+        name="Mode Flag",
+        description="A flag for modes",
+        options={'ANIMATABLE'}
+
+    )
+
+
+class ATB_ObjectProperties(PropertyGroup):
+    debug: BoolVectorProperty(
+                            name="Debug Switches",
+                            description="ATB Gizmo Toolbox",
+                            default=(False, False, False, False),
+                            size=4,
+                            options={'SKIP_SAVE'}
+                             )
+
+
+class MetaPanelTabs(PropertyGroup):
+    stuff = metapanel_layout_items()
+
+    tab: EnumProperty(
+        name='',
+        description='Current Tab',
+        items=stuff
+    )
+
+    debug: BoolVectorProperty(
+                            name="Debug Switches",
+                            description="ATB Gizmo Toolbox",
+                            default=(False, False, False, False),
+                            size=4,
+                            options={'SKIP_SAVE'}
+                             )
+
+    cavity_toggle: BoolVectorProperty(
+                                    name="Cavity Shading",
+                                    description="ATB Cavity Toggles",
+                                    default=(False, False),
+                                    size=2,
+                                    options={'SKIP_SAVE'}
+                                     )
+
+    activeObjectPanel_Toggles: BoolVectorProperty(
+                            name="Active Object Panel Sub-Section Toggles",
+                            description="ATB Gizmo Toolbox",
+                            default=(False, False, False, False),
+                            size=4,
+                            options={'SKIP_SAVE'}
+                             )
+
+    exp_objpointer: PointerProperty(
+        type=bpy.types.Object,
+        name="Reference Object",
+        description="MAGIC",
+    )
+
+    cam_index: IntProperty(
+        name="Camera Index",
+        default=0
+    )
+
 
 # WIRE COLORS
 
@@ -551,7 +578,13 @@ def fast_snap_prev_modes(get):
             ('MEDIAN', "Median", "", 'NONE', 3),
             ('ACTIVE', "Active", "", 'NONE', 4),
                 ]
-
+    else:
+        items = [
+            ('CLOSEST', "Closest", "", 'NONE', 1),
+            ('CENTER', "Center", "", 'NONE', 2),
+            ('MEDIAN', "Median", "", 'NONE', 3),
+            ('ACTIVE', "Active", "", 'NONE', 4),
+                ]
     return items
 
 
@@ -598,3 +631,75 @@ class CustomPopoverProps(PropertyGroup):
         default="BATMAN",
     )
 
+
+class ATB_WorkspaceProperties(PropertyGroup):
+    """
+    Root group for ATB properties that can be
+    configured per-workspace. Mostly panel tabs.
+    """
+    # Top-level debug flag
+    debug: BoolProperty(
+                            name="Debug",
+                            description="ATB Debug Mode",
+                            default=True,
+                            options={'SKIP_SAVE'}
+                             )
+
+
+    ### Meta Panel Stuff ###
+    mp_tabs: EnumProperty(
+        name='',
+        description='Current Tab',
+        items=metapanel_layout_items()
+    )
+
+    mp_active_subsections: BoolVectorProperty(
+                            name="Active Object Panel Sub-Section Toggles",
+                            description="ATB Gizmo Toolbox",
+                            default=(False, False, False, False),
+                            size=4,
+                            options={'SKIP_SAVE'}
+                             )
+
+    mp_cam_index: IntProperty(
+        name="Camera Index",
+        default=0
+    )
+
+    mp_shading_cavtoggle: BoolVectorProperty(
+                                    name="Cavity Shading",
+                                    description="ATB Cavity Toggles",
+                                    default=(False, False),
+                                    size=2,
+                                    options={'SKIP_SAVE'}
+                                     )
+
+    mp_transforms: PointerProperty(type=CustomTransforms)
+
+
+    ### Quick-Menu ###
+    qm_menus: EnumProperty(
+        name='',
+        description='Current Menu',
+        items=quick_ops_items()
+    )
+
+
+    ### Custom Popovers ###
+    PointerProperty(type=CustomPopoverProps)
+
+
+    ### Fast Panel
+    fp_tab_items = [
+                ('MEASURES', "Measures", "Measurement Tools and Overlays", 'DESKTOP', 1),
+                ('OVERLAYS', "Overlays", "Viewport Overlays", 'SEQ_STRIP_DUPLICATE', 2),
+                ('NORMALS', "Normals", "Mesh Normal Overlays", 'SNAP_FACE_CENTER', 3),
+                ('GIZMOS', "Gizmos", "Gizmo Options", 'CON_OBJECTSOLVER', 4),
+                ('DISPLAY', "Display", "Object Display Options", 'RIGID_BODY_CONSTRAINT', 5)
+                           ]
+
+    fp_tabs: EnumProperty(
+        name=' ',
+        description='Fast Panel Tabs',
+        items=fp_tab_items
+    )

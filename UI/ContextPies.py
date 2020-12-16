@@ -22,6 +22,71 @@ from bpy.types import (
     Menu
 )
 
+class ATB_OT_MetaPie(bpy.types.Operator):
+    bl_idname = "atb.meta_pie"
+    bl_label = "ATB Meta Pie"
+    bl_description = ("Launches the mode-appropriate ATB Pie.")
+    bl_options = {'REGISTER'}
+
+    mode_items = [
+        ("BRUSH", "Brush", ""),
+        ("STROKE", "Stroke", ""),
+        ("PLANE", "Plane", ""),
+        ("SYMM", "Symmetry", ""),
+    ]
+
+    mode: bpy.props.EnumProperty(
+        items=mode_items,
+        name="Mode",
+        description="The invocation mode, used to select which sculpt functions are displayed",
+        default='STROKE'
+    )
+
+    def invoke(self, context, event):
+        self.loc = (event.mouse_region_x, event.mouse_region_y)
+
+        if context.mode == 'OBJECT':
+            print("OBJECT MODE")
+            bpy.ops.atb.super_select('INVOKE_DEFAULT', False)
+            return {'FINISHED'}
+
+
+        elif context.mode == 'SCULPT':
+            print("SCULPT MODE")
+            bpy.ops.atb.sculpt_pie('INVOKE_DEFAULT', False)
+            return {'FINISHED'}
+
+        elif context.mode == 'EDIT_MESH':
+            print("MESH EDIT")
+            bpy.ops.atb.super_select('INVOKE_DEFAULT', False)
+            return {'FINISHED'}
+
+        elif context.mode == 'EDIT_CURVE':
+            print("CURVE EDIT")
+
+        elif context.mode == 'EDIT_SURFACE':
+            print("SURFACE EDIT")
+
+        elif context.mode == 'EDIT_TEXT':
+            print("TEXT EDIT")
+
+        elif context.mode == 'EDIT_ARMATURE':
+            print("ARMATURE EDIT")
+
+        elif context.mode == 'EDIT_METABALL':
+            print("METABALL EDIT")
+
+        elif context.mode == 'EDIT_LATTICE':
+            print("LATTICE EDIT")
+
+
+        if event.is_tablet:
+            self.tablet = True
+        else:
+            self.tablet = False
+
+        return {'FINISHED'}
+
 
 class VIEW3D_MT_PIE_orbit_lock(Menu):
     bl_label = "Context Pie"
@@ -59,7 +124,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # LEFT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Clear Seam / Sharp / Bevel / Crease"
                 )
 
@@ -101,7 +166,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # RIGHT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Mark Seam / Sharp / Bevel / Crease"
                 )
 
@@ -163,7 +228,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
             elif context.scene.cp_mode_enum == '2':
                 # LEFT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Mark Seam / Sharp / Bevel / Crease"
                 )
 
@@ -205,7 +270,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # RIGHT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Clear Seam / Sharp / Bevel / Crease"
                 )
 
@@ -247,7 +312,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # BOTTOM
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Cursor to Active / Selection"
                 )
 
@@ -261,7 +326,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # TOP
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Merge to: Center | (c) Last | (a) Cursor | (s) First"
                 )
 
@@ -308,7 +373,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # TOP RIGHT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Select Surface | Region | Inner | Outer"
                 )
 
@@ -335,7 +400,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # BOTTOM LEFT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Select More / Less / Next / Prev"
                 )
 
@@ -357,7 +422,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # BOTTOM RIGHT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Snap to Active / Cursor"
                 )
 
@@ -387,7 +452,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # LEFT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Bevel / Inset"
                 )
 
@@ -401,7 +466,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # RIGHT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Bridge / Merge Edge Loops"
                 )
 
@@ -425,7 +490,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # BOTTOM
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Transform Selection / Cursor"
                 )
 
@@ -449,7 +514,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # TOP
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Cycle Pie"
                 )
 
@@ -473,7 +538,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
                 # TOP LEFT
                 context_op = pie.operator(
-                    "act.context_op",
+                    "atb.context_op",
                     text="Extrude and Push / Scale"
                 )
                 context_op.def_op = "bpy.ops.view3d.edit_mesh_extrude_move_normal('INVOKE_DEFAULT', True)"
@@ -493,7 +558,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
         if bpy.context.mode == 'OBJECT':
             # LEFT
             context_op = pie.operator(
-                "act.context_op",
+                "atb.context_op",
                 text="Cursor to Active / Selection"
             )
             context_op.def_op = """view3d.snap_cursor_to_active"""
@@ -506,7 +571,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
             # RIGHT
             context_op = pie.operator(
-                "act.context_op",
+                "atb.context_op",
                 text="Snap to Active / Cursor"
             )
 
@@ -529,7 +594,7 @@ class VIEW3D_MT_PIE_orbit_lock(Menu):
 
             # BOTTOM
             context_op = pie.operator(
-                "act.context_op",
+                "atb.context_op",
                 text="Set Origin to Cursor / Geometry"
             )
 
@@ -576,7 +641,7 @@ class VIEW3D_MT_PIE_expand_mode(Menu):
         pie = layout.menu_pie()
 
         pie.operator(
-            "act.add_to_mode"
+            "atb.add_to_mode"
         )
 
 

@@ -179,7 +179,7 @@ class ATVertexGizmoGroup(GizmoGroup):
         z_ax.use_draw_offset_scale = True
         z_ax.use_draw_scale = True
 
-        props = z_ax.target_set_operator("act.context_op")
+        props = z_ax.target_set_operator("atb.context_op")
         props.def_op = "transform.translate"
         props.def_op_args = "'INVOKE_DEFAULT', True"
         props.def_op_props = (

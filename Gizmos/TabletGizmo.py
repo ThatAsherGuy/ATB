@@ -90,7 +90,7 @@ class ATB_TabletGizmoGroup(GizmoGroup):
 
         button_a = make_button2d(self)
 
-        op = button_a.target_set_operator("act.context_op")
+        op = button_a.target_set_operator("atb.context_op")
 
 
         op.def_op = "wm.call_menu_pie"

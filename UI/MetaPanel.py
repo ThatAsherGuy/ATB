@@ -161,6 +161,7 @@ class CUSTOM_UL_camera_list(bpy.types.UIList):
 
 
 class VIEW3D_PT_meta_panel(Panel):
+    bl_idname = "VIEW3D_PT_meta_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "ATB"
@@ -215,6 +216,7 @@ class VIEW3D_PT_meta_panel(Panel):
         wm = bpy.context.window_manager
         tabs = wm.metapanel_tabs
         metapanel = wm.metapanel_tabs
+        atb_props = context.scene.ATB
 
         if not tabs.tab:
             tabs.tab = '0'
@@ -230,6 +232,7 @@ class VIEW3D_PT_meta_panel(Panel):
         layout = self.layout
 
         root = layout.column(align=True)
+        root.prop(atb_props, "mode_flag")
 
         tb_width_check = check_width('UI', 12, 1, 440)
 
@@ -281,6 +284,8 @@ class VIEW3D_PT_meta_panel(Panel):
             orient_slot = scene.transform_orientation_slots[0]
 
             # Group 1 - Transform Orientation and Pivot
+            # bcol.label(text=self.bl_owner_id)
+            # bcol.template_running_jobs()
             bcol.label(text="Orientation")
 
             g1_r = bcol.grid_flow(align=True)
@@ -326,32 +331,32 @@ class VIEW3D_PT_meta_panel(Panel):
             # g_1_r_1.scale_y = 0.5
 
             g_1_r_1.operator(
-                "act.make_named_orientation",
+                "atb.make_named_orientation",
                 text="",
                 icon='EVENT_A'
             ).transform_slot = 'SLOT_A'
             g_1_r_1.operator(
-                "act.make_named_orientation",
+                "atb.make_named_orientation",
                 text="",
                 icon='EVENT_B'
             ).transform_slot = 'SLOT_B'
             g_1_r_1.operator(
-                "act.make_named_orientation",
+                "atb.make_named_orientation",
                 text="",
                 icon='EVENT_C'
             ).transform_slot = 'SLOT_C'
             g_1_r_1.operator(
-                "act.make_named_orientation",
+                "atb.make_named_orientation",
                 text="",
                 icon='EVENT_D'
             ).transform_slot = 'SLOT_D'
             g_1_r_1.operator(
-                "act.make_named_orientation",
+                "atb.make_named_orientation",
                 text="",
                 icon='EVENT_E'
             ).transform_slot = 'SLOT_E'
             g_1_r_1.operator(
-                "act.make_named_orientation",
+                "atb.make_named_orientation",
                 text="",
                 icon='EVENT_F'
             ).transform_slot = 'SLOT_E'
@@ -403,7 +408,7 @@ class VIEW3D_PT_meta_panel(Panel):
             g_1_r_3 = bcol.row(align=True)
 
             g_1_r_3.operator(
-                "act.align_cursor_to_orientation",
+                "atb.align_cursor_to_orientation",
                 text="Do Cursor",
             )
 
@@ -427,55 +432,55 @@ class VIEW3D_PT_meta_panel(Panel):
             grid.scale_y = 0.75
 
             op = grid.operator(
-                "act.origin_to_bbox",
+                "atb.origin_to_bbox",
                 text='Front Left',
             )
             op.box_mode = 'POINT'
             op.box_point = 'XNEG_YPOS_ZNEG'
 
             op = grid.operator(
-                "act.origin_to_bbox",
+                "atb.origin_to_bbox",
                 text='Front Right',
             )
             op.box_mode = 'POINT'
             op.box_point = 'XPOS_YPOS_ZNEG'
 
             op = grid.operator(
-                "act.origin_to_bbox",
+                "atb.origin_to_bbox",
                 text='Back Left',
             )
             op.box_mode = 'POINT'
             op.box_point = 'XNEG_YNEG_ZNEG'
 
             op = grid.operator(
-                "act.origin_to_bbox",
+                "atb.origin_to_bbox",
                 text='Back Right',
             )
             op.box_mode = 'POINT'
             op.box_point = 'XPOS_YNEG_ZNEG'
 
             op = grid.operator(
-                "act.origin_to_bbox",
+                "atb.origin_to_bbox",
                 text='Bottom',
             )
             op.box_mode = 'FACE'
             op.box_face = 'ZNEG'
 
             op = grid.operator(
-                "act.origin_to_bbox",
+                "atb.origin_to_bbox",
                 text='Center',
             )
             op.box_mode = 'FACE'
             op.box_face = 'CENTER'
 
             op = grid.operator(
-                "act.set_origin",
+                "atb.set_origin",
                 text='Selected',
             )
             op.snap_mode = 'SELECTION'
 
             op = grid.operator(
-                "act.set_origin",
+                "atb.set_origin",
                 text='Cursor',
             )
             op.snap_mode = 'CURSOR'
@@ -1094,7 +1099,7 @@ class VIEW3D_PT_meta_panel(Panel):
                       and shading.show_cavity else False)
 
             ico = ('WORLD_DATA' if metapanel.cavity_toggle[1] else 'WORLD_DATA')
-            op = row.operator("act.bool_to_enum", text="", icon=ico, depress=press1)
+            op = row.operator("atb.bool_to_enum", text="", icon=ico, depress=press1)
             op.bool_prop = 'window_manager.metapanel_tabs.cavity_toggle'
             op.enum_prop_path = 'space_data.shading.cavity_type'
             op.bool_index = 1
@@ -1116,7 +1121,7 @@ class VIEW3D_PT_meta_panel(Panel):
 
             ico = ('RESTRICT_VIEW_OFF' if metapanel.cavity_toggle[0] else 'RESTRICT_VIEW_ON')
 
-            op = row.operator("act.bool_to_enum", text="", icon=ico, depress=press2)
+            op = row.operator("atb.bool_to_enum", text="", icon=ico, depress=press2)
             op.bool_prop = 'window_manager.metapanel_tabs.cavity_toggle'
             op.enum_prop_path = 'space_data.shading.cavity_type'
             op.bool_index = 0
@@ -2808,55 +2813,55 @@ class VIEW3D_MT_set_origin(bpy.types.Menu):
         layout = self.layout
 
         op = layout.operator(
-            "act.origin_to_bbox",
+            "atb.origin_to_bbox",
             text='Origin to Front Left',
         )
         op.box_mode = 'POINT'
         op.box_point = 'XNEG_YPOS_ZNEG'
 
         op = layout.operator(
-            "act.origin_to_bbox",
+            "atb.origin_to_bbox",
             text='Origin to Front Right',
         )
         op.box_mode = 'POINT'
         op.box_point = 'XPOS_YPOS_ZNEG'
 
         op = layout.operator(
-            "act.origin_to_bbox",
+            "atb.origin_to_bbox",
             text='Origin to Back Left',
         )
         op.box_mode = 'POINT'
         op.box_point = 'XNEG_YNEG_ZNEG'
 
         op = layout.operator(
-            "act.origin_to_bbox",
+            "atb.origin_to_bbox",
             text='Origin to Back Right',
         )
         op.box_mode = 'POINT'
         op.box_point = 'XPOS_YNEG_ZNEG'
 
         op = layout.operator(
-            "act.origin_to_bbox",
+            "atb.origin_to_bbox",
             text='Origin to Bottom',
         )
         op.box_mode = 'FACE'
         op.box_face = 'ZNEG'
 
         op = layout.operator(
-            "act.origin_to_bbox",
+            "atb.origin_to_bbox",
             text='Origin to Center',
         )
         op.box_mode = 'FACE'
         op.box_face = 'CENTER'
 
         op = layout.operator(
-            "act.set_origin",
+            "atb.set_origin",
             text='Origin to Selected',
         )
         op.snap_mode = 'SELECTION'
 
         op = layout.operator(
-            "act.set_origin",
+            "atb.set_origin",
             text='Origin to Cursor',
         )
         op.snap_mode = 'CURSOR'

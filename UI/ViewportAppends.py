@@ -42,7 +42,7 @@ def custom_popovers(self, context):
     root = layout.row(align=True)
 
     if panel_1 == "BATMAN":
-        root.operator("act.set_custom_pop", text="", icon='ADD').button = 1
+        root.operator("atb.set_custom_pop", text="", icon='ADD').button = 1
     else:
         root.popover(
             panel_1,
@@ -51,7 +51,7 @@ def custom_popovers(self, context):
         )
 
     if panel_2 == "BATMAN":
-        root.operator("act.set_custom_pop", text="", icon='ADD').button = 2
+        root.operator("atb.set_custom_pop", text="", icon='ADD').button = 2
     else:
         root.popover(
             panel_2,
@@ -60,14 +60,14 @@ def custom_popovers(self, context):
         )
 
     if panel_3 == "BATMAN":
-        root.operator("act.set_custom_pop", text="", icon='ADD').button = 3
+        root.operator("atb.set_custom_pop", text="", icon='ADD').button = 3
     else:
         root.popover(
             panel_3,
             text="",
             icon='OUTLINER_OB_POINTCLOUD'
         )
-    root.operator("act.clear_custom_pop", text="", icon='REMOVE')
+    root.operator("atb.clear_custom_pop", text="", icon='REMOVE')
 
 
 def transform_pop(self, context):

@@ -84,7 +84,7 @@ def invert_view_axis(axis):
 
 class ATB_OT_ViewAxis(bpy.types.Operator):
     """Select operator wrapper with a pie menu for fancy things"""
-    bl_idname = "act.view_axis"
+    bl_idname = "atb.view_axis"
     bl_label = "ATB View Axis"
     bl_description = (
                     "Click: Align View\n"
@@ -134,7 +134,7 @@ class ATB_OT_ViewAxis(bpy.types.Operator):
 
 class ATB_OT_set_axis(bpy.types.Operator):
     """Select operator wrapper with a pie menu for fancy things"""
-    bl_idname = "act.set_axis"
+    bl_idname = "atb.set_axis"
     bl_label = "ATB Set Axis"
     bl_description = "Turn arbitrary inputs into viewport camera alignments"
     bl_options = {'REGISTER'}

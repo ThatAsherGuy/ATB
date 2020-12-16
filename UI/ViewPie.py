@@ -35,17 +35,17 @@ class VIEW3D_MT_ATB_view_pie(Menu):
         pie = layout.menu_pie()
 
         # LEFT
-        op = pie.operator("act.view_axis", text="Front/Back | Y Axis")
+        op = pie.operator("atb.view_axis", text="Front/Back | Y Axis")
         op.axis = 'FRONT'
         op.speed = context.preferences.view.smooth_view
 
         # RIGHT
-        op = pie.operator("act.view_axis", text="Right/Left | X Axis")
+        op = pie.operator("atb.view_axis", text="Right/Left | X Axis")
         op.axis = 'RIGHT'
         op.speed = context.preferences.view.smooth_view
 
         # BOTTOM
-        op = pie.operator("act.view_axis", text="Top/Bottom | Z Axis")
+        op = pie.operator("atb.view_axis", text="Top/Bottom | Z Axis")
         op.axis = 'TOP'
         op.speed = context.preferences.view.smooth_view
 
@@ -58,7 +58,7 @@ class VIEW3D_MT_ATB_view_pie(Menu):
             cam_icon = 'CON_CAMERASOLVER'
 
         context_op = pie.operator(
-            "act.context_op",
+            "atb.context_op",
             text="Camera",
             icon=cam_icon
         )
@@ -141,7 +141,7 @@ class VIEW3D_MT_ATB_view_pie(Menu):
             persp_icon = 'VIEW_ORTHO'
 
         context_op = pie.operator(
-            "act.context_op",
+            "atb.context_op",
             text=persp_label,
             icon=persp_icon
         )
@@ -151,7 +151,7 @@ class VIEW3D_MT_ATB_view_pie(Menu):
         context_op.ctrl_op = "wm.context_toggle"
         context_op.ctrl_op_props = "{'data_path': 'preferences.inputs.use_auto_perspective'}"
 
-        context_op.shift_op = "act.set_axis"
+        context_op.shift_op = "atb.set_axis"
         context_op.shift_op_props = ""
 
         # BOTTOM LEFT
@@ -242,7 +242,7 @@ class VIEW3D_MT_ATB_cursor_pie(Menu):
 
         # LEFT
         context_op = pie.operator(
-            "act.context_op",
+            "atb.context_op",
             text="Move Cursor",
             icon='ORIENTATION_CURSOR'
         )
@@ -263,7 +263,7 @@ class VIEW3D_MT_ATB_cursor_pie(Menu):
         op.name = "VIEW3D_MT_ATB_origin_pie"
 
         # context_op = pie.operator(
-        #     "act.context_op",
+        #     "atb.context_op",
         #     text="Reset Cursor",
         #     icon='CURSOR'
         # )
@@ -275,7 +275,7 @@ class VIEW3D_MT_ATB_cursor_pie(Menu):
 
         # BOTTOM
         context_op = pie.operator(
-            "act.context_op",
+            "atb.context_op",
             text="Cursor to Selected | Active | Transform",
             icon='PIVOT_CURSOR'
         )
@@ -293,7 +293,7 @@ class VIEW3D_MT_ATB_cursor_pie(Menu):
 
         # TOP
         context_op = pie.operator(
-            "act.context_op",
+            "atb.context_op",
             text="Selected to Cursor | Active",
             icon='CUBE',
         )
@@ -340,7 +340,7 @@ class VIEW3D_MT_PIE_view_utilities(Menu):
         col.prop(colorz, "default_obj_wire", text="")
         col.prop(colorz, "default_edit_wire", text="")
 
-        op = col.operator("act.store_wire_color")
+        op = col.operator("atb.store_wire_color")
 
         col.prop(colorz, "temp_obj_wire", text="")
         col.prop(colorz, "temp_edit_wire", text="")
@@ -351,7 +351,7 @@ class VIEW3D_MT_PIE_view_utilities(Menu):
 
         # BOTTOM
         col = pie.column()
-        op = col.operator("act.set_color", text="Toggle Wire Colors")
+        op = col.operator("atb.set_color", text="Toggle Wire Colors")
         op.tog_set = True
         op.sync_wire = True
         op.invert_wire = False
@@ -359,7 +359,7 @@ class VIEW3D_MT_PIE_view_utilities(Menu):
 
         # TOP
         col = pie.column()
-        op = col.operator("act.set_color", text="Toggle Vertex Sizes")
+        op = col.operator("atb.set_color", text="Toggle Vertex Sizes")
         op.tog_vert_size = True
         op.tog_set = False
         op.sync_wire = False
@@ -389,20 +389,20 @@ class VIEW3D_MT_ATB_origin_pie(Menu):
         )
         # RIGHT
         op = pie.operator(
-            "act.set_origin",
+            "atb.set_origin",
             text='To Cursor',
         )
         op.snap_mode = 'CURSOR'
         # BOTTOM
         op = pie.operator(
-            "act.origin_to_bbox",
+            "atb.origin_to_bbox",
             text='Bounding Box Bottom',
         )
         op.box_mode = 'FACE'
         op.box_face = 'ZNEG'
         # TOP
         op = pie.operator(
-            "act.origin_to_bbox",
+            "atb.origin_to_bbox",
             text='To Geometry Center',
         )
         op.box_mode = 'FACE'
@@ -434,9 +434,9 @@ class VIEW3D_MT_ATB_tablet_pie(Menu):
         op.name = "VIEW3D_MT_ATB_cursor_pie"
         # BOTTOM
         if context.mode == "OBJECT":
-            op = pie.operator("act.group_select", text="Select Hierachy")
+            op = pie.operator("atb.group_select", text="Select Hierachy")
         else:
-            op = pie.operator("act.super_select", text="Select Topology")
+            op = pie.operator("atb.super_select", text="Select Topology")
             op.action = "0"
         # TOP
         op = pie.operator("wm.call_menu_pie", text="View")
@@ -449,3 +449,127 @@ class VIEW3D_MT_ATB_tablet_pie(Menu):
         pie.separator()
         # BOTTOM RIGHT
         op = pie.operator("view3d.object_mode_pie_or_toggle", text="Editor Mode")
+
+
+# I'm trying some stuff in here that's totally unrelated to the actual functionality.
+# The variable names are obtuse.
+
+class VIEW3D_PT_camera_list(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    # bl_category = "ATB"
+    bl_label = "Camera List"
+    bl_options = {'DRAW_BOX', 'HEADER_LAYOUT_EXPAND',  }
+
+    def draw(self, context):
+        C = context
+        wm = C.window_manager
+        tabs = wm.metapanel_tabs
+        active = C.active_object
+        scene = C.scene
+
+        # Single-letter capitalized variable names....
+        L = self.layout
+        R = L.column(align=True)
+
+        row = R.row(align=True)
+        row.template_list("CUSTOM_UL_camera_list", "", context.blend_data,
+                          "cameras", tabs, "cam_index", rows=1)
+
+
+def listpanel(C, L):
+    wm = C.window_manager
+    tabs = wm.metapanel_tabs
+    active = C.active_object
+    scene = C.scene
+
+    # Single-letter capitalized variable names....
+    R = L.column(align=True)
+    row = R.row(align=True)
+    row.template_list("CUSTOM_UL_camera_list", "", C.blend_data,
+                        "cameras", tabs, "cam_index", rows=1)
+
+def listpanel_alt(self, C):
+    wm = C.window_manager
+    tabs = wm.metapanel_tabs
+    active = C.active_object
+    scene = C.scene
+
+    # Single-letter capitalized variable names....
+    L = self.layout.menu_pie()
+    L.ui_units_x = 5
+    R = L.column(align=True)
+    row = R.row(align=True)
+    row.template_list("CUSTOM_UL_camera_list", "", C.blend_data,
+                        "cameras", tabs, "cam_index", type='DEFAULT')
+
+def camera_pie_base(self, context):
+    region = context.region_data
+    layout = self.layout
+    # view = context.space_data
+    pie = layout.menu_pie()
+    event = []
+
+    wm = context.window_manager
+    tabs = wm.metapanel_tabs
+
+    # LEFT
+    listpanel(context, pie)
+    # RIGHT
+    col = pie.column()
+    col.ui_units_x = 5
+    col.template_list("CUSTOM_UL_camera_list", "", context.blend_data,
+                            "cameras", tabs, "cam_index", type="DEFAULT")
+    # BOTTOM
+    # wm.popup_menu_pie(event, listpanel_alt,)
+    # TOP
+    # TOP LEFT
+    # TOP RIGHT
+    # BOTTOM LEFT
+    # BOTTOM RIGHT
+
+
+class ATB_OT_EnhancedCameraPie(bpy.types.Operator):
+    """Shortest Path Pick operator wrapper with a pie menu for fancy things"""
+    bl_idname = "atb.ehc"
+    bl_label = "ATB Enhanced Camera Pie"
+    bl_description = """Fancy Things"""
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        m_loc = (event.mouse_region_x, event.mouse_region_y)
+        self.m_loc = m_loc
+
+        wm.popup_menu_pie(event, draw_func=camera_pie_base, title="", icon='NONE')
+        return {'FINISHED'}
+
+
+class VIEW3D_MT_ATB_camera_pie(Menu):
+    bl_label = "ATB Camera Pie"
+
+    def draw(self, context):
+        region = context.region_data
+        layout = self.layout
+        # view = context.space_data
+        pie = layout.menu_pie()
+        event = []
+
+
+        wm = context.window_manager
+        tabs = wm.metapanel_tabs
+
+        # LEFT
+        listpanel(context, pie)
+        # RIGHT
+        col = pie.column()
+        col.ui_units_x = 5
+        col.template_list("CUSTOM_UL_camera_list", "", context.blend_data,
+                                "cameras", tabs, "cam_index", type="DEFAULT")
+        # BOTTOM
+        # wm.popup_menu_pie(event, listpanel_alt,)
+        # TOP
+        # TOP LEFT
+        # TOP RIGHT
+        # BOTTOM LEFT
+        # BOTTOM RIGHT

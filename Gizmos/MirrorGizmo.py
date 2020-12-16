@@ -85,7 +85,7 @@ def set_op(arrow, axis):
         "NEGATIVE_Y",
         "NEGATIVE_Z",
     )
-    props = arrow.target_set_operator("act.quick_symmetry")
+    props = arrow.target_set_operator("atb.quick_symmetry")
     props.mirror_axis = axes[axis]
     props.do_modal = False
     return axes[axis]

@@ -22,7 +22,7 @@ import bpy
 
 
 class ATBPrintVerts(bpy.types.Operator):
-    bl_idname = "act.print_verts"
+    bl_idname = "atb.print_verts"
     bl_label = "Print Vertex Coordinates"
     bl_description = "Creates a list of vertex coordinates that can be used for gizmos"
     bl_options = {'REGISTER'}

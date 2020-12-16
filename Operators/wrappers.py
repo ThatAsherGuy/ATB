@@ -41,7 +41,7 @@ import types
 # For header buttons, doesn't push an undo
 class ATB_OT_BoolToEnum(bpy.types.Operator):
     """Takes a BoolVector and an Enum, makes them play nice"""
-    bl_idname = "act.bool_to_enum"
+    bl_idname = "atb.bool_to_enum"
     bl_label = "ATB Bool to Enum"
     bl_description = "Takes a BoolVector and an Enum, makes them play nice"
 
@@ -123,7 +123,7 @@ class ATB_OT_BoolToEnum(bpy.types.Operator):
 # For header buttons, forces a re-draw, doesn't push an undo
 class ATB_OT_CycleEnum(bpy.types.Operator):
     """Wrapper for context_cycle_enum that updates the 3d viewport"""
-    bl_idname = "act.cycle_enum"
+    bl_idname = "atb.cycle_enum"
     bl_label = "ATB Cycle Enum"
     bl_description = "Wrapper for context_cycle_enum"
 
@@ -148,7 +148,7 @@ class ATB_OT_CycleEnum(bpy.types.Operator):
 # For Panel tabs, doesn't push an undo
 class ATB_OT_SetEnum(bpy.types.Operator):
     """Wrapper for context_set_enum that updates the 3d viewport"""
-    bl_idname = "act.set_enum"
+    bl_idname = "atb.set_enum"
     bl_label = "ATB Set Enum and Update"
     bl_description = "Wrapper for context_set_enum"
 
@@ -180,7 +180,7 @@ class ATB_OT_SetEnum(bpy.types.Operator):
 # A general-purpose dynamic operator operator.
 class ATB_OT_ContextOp(bpy.types.Operator):
     """Root Operator for checking modifer key status on operator invocation"""
-    bl_idname = "act.context_op"
+    bl_idname = "atb.context_op"
     bl_label = "ATB Context Operator"
     bl_description = """Calls different operators depending on the modifier key pressed"""
     bl_options = {'REGISTER'}
@@ -273,7 +273,7 @@ class ATB_OT_ContextOp(bpy.types.Operator):
 
         op_split = _op.split(".")
 
-        if not _op.startswith("act."):
+        if not _op.startswith("atb."):
             operator = getattr(getattr(bpy.ops, op_split[0]), op_split[1])
 
         if args:
@@ -301,7 +301,7 @@ class ATB_OT_ContextOp(bpy.types.Operator):
             self.report({'INFO'}, "Use Args: " + str(use_args))
 
         # try:
-        if _op.startswith("act."):
+        if _op.startswith("atb."):
             full = "bpy.ops." + _op + "('INVOKE_DEFAULT', True)"
             if db:
                 self.report({'INFO'}, "Custom Operator: " + str(full))
@@ -352,7 +352,7 @@ class ATB_OT_ContextOp(bpy.types.Operator):
 # TODO: Do I actually use this operator? Might be able to nix it.
 class ATB_OT_MouseContextOp(bpy.types.Operator):
     """Root Operator for checking mouse button status on operator invocation"""
-    bl_idname = "act.mouse_context_op"
+    bl_idname = "atb.mouse_context_op"
     bl_label = "ATB Mouse Context Operator"
     bl_description = """Calls different operators depending on the mouse button pressed"""
     bl_options = {'REGISTER'}
@@ -445,7 +445,7 @@ class ATB_OT_MouseContextOp(bpy.types.Operator):
 
         op_split = _op.split(".")
 
-        if not _op.startswith("act."):
+        if not _op.startswith("atb."):
             operator = getattr(getattr(bpy.ops, op_split[0]), op_split[1])
 
         if args:
@@ -473,7 +473,7 @@ class ATB_OT_MouseContextOp(bpy.types.Operator):
             self.report({'INFO'}, "Use Args: " + str(use_args))
 
         # try:
-        if _op.startswith("act."):
+        if _op.startswith("atb."):
             full = "bpy.ops." + _op + "('INVOKE_DEFAULT', True)"
             if db:
                 self.report({'INFO'}, "Custom Operator: " + str(full))
@@ -519,7 +519,7 @@ class ATB_OT_MouseContextOp(bpy.types.Operator):
 # Enables Fullscreen, hides overlays, headers, gizmos, etc
 class ATB_OT_TogglePhotoMode(bpy.types.Operator):
     """Wrapper for context_cycle_enum that updates the 3d viewport"""
-    bl_idname = "act.toggle_photo_mode"
+    bl_idname = "atb.toggle_photo_mode"
     bl_label = "ATB Toggle Photo Mode"
     bl_description = "Enables Fullscreen, hides overlays, headers, gizmos, etc"
 
@@ -546,7 +546,7 @@ class ATB_OT_TogglePhotoMode(bpy.types.Operator):
 # The Select Operator, with Pie
 class ATB_OT_EnhancedSelect(bpy.types.Operator):
     """Select operator wrapper with a pie menu for fancy things"""
-    bl_idname = "act.super_select"
+    bl_idname = "atb.super_select"
     bl_label = "ATB Super Select"
     bl_description = """Fancy Things"""
     bl_options = {'REGISTER'}
@@ -648,7 +648,7 @@ class ATB_OT_EnhancedSelect(bpy.types.Operator):
 
                 # BOTTOM
                 pie.operator_context = 'INVOKE_DEFAULT'
-                op = pie.operator("act.group_select", text="Select Hierachy")
+                op = pie.operator("atb.group_select", text="Select Hierachy")
                 op.location = m_loc
 
                 # TOP
@@ -740,7 +740,7 @@ class ATB_OT_EnhancedSelect(bpy.types.Operator):
 
 class ATB_OT_EnhancedTag(bpy.types.Operator):
     """Shortest Path Pick operator wrapper with a pie menu for fancy things"""
-    bl_idname = "act.super_tag"
+    bl_idname = "atb.super_tag"
     bl_label = "ATB Super Tag"
     bl_description = """Fancy Things"""
     bl_options = {'REGISTER', 'UNDO'}
@@ -872,7 +872,7 @@ class ATB_OT_EnhancedTag(bpy.types.Operator):
 
 class ATB_OT_GroupSelect(bpy.types.Operator):
     """Object-Mode Selection That Actually Makes Sense"""
-    bl_idname = "act.group_select"
+    bl_idname = "atb.group_select"
     bl_label = "ATB Group Select"
     bl_description = "Jesus on a pogo stick"
 
@@ -934,7 +934,7 @@ class ATB_OT_GroupSelect(bpy.types.Operator):
 
 class ATB_OT_AddToMode(bpy.types.Operator):
     """Wrapper for editmode_toggle that uses overrides to enable mode expansion"""
-    bl_idname = "act.add_to_mode"
+    bl_idname = "atb.add_to_mode"
     bl_label = "ATB Add Object to Mode"
     bl_description = "Adds objects to current editor mode"
 
@@ -989,7 +989,7 @@ class ATB_OT_AddToMode(bpy.types.Operator):
 
 class ATB_OT_MoveCursor(bpy.types.Operator):
     """Wrapper for various 3D Cursor Operators, with context overrides"""
-    bl_idname = "act.move_cursor"
+    bl_idname = "atb.move_cursor"
     bl_label = "ATB Move Cursor"
     bl_description = "Does Things to the 3D Cursor"
 
@@ -1048,7 +1048,7 @@ class ATB_OT_MoveCursor(bpy.types.Operator):
 
 class ATB_OT_FastSnap(bpy.types.Operator):
     """Wrapper for various transforms, which toggles snapping and pivot setting"""
-    bl_idname = "act.fast_snap"
+    bl_idname = "atb.fast_snap"
     bl_label = "ATB Fast Snap"
     bl_description = "Fast Snapping"
 
@@ -1186,7 +1186,7 @@ def scale_round(x, base=5):
 # Stolen from someone smarter than me
 class ATB_OT_context_modal_mouse(bpy.types.Operator):
     """Adjust arbitrary values with mouse input, but not shitty"""
-    bl_idname = "act.context_modal_mouse"
+    bl_idname = "atb.context_modal_mouse"
     bl_label = "ATB Context Modal Mouse"
     bl_options = {'GRAB_CURSOR', 'BLOCKING', 'UNDO', 'INTERNAL'}
 
@@ -1269,7 +1269,7 @@ class ATB_OT_context_modal_mouse(bpy.types.Operator):
 # TODO: There are still a few edge cases for this one that I need to solve
 class ATB_OT_drop_tool(bpy.types.Operator):
     """Changes the active tool to a contextually-appropriate 'default tool'"""
-    bl_idname = "act.drop_tool"
+    bl_idname = "atb.drop_tool"
     bl_label = "ATB Drop Tool"
     # bl_options = {'GRAB_CURSOR', 'BLOCKING', 'UNDO', 'INTERNAL'}
 
@@ -1316,7 +1316,7 @@ class ATB_OT_drop_tool(bpy.types.Operator):
 
 class ATB_OT_Set_Custom_Popover(bpy.types.Operator):
     """Let's the user set which panel will be displayed by the associated popover button"""
-    bl_idname = "act.set_custom_pop"
+    bl_idname = "atb.set_custom_pop"
     bl_label = "ATB Set Custom Popover"
     bl_options = {'BLOCKING', 'UNDO', 'INTERNAL', 'REGISTER'}
 
@@ -1367,7 +1367,7 @@ class ATB_OT_Set_Custom_Popover(bpy.types.Operator):
 
 class ATB_OT_Clear_Custom_Popover(bpy.types.Operator):
     """Let's the user clear the panel of the associated popover button"""
-    bl_idname = "act.clear_custom_pop"
+    bl_idname = "atb.clear_custom_pop"
     bl_label = "ATB Clear Custom Popover"
     bl_options = {'BLOCKING', 'UNDO', 'INTERNAL', 'REGISTER'}
 
@@ -1398,7 +1398,7 @@ class ATB_OT_Clear_Custom_Popover(bpy.types.Operator):
 
 class ATB_OT_Frame_Object(bpy.types.Operator):
     """Forces the Frame Selected operator to frame the object in edit mode"""
-    bl_idname = "act.frame_object"
+    bl_idname = "atb.frame_object"
     bl_label = "ATB Frame Object"
     bl_options = {'BLOCKING', 'UNDO', 'REGISTER'}
 

@@ -134,7 +134,7 @@ def get_mod_modal_hook(mod, sub):
 
 class ATB_OT_AddModifier(bpy.types.Operator):
     """Edit Mode Context menu for out-of-mode objects"""
-    bl_idname = "act.add_modifier"
+    bl_idname = "atb.add_modifier"
     bl_label = "ATB Add Modifier"
     bl_description = "Adds modifiers to one or more objects, with an optional adjustment modal"
     bl_options = {'REGISTER', 'UNDO', 'GRAB_CURSOR_X'}
@@ -312,7 +312,7 @@ class ATB_OT_AddModifier(bpy.types.Operator):
 
 class ATB_OT_Modifier_Pie(bpy.types.Operator):
     """Edit Mode Context menu for out-of-mode objects"""
-    bl_idname = "act.mod_pie"
+    bl_idname = "atb.mod_pie"
     bl_label = "ATB Modifier Pie"
     bl_description = "A pie menu for adding modifiers to multiple objects"
 
@@ -323,7 +323,7 @@ class ATB_OT_Modifier_Pie(bpy.types.Operator):
 
             # LEFT
             op = pie.operator(
-                "act.add_modifier",
+                "atb.add_modifier",
                 text="Bevel"
             )
             op.modifier = 'BEVEL'
@@ -332,7 +332,7 @@ class ATB_OT_Modifier_Pie(bpy.types.Operator):
 
             # RIGHT
             op = pie.operator(
-                "act.add_modifier",
+                "atb.add_modifier",
                 text="Mirror"
             )
             op.modifier = 'MIRROR'
@@ -341,7 +341,7 @@ class ATB_OT_Modifier_Pie(bpy.types.Operator):
 
             # BOTTOM
             op = pie.operator(
-                "act.add_modifier",
+                "atb.add_modifier",
                 text="Array"
             )
             op.modifier = 'ARRAY'
@@ -350,7 +350,7 @@ class ATB_OT_Modifier_Pie(bpy.types.Operator):
 
             # TOP
             op = pie.operator(
-                "act.add_modifier",
+                "atb.add_modifier",
                 text="Solidify"
             )
             op.modifier = 'SOLIDIFY'

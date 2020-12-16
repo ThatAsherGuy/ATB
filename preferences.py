@@ -12,6 +12,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
+from _bpy import _bl_owner_id_get, _bl_owner_id_set
 import os
 import rna_keymap_ui
 from . dicts import keys as keysdict
@@ -108,7 +109,7 @@ def register_keymaps(keylists):
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     refmap = wm.keyconfigs.active
-    # kc = wm.keyconfigs.user
+
     debug = 0
 
     keymaps = []
@@ -118,6 +119,7 @@ def register_keymaps(keylists):
         for item in keylist:
             keymap = item.get("keymap")
             space_type = item.get("space_type", "EMPTY")
+
             if debug == 2:
                 print("Items Added: ", i)
                 print(str(keymap) + " | " + str(space_type))
@@ -131,6 +133,7 @@ def register_keymaps(keylists):
 
                 if ref:
                     km = kc.keymaps.new(name=str(keymap), space_type=space_type)
+                    # km.bl_owner_id = "Asher's Toolbox"
 
                     idname = item.get("idname")
                     type = item.get("type")
@@ -139,8 +142,9 @@ def register_keymaps(keylists):
                     shift = item.get("shift", False)
                     ctrl = item.get("ctrl", False)
                     alt = item.get("alt", False)
+                    any_mod = item.get("any", False)
 
-                    kmi = km.keymap_items.new(idname, type, value, shift=shift, ctrl=ctrl, alt=alt)
+                    kmi = km.keymap_items.new(idname, type, value, shift=shift, ctrl=ctrl, alt=alt, any=any_mod)
 
                     if debug == 1:
                         print(str(kmi.idname)

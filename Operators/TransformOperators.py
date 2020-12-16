@@ -28,7 +28,7 @@ import bmesh
 
 class ATB_OT_RotateAroundPivot(bpy.types.Operator):
     """Wrapper for transform.rotate"""
-    bl_idname = "act.rotate_around_pivot"
+    bl_idname = "atb.rotate_around_pivot"
     bl_label = "ATB Rotate Around Pivot"
     bl_description = "Wrapper for transform.rotate"
     bl_options = {'REGISTER', 'UNDO'}
@@ -362,7 +362,7 @@ class CursorToSelected(bpy.types.Operator):
 
 class ATB_OT_CreateNamedOrientation(bpy.types.Operator):
     """Wrapper for custom orientations"""
-    bl_idname = "act.make_named_orientation"
+    bl_idname = "atb.make_named_orientation"
     bl_label = "ATB Custom Orientation"
     bl_description = "Set/Update Orientation Quick Slot"
     bl_options = {'REGISTER', 'UNDO'}
@@ -484,7 +484,7 @@ class ATB_OT_CreateNamedOrientation(bpy.types.Operator):
 
 class ATB_OT_CursorToOrientation(bpy.types.Operator):
     """Aligns the 3D Cursor to the active orientation. Doesn't fuck with mesh data"""
-    bl_idname = "act.align_cursor_to_orientation"
+    bl_idname = "atb.align_cursor_to_orientation"
     bl_label = "ATB Align Cursor to Orientation"
     bl_description = "Aligns the 3d cursor to the active transform orientation"
     bl_options = {'REGISTER', 'UNDO'}
@@ -533,7 +533,7 @@ class ATB_OT_CursorToOrientation(bpy.types.Operator):
 
 
 class ATB_OT_SetOrigin(bpy.types.Operator):
-    bl_idname = "act.set_origin"
+    bl_idname = "atb.set_origin"
     bl_label = "ATB Set Origin"
     bl_description = "Moves the object origin to your selection. Works in edit mode"
     bl_options = {'REGISTER', 'UNDO'}
@@ -587,7 +587,7 @@ class ATB_OT_SetOrigin(bpy.types.Operator):
 
 
 class ATB_OT_SetOriginToBBox(bpy.types.Operator):
-    bl_idname = "act.origin_to_bbox"
+    bl_idname = "atb.origin_to_bbox"
     bl_label = "ATB Set Origin To Bounding Box"
     bl_description = "Moves the object origin to a point on its bounding box"
     bl_options = {'REGISTER', 'UNDO'}

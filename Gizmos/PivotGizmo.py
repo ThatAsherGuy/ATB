@@ -145,7 +145,7 @@ class ATPivotGizmoGroup(GizmoGroup):
         vbutton.use_draw_scale = True
         vbutton.use_draw_offset_scale = False
 
-        props = vbutton.target_set_operator("act.rotate_around_pivot")
+        props = vbutton.target_set_operator("atb.rotate_around_pivot")
         offset = (scene.piv_gz_x, scene.piv_gz_y, scene.piv_gz_z)
 
         offset_mat = mathutils.Matrix.Translation(offset)
@@ -186,7 +186,7 @@ class ATPivotGizmoGroup(GizmoGroup):
         vbutton.use_draw_scale = True
         vbutton.use_draw_offset_scale = False
 
-        props = vbutton.target_set_operator("act.rotate_around_pivot")
+        props = vbutton.target_set_operator("atb.rotate_around_pivot")
         offset = (scene.piv_gz_x, scene.piv_gz_y, scene.piv_gz_z)
 
         offset_mat = mathutils.Matrix.Translation(offset)
@@ -232,7 +232,7 @@ class ATPivotGizmoGroup(GizmoGroup):
         vbutton.use_draw_scale = True
         vbutton.use_draw_offset_scale = True
 
-        props = vbutton.target_set_operator("act.rotate_around_pivot")
+        props = vbutton.target_set_operator("atb.rotate_around_pivot")
         offset = (scene.piv_gz_x, scene.piv_gz_y, scene.piv_gz_z)
 
         offset_mat = mathutils.Matrix.Translation(offset)

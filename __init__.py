@@ -34,6 +34,9 @@ from . properties import ATBWireColors
 from . properties import FastSnapProps
 from . properties import CustomPopoverProps
 from . properties import ModalProps
+from . properties import ATB_ObjectProperties
+from . properties import ATB_SceneProperties
+from . properties import ATB_WorkspaceProperties
 
 from . preferences import ATBAddonPreferences
 from . preferences import register_keymaps, unregister_keymaps
@@ -87,6 +90,10 @@ from .Operators.MeshOps import ATB_OT_QuickSymmetry
 from .Operators.ModifierOps import ATB_OT_AddModifier
 from .Operators.ModifierOps import ATB_OT_Modifier_Pie
 
+from .Operators.ObjectOps import ATB_OT_AddBasePlane
+
+from .Operators.SculptOps import ATB_OT_SculptPie
+
 from .Utilities.GizmoUtils import ATBPrintVerts
 
 from .Gizmos.VertPieGizmo import ATVertexGizmoGroup
@@ -109,6 +116,7 @@ from .UI.ContextPies import VIEW3D_MT_PIE_orbit_lock
 from .UI.ContextPies import VIEW3D_MT_PIE_expand_mode
 from .UI.ContextPies import VIEW3D_MT_PIE_quick_snap
 from .UI.ContextPies import VIEW3D_MT_PIE_quick_orientation
+from .UI.ContextPies import ATB_OT_MetaPie
 
 from .UI.ViewPanel import ATB_PT_ViewOverlaysPanel
 from .UI.ViewPanel import ATB_MT_MeshShadingMenu
@@ -129,6 +137,8 @@ from .UI.ViewPie import VIEW3D_PT_viewport_rotation_panel
 from .UI.ViewPie import VIEW3D_PT_viewport_orbit_panel
 from .UI.ViewPie import VIEW3D_MT_ATB_tablet_pie
 from .UI.ViewPie import VIEW3D_MT_ATB_origin_pie
+from .UI.ViewPie import VIEW3D_MT_ATB_camera_pie
+from .UI.ViewPie import ATB_OT_EnhancedCameraPie
 
 from .UI.EditMenu import VIEW3D_MT_actc_root
 from .UI.EditMenu import VIEW3D_MT_actc_sub_edges
@@ -149,31 +159,6 @@ bl_info = {
     "warning": "Alpha of all Alphas",
     "category": "Modeling"
 }
-
-panels = (
-        ATB_PT_ViewOverlaysPanel,
-        )
-
-
-# class ATBAddonPreferences(bpy.types.AddonPreferences):
-#     # this must match the addon name, use '__package__'
-#     # when defining this in a submodule of a python package.
-#     bl_idname = __name__
-
-#     category: bpy.props.StringProperty(
-#             name="Tab Category",
-#             description="Choose a name for the category of the panel",
-#             default="Dev",
-#             update=update_panel
-#             )
-
-#     def draw(self, context):
-#         layout = self.layout
-
-#         row = layout.row()
-#         col = row.column()
-#         col.label(text="Tab Category:")
-#         col.prop(self, "category", text="")
 
 def debug_keymap():
     wm = bpy.context.window_manager
@@ -262,9 +247,13 @@ classes = (
     ATB_OT_SuperTabletPie,
     # Mesh Ops
     ATB_OT_QuickSymmetry,
+    # Object Ops
+    ATB_OT_AddBasePlane,
     # Modifier Ops
     ATB_OT_AddModifier,
     ATB_OT_Modifier_Pie,
+    # Sculpt Ops
+    ATB_OT_SculptPie,
     # GizmoUtils.py
     ATBPrintVerts,
     # Pies
@@ -275,8 +264,11 @@ classes = (
     VIEW3D_MT_PIE_quick_orientation,
     VIEW3D_MT_ATB_tablet_pie,
     VIEW3D_MT_ATB_origin_pie,
+    VIEW3D_MT_ATB_camera_pie,
+    ATB_OT_EnhancedCameraPie,
     VIEW3D_PT_viewport_rotation_panel,
     VIEW3D_PT_viewport_orbit_panel,
+    ATB_OT_MetaPie,
     # Property Groups
     MetaPanelTabs,
     QuickOpMenus,
@@ -287,6 +279,9 @@ classes = (
     FastSnapProps,
     CustomPopoverProps,
     ModalProps,
+    ATB_ObjectProperties,
+    ATB_SceneProperties,
+    ATB_WorkspaceProperties,
     # Quick FavoritesMenu
     VIEW3D_MT_actc_root,
     VIEW3D_MT_actc_sub_edges,
@@ -304,6 +299,8 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    WorkSpace.ATB = PointerProperty(type=ATB_WorkspaceProperties)
+
     WindowManager.metapanel_tabs = PointerProperty(type=MetaPanelTabs)
     WindowManager.quick_op_menus = PointerProperty(type=QuickOpMenus)
     WorkSpace.custom_transforms = PointerProperty(type=CustomTransforms)
@@ -311,15 +308,14 @@ def register():
     WindowManager.mat_convert = PointerProperty(type=ObjectMatrixConversions)
     WorkSpace.temp_wires = PointerProperty(type=ATBWireColors)
     WorkSpace.customPops = PointerProperty(type=CustomPopoverProps)
+    bpy.types.Object.atb_props = PointerProperty(type=ATB_ObjectProperties)
+    bpy.types.Scene.ATB = PointerProperty(type=ATB_SceneProperties)
 
     WorkSpace.modals = PointerProperty(type=ModalProps)
 
     WindowManager.snap_state = PointerProperty(type=FastSnapProps)
 
     bpy.types.VIEW3D_HT_header.append(popover)
-    # bpy.types.VIEW3D_MT_editor_menus.append(custom_popovers)
-    # bpy.types.INFO_HT_header.append(info_space_buttons)
-    # bpy.types.PROPERTIES_PT_navigation_bar.append(navbar_extras)
 
     bpy.utils.register_tool(ATCursorTool)
 
@@ -331,6 +327,9 @@ def register():
     elif prefs.addons[__name__].preferences.baseKeymap == 'HUMANS':
         keylist = get_keys(dictname="humankeysdict")
         print("Loading Human Keymap")
+    else:
+        keylist = get_keys(dictname="keysdict")
+        print("Loading Backup Keymap")
 
     # keylist = get_keys()
     keymaps = register_keymaps(keylist)
@@ -347,9 +346,6 @@ def unregister():
         bpy.utils.unregister_class(cls)
 
     bpy.types.VIEW3D_HT_header.remove(popover)
-    # bpy.types.INFO_HT_header.remove(info_space_buttons)
-    # bpy.types.VIEW3D_MT_editor_menus.remove(custom_popovers)
-    # bpy.types.PROPERTIES_PT_navigation_bar.remove(navbar_extras)
 
     bpy.utils.unregister_tool(ATCursorTool)
 
@@ -357,3 +353,6 @@ def unregister():
     del bpy.types.WindowManager.quick_op_menus
     del bpy.types.WindowManager.mat_convert
     del bpy.types.WorkSpace.customPops
+    del bpy.types.Scene.ATB
+    del bpy.types.Object.atb_props
+    del bpy.types.WorkSpace.ATB

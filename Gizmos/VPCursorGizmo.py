@@ -183,7 +183,7 @@ class ATVPCursorGizmo(GizmoGroup):
         props.cursor_transform = True
         props.release_confirm = True
 
-        # props = c_button.target_set_operator("act.mouse_context_op")
+        # props = c_button.target_set_operator("atb.mouse_context_op")
         # props.left_op = "transform.translate"
         # props.left_op_args = "'INVOKE_DEFAULT', True"
         # props.left_op_props = (

@@ -27,7 +27,7 @@ from bpy.props import (
 
 class ATB_OT_QuickSymmetry(bpy.types.Operator):
     """A wrapper for the symmetrize operator with an (optional) modal gizmo"""
-    bl_idname = "act.quick_symmetry"
+    bl_idname = "atb.quick_symmetry"
     bl_label = "ATB Quick Symmetry"
     bl_description = "A wrapper for the symmetrize operator with an (optional) modal gizmo"
     bl_options = {'UNDO_GROUPED'}
