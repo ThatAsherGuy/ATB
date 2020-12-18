@@ -22,6 +22,74 @@ from bpy.types import (
     Menu
 )
 
+def save_pie(self, context):
+    pie = self.layout.menu_pie()
+    pie.operator_context = 'INVOKE_DEFAULT'
+
+    # LEFT
+    pie.operator(
+        "wm.save_as_mainfile",
+        text="Save As...",
+    )
+
+    # RIGHT
+    pie.operator(
+        "wm.save_mainfile",
+        text="Save",
+    )
+
+    # BOTTOM
+    pie.operator(
+        "atb.save_incremental",
+        text="Save Incremental",
+    )
+
+    # TOP
+    pie.operator(
+        "wm.open_mainfile",
+        text="Open...",
+    )
+
+    # TOP LEFT
+    pie.separator()
+
+    # TOP RIGHT
+    pie.separator()
+
+    # BOTTOM LEFT
+    pie.separator()
+
+    # BOTTOM RIGHT
+    pie.separator()
+
+class ATB_OT_SavePie(bpy.types.Operator):
+    bl_idname = "atb.save_pie"
+    bl_label = "ATB Save Pie"
+    bl_description = ("A Pie for quick-saving, incremental saving, and other things.")
+    bl_options = {'REGISTER'}
+
+    mode_items = [
+        ("BRUSH", "Brush", ""),
+        ("STROKE", "Stroke", ""),
+        ("PLANE", "Plane", ""),
+        ("SYMM", "Symmetry", ""),
+    ]
+
+    mode: bpy.props.EnumProperty(
+        items=mode_items,
+        name="Mode",
+        description="The invocation mode, used to select which sculpt functions are displayed",
+        default='STROKE'
+    )
+
+    def invoke(self, context, event):
+        self.loc = (event.mouse_region_x, event.mouse_region_y)
+
+        wm = context.window_manager
+        wm.popup_menu_pie(event, draw_func=save_pie, title="", icon='NONE')
+        return{'FINISHED'}
+
+
 class ATB_OT_MetaPie(bpy.types.Operator):
     bl_idname = "atb.meta_pie"
     bl_label = "ATB Meta Pie"

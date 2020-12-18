@@ -464,7 +464,7 @@ class VIEW3D_PT_camera_list(Panel):
     def draw(self, context):
         C = context
         wm = C.window_manager
-        tabs = wm.metapanel_tabs
+        mp_props = context.workspace.ATB
         active = C.active_object
         scene = C.scene
 
@@ -474,12 +474,12 @@ class VIEW3D_PT_camera_list(Panel):
 
         row = R.row(align=True)
         row.template_list("CUSTOM_UL_camera_list", "", context.blend_data,
-                          "cameras", tabs, "cam_index", rows=1)
+                          "cameras", mp_props, "mp_cam_index", rows=1)
 
 
 def listpanel(C, L):
     wm = C.window_manager
-    tabs = wm.metapanel_tabs
+    mp_props = C.workspace.ATB
     active = C.active_object
     scene = C.scene
 
@@ -487,11 +487,11 @@ def listpanel(C, L):
     R = L.column(align=True)
     row = R.row(align=True)
     row.template_list("CUSTOM_UL_camera_list", "", C.blend_data,
-                        "cameras", tabs, "cam_index", rows=1)
+                        "cameras", mp_props, "mp_cam_index", rows=1)
 
 def listpanel_alt(self, C):
     wm = C.window_manager
-    tabs = wm.metapanel_tabs
+    mp_props = C.workspace.ATB
     active = C.active_object
     scene = C.scene
 
@@ -501,7 +501,7 @@ def listpanel_alt(self, C):
     R = L.column(align=True)
     row = R.row(align=True)
     row.template_list("CUSTOM_UL_camera_list", "", C.blend_data,
-                        "cameras", tabs, "cam_index", type='DEFAULT')
+                        "cameras", mp_props, "mp_cam_index", type='DEFAULT')
 
 def camera_pie_base(self, context):
     region = context.region_data
@@ -511,16 +511,18 @@ def camera_pie_base(self, context):
     event = []
 
     wm = context.window_manager
-    tabs = wm.metapanel_tabs
+    mp_props = context.workspace.ATB
 
     # LEFT
     listpanel(context, pie)
     # RIGHT
     col = pie.column()
     col.ui_units_x = 5
+    col.ui_units_y = 33
     col.template_list("CUSTOM_UL_camera_list", "", context.blend_data,
-                            "cameras", tabs, "cam_index", type="DEFAULT")
+                            "cameras", mp_props, "mp_cam_index", type="DEFAULT")
     # BOTTOM
+    # pie.template_component_menu(mp_props, "fp_tabs", name="jim")
     # wm.popup_menu_pie(event, listpanel_alt,)
     # TOP
     # TOP LEFT
@@ -557,7 +559,7 @@ class VIEW3D_MT_ATB_camera_pie(Menu):
 
 
         wm = context.window_manager
-        tabs = wm.metapanel_tabs
+        mp_props = context.workspace.ATB
 
         # LEFT
         listpanel(context, pie)
@@ -565,7 +567,7 @@ class VIEW3D_MT_ATB_camera_pie(Menu):
         col = pie.column()
         col.ui_units_x = 5
         col.template_list("CUSTOM_UL_camera_list", "", context.blend_data,
-                                "cameras", tabs, "cam_index", type="DEFAULT")
+                                "cameras", mp_props, "mp_cam_index", type="DEFAULT")
         # BOTTOM
         # wm.popup_menu_pie(event, listpanel_alt,)
         # TOP

@@ -164,7 +164,7 @@ class AxisGizmo(GizmoGroup):
         global handle
 
         wm = bpy.context.window_manager
-        metapanel = wm.metapanel_tabs
+        mp_props = wm.ATB
 
         if gizmo.bl_idname == 'GIZMO_GT_dial_3d':
             gizmo.arc_partial_angle = math.radians(320)
@@ -261,9 +261,9 @@ class AxisGizmo(GizmoGroup):
                 gizmo.scale_basis *= 1.2
                 gizmo.draw_options = {'FILL_SELECT'}
 
-        if metapanel.debug[1]:
+        if mp_props.mp_debug[1]:
             props = gizmo.target_set_operator("view3d.dolly")
-        elif metapanel.debug[2]:
+        elif mp_props.mp_debug[2]:
             props = gizmo.target_set_operator("view3d.rotate")
             props.use_cursor_init = False
         else:

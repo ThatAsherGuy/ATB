@@ -23,6 +23,7 @@ from bpy.props import (
 )
 from mathutils import Matrix, Vector, Quaternion
 import bmesh
+from random import random
 # from math import degrees
 
 
@@ -725,3 +726,71 @@ class ATB_OT_SetOriginToBBox(bpy.types.Operator):
             if (self.box_mode == "POINT") or not (self.box_face == "CENTER"):
                 obj.location -= snap_point
         return {'FINISHED'}
+
+
+class ATB_OT_QuickSnapOrigin(bpy.types.Operator):
+    bl_idname = "atb.quick_snap_origin"
+    bl_label = "ATB Snap Origin"
+    bl_description = "Nested Modal Magic"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        tool_settings = context.scene.tool_settings
+        tool_settings.snap_elements = self.snap_elements
+        tool_settings.snap_target = self.snap_target
+        tool_settings.use_transform_data_origin = False
+        tool_settings.use_snap = False
+        print("FIN")
+        return {'FINISHED'}
+
+    def modal(self, context, event):
+
+        if not self.inner:
+            self.inner = True
+            bpy.ops.transform.translate(
+                'INVOKE_DEFAULT',
+                False,
+                cursor_transform=False
+            )
+            return {'RUNNING_MODAL'}
+
+        if event.type == 'LEFTMOUSE':
+            return self.execute(context)
+
+        if event.type == 'RET':
+            if event.value == 'RELEASE':
+                return self.execute(context)
+
+        if event.type == 'SPACE':
+            if event.value == 'RELEASE':
+                tool_settings = context.scene.tool_settings
+                if tool_settings.snap_elements == {'VERTEX', 'EDGE_MIDPOINT'}:
+                    tool_settings.snap_elements = {'EDGE'}
+                elif tool_settings.snap_elements == {'EDGE'}:
+                    tool_settings.snap_elements = {'FACE'}
+                elif tool_settings.snap_elements == {'FACE'}:
+                    tool_settings.snap_elements = {'VERTEX', 'EDGE_MIDPOINT'}
+                self.inner = False
+                return {'RUNNING_MODAL'}
+
+        if event.type == 'ESCAPE':
+            if event.value == 'RELEASE':
+                return {'CANCELLED'}
+
+        return {'RUNNING_MODAL'}
+            
+
+    def invoke(self, context, event):
+        tool_settings = context.scene.tool_settings
+
+        self.snap_elements = tool_settings.snap_elements
+        self.snap_target = tool_settings.snap_target
+
+        self.inner = False
+
+        tool_settings.use_transform_data_origin = True
+        tool_settings.use_snap = True
+        tool_settings.snap_elements = {'VERTEX', 'EDGE_MIDPOINT'}
+
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}

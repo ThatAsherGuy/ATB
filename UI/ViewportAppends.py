@@ -352,6 +352,6 @@ def navbar_extras(self, context):
     layout = self.layout
 
     wm = bpy.context.window_manager
-    metapanel = wm.metapanel_tabs
+    metapanel = wm.ATB
 
     layout.prop_tabs_enum(metapanel, "tab", icon_only=True)

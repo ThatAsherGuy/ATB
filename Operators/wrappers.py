@@ -37,6 +37,75 @@ import bpy_extras
 import bmesh
 import math
 import types
+import os
+import re
+import sys
+
+
+# Yoinked directly from MachineTools
+def add_path_to_recent_files(path):
+    enc = sys.getfilesystemencoding()
+
+    try:
+        recent_path = bpy.utils.user_resource('CONFIG', "recent-files.txt")
+        with open(recent_path, "r+", encoding=enc) as f:
+            content = f.read()
+            f.seek(0, 0)
+            f.write(path.rstrip('\r\n') + '\n' + content)
+
+    except (IOError, OSError, FileNotFoundError):
+        pass
+
+
+class ATB_OT_SaveIncremental(bpy.types.Operator):
+    """Pretty much the save function from MachineTools"""
+    bl_idname = "atb.save_incremental"
+    bl_label = "ATB Incremental Save"
+    bl_description = "Creates an incremental save"
+
+    def increment_path(self, current):
+        path = os.path.dirname(current)
+        name = os.path.basename(current)
+
+        name_regex = re.compile(r"(.+)\.blend\d*$")
+
+        do = name_regex.match(name)
+
+        if do:
+            save_name = do.group(1)
+            number_regex = re.compile(r"(.*?)(\d+)$")
+
+            do = number_regex.match(save_name)
+
+            if do:
+                base = do.group(1)
+                number = do.group(2)
+            else:
+                base = save_name + "_"
+                number = "000"
+
+            incr = int(number) + 1
+            incrstr = str(incr).zfill(len(number))
+            incrname = base + incrstr + ".blend"
+
+            return os.path.join(path, incrname)
+
+    def execute(self, context):
+        current = bpy.data.filepath
+
+        if current:
+            path = self.increment_path(current)
+            add_path_to_recent_files(path)
+
+            if os.path.exists(path):
+                self.report({'ERROR'}, "FAILED TO INCREMENT")
+            else:
+                bpy.ops.wm.save_as_mainfile(filepath=path)
+                print("Saved Incrementally: ", path)
+        else:
+            bpy.ops.save_mainfile('INVOKE_DEFAULT')
+        
+        return {'FINISHED'}
 
 # For header buttons, doesn't push an undo
 class ATB_OT_BoolToEnum(bpy.types.Operator):
@@ -71,7 +140,7 @@ class ATB_OT_BoolToEnum(bpy.types.Operator):
         enum_prop_path = self.enum_prop_path
 
         wm = bpy.context.window_manager
-        metapanel = wm.metapanel_tabs
+        mp_props = wm.ATB
 
         bpy.ops.wm.context_toggle(
                 'INVOKE_DEFAULT',
@@ -79,21 +148,21 @@ class ATB_OT_BoolToEnum(bpy.types.Operator):
                 data_path=bp_compl
         )
 
-        if metapanel.cavity_toggle[0] and metapanel.cavity_toggle[1]:
+        if mp_props.mp_shading_cavtoggle[0] and mp_props.mp_shading_cavtoggle[1]:
             bpy.ops.wm.context_set_enum(
                 'INVOKE_DEFAULT',
                 False,
                 data_path=enum_prop_path,
                 value='BOTH',
             )
-        elif metapanel.cavity_toggle[0]:
+        elif mp_props.mp_shading_cavtoggle[0]:
             bpy.ops.wm.context_set_enum(
                 'INVOKE_DEFAULT',
                 False,
                 data_path=enum_prop_path,
                 value='SCREEN',
             )
-        elif metapanel.cavity_toggle[1]:
+        elif mp_props.mp_shading_cavtoggle[1]:
             bpy.ops.wm.context_set_enum(
                 'INVOKE_DEFAULT',
                 False,
@@ -101,7 +170,7 @@ class ATB_OT_BoolToEnum(bpy.types.Operator):
                 value='WORLD',
             )
 
-        if not metapanel.cavity_toggle[0] and not metapanel.cavity_toggle[1]:
+        if not mp_props.mp_shading_cavtoggle[0] and not mp_props.mp_shading_cavtoggle[1]:
             bpy.ops.wm.context_toggle(
                     'INVOKE_DEFAULT',
                     False,
@@ -110,7 +179,7 @@ class ATB_OT_BoolToEnum(bpy.types.Operator):
 
         if (
                 not context.space_data.shading.show_cavity
-                and (metapanel.cavity_toggle[0] or metapanel.cavity_toggle[1])):
+                and (mp_props.mp_shading_cavtoggle[0] or mp_props.mp_shading_cavtoggle[1])):
             bpy.ops.wm.context_toggle(
                     'INVOKE_DEFAULT',
                     False,

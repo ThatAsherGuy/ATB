@@ -60,6 +60,9 @@ class ATB_OT_QuickSymmetry(bpy.types.Operator):
 
     def modal(self, context, event):
 
+        if bpy.context.gizmo_group:
+            print(bpy.context.gizmo_group.bl_idname)
+
         if bpy.context.workspace.modals.mirror_modal == False:
             context.area.header_text_set(None)
             bpy.context.window_manager.gizmo_group_type_unlink_delayed("atb_mirror_gizmo_group")
@@ -75,7 +78,8 @@ class ATB_OT_QuickSymmetry(bpy.types.Operator):
 
         if event.type in {'LEFTMOUSE', 'MIDDLEMOUSE', 'MOUSEMOVE', 'WHEELUPMOUSE', 'WHEELDOWNMOUSE'}:
             if event.value == 'CLICK':
-                return {'PASS_THROUGH', 'FINISHED'}
+                if bpy.context.workspace.modals.mirror_modal == False:
+                    return {'PASS_THROUGH', 'FINISHED'}
             return {'PASS_THROUGH'}
 
         if event.type in {'RIGHTMOUSE', 'ESC'}:

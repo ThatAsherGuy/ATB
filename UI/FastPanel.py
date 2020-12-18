@@ -51,7 +51,7 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
 
         # Fast Panel Property Group
         wm = bpy.context.window_manager
-        fp = wm.fp_props
+        fp_props = context.workspace.ATB
 
         if context.active_object:
             if context.active_object.type == 'MESH':
@@ -60,12 +60,13 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
 
         layout = self.layout
 
-        if fp.layout_bool:
-            layout.ui_units_x = 60
-            root = layout.grid_flow(columns=4, even_columns=True, align=False)
-        else:
-            root = layout.grid_flow(columns=1, even_columns=True, align=False)
-            layout.ui_units_x = 12
+        # if fp.layout_bool:
+        #     layout.ui_units_x = 60
+        #     root = layout.grid_flow(columns=4, even_columns=True, align=False)
+        # else:
+
+        root = layout.grid_flow(columns=1, even_columns=True, align=False)
+        layout.ui_units_x = 12
 
         root.scale_y = 1
 
@@ -82,10 +83,10 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
         tb_r.alignment = 'RIGHT'
 
         # tab_row.prop(fp, "layout_bool", text="", icon="KEYFRAME_HLT")
-        tb_r.prop(fp, "fast_panel_tabs", expand=True, icon_only=True)
+        tb_r.prop(fp_props, "fp_tabs", expand=True, icon_only=True)
 
         # Measures Row
-        if fp.fast_panel_tabs == 'MEASURES':
+        if fp_props.fp_tabs == 'MEASURES':
             but_box = col_1.column()
 
             but_box_inner_col = but_box.column(align=True)
@@ -366,7 +367,7 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
                     col.prop(active_obj, "color", text="")
 
         # Overlays Row
-        if fp.fast_panel_tabs == 'OVERLAYS':
+        if fp_props.fp_tabs == 'OVERLAYS':
             but_box = col_1.box()
             but_box_inner_col = but_box.column(align=True)
             but_row = but_box_inner_col.row(align=True)
@@ -425,7 +426,7 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
             )
 
         # Normals Row
-        if fp.fast_panel_tabs == 'NORMALS':
+        if fp_props.fp_tabs == 'NORMALS':
             but_box = col_1.box()
 
             but_box_inner_col = but_box.column(align=True)
@@ -499,10 +500,13 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
                     )
 
         # Gizmo Row
-        if fp.fast_panel_tabs == 'GIZMOS':
+        if fp_props.fp_tabs == 'GIZMOS':
             but_box = col_1.box()
+
             but_box_inner_col = but_box.column(align=True)
+
             but_row = but_box_inner_col.row(align=True)
+
             but_row.prop(scene.transform_orientation_slots[1], "type", text="")
             but_row.prop(
                 view,
@@ -583,8 +587,17 @@ class VIEW3D_PT_view3d_fast_panel(Panel):
                 icon='GIZMO',
             )
 
+            but_row = but_box_inner_col.row(align=True)
+            but_row.prop(
+                view,
+                "show_gizmo",
+                text="",
+                toggle=True,
+                icon='GIZMO',
+            )
+
         # Display Row
-        if fp.fast_panel_tabs == 'DISPLAY':
+        if fp_props.fp_tabs == 'DISPLAY':
             but_box = col_1.box()
             # but_box.scale_y = 0.85
             but_box_inner_col = but_box.column(align=True)
@@ -818,685 +831,3 @@ class VIEW3D_PT_grid_ribbon(Panel):
         row_2.prop(overlay, "show_ortho_grid", text="Ortho", toggle=True)
         row_2.prop(units, "length_unit", text="")
 
-
-class VIEW3D_PT_snap_ribbon(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'WINDOW'
-    # bl_category = "Ribbons"
-    bl_label = "Snap Ribbon"
-
-    @classmethod
-    def get_shading(cls, context):
-        view = context.space_data
-        if view.type == 'VIEW_3D':
-            return view.shading
-        else:
-            return context.scene.display.shading
-
-    def draw(self, context):
-
-        area = bpy.context.area
-        resolution = bpy.context.preferences.system.ui_scale
-        # resolution_label = str(resolution)
-
-        for reg in area.regions:
-            if reg.type == 'UI':
-                region_width_raw = reg.width
-
-        region_width = region_width_raw - 40
-        # region_width_label = str(region_width)
-
-        region_width_int = round(region_width / (20 * resolution))
-        # region_width_int_label = str(region_width_int)
-
-        layout = self.layout
-        # layout.ui_units_x = region_width_int
-        layout.scale_y = 0.85
-
-        root = layout.column(align=True)
-
-        # break_info = root.row(align=True)
-
-        # break_info.label(text=region_width_label)
-        # break_info.label(text=region_width_int_label)
-        # break_info.label(text=resolution_label)
-
-        if region_width_int >= 12:
-            col_set_1 = 8
-            col_set_2 = 4
-            col_set_3 = 4
-
-        if region_width_int < 12:
-            col_set_1 = 8
-            col_set_2 = 4
-            col_set_3 = 4
-
-        if region_width_int <= 8:
-            col_set_1 = 8
-            col_set_2 = 2
-            col_set_3 = 2
-
-        if region_width_int <= 6:
-            col_set_1 = 4
-            col_set_2 = 2
-            col_set_3 = 2
-
-        if region_width_int < 6:
-            col_set_1 = 2
-            col_set_2 = 1
-            col_set_3 = 1
-        tool_settings = context.scene.tool_settings
-
-        snap_box = root.box()
-
-        snap_box_inner_col = snap_box.column(align=True)
-        snap_box_inner_row = snap_box_inner_col.column(align=False)
-
-        first_row = snap_box_inner_row.grid_flow(columns=col_set_1, align=True)
-
-        first_row.prop(
-            tool_settings,
-            "use_snap",
-            text="",
-            expand=True,
-            toggle=True
-        )
-        first_row.prop_enum(
-            tool_settings,
-            "snap_elements",
-            'INCREMENT',
-            text=""
-        )
-        first_row.prop_enum(
-            tool_settings,
-            "snap_elements",
-            'VERTEX',
-            text=""
-        )
-        first_row.prop_enum(
-            tool_settings,
-            "snap_elements",
-            'FACE',
-            text=""
-        )
-        first_row.prop_enum(
-            tool_settings,
-            "snap_elements",
-            'VOLUME',
-            text=""
-        )
-        first_row.prop_enum(
-            tool_settings,
-            "snap_elements",
-            'EDGE',
-            text=""
-        )
-        first_row.prop_enum(
-            tool_settings,
-            "snap_elements",
-            'EDGE_MIDPOINT',
-            text=""
-        )
-        first_row.prop_enum(
-            tool_settings,
-            "snap_elements",
-            'EDGE_PERPENDICULAR',
-            text=""
-        )
-
-        second_row = snap_box_inner_row.grid_flow(columns=col_set_2, align=True)
-
-        second_row.prop(
-            tool_settings,
-            "use_snap_align_rotation",
-            text="Align",
-            toggle=True
-        )
-        second_row.prop(
-            tool_settings,
-            "use_snap_peel_object",
-            text="Peel",
-            toggle=True
-        )
-        second_row.prop(
-            tool_settings,
-            "use_snap_project",
-            text="Project",
-            toggle=True
-        )
-        second_row.prop(
-            tool_settings,
-            "use_snap_grid_absolute",
-            text="Absolute",
-            toggle=True
-        )
-
-        third_row = snap_box_inner_row.grid_flow(columns=col_set_3, align=True)
-
-        third_row.prop(
-            tool_settings,
-            "use_snap_rotate",
-            text="Rotate",
-            toggle=True
-        )
-        third_row.prop(
-            tool_settings,
-            "use_snap_translate",
-            text="Move",
-            toggle=True
-        )
-        third_row.prop(
-            tool_settings,
-            "use_snap_scale",
-            text="Scale",
-            toggle=True
-        )
-        third_row.prop(
-            tool_settings,
-            "snap_target",
-            expand=False,
-            text="",
-        )
-
-
-class VIEW3D_PT_draw_ribbon(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'WINDOW'
-    # bl_category = "Ribbons"
-    bl_label = "Draw Ribbon"
-
-    @classmethod
-    def get_shading(cls, context):
-        view = context.space_data
-        if view.type == 'VIEW_3D':
-            return view.shading
-        else:
-            return context.scene.display.shading
-
-    def draw(self, context):
-
-        area = bpy.context.area
-        resolution = bpy.context.preferences.system.ui_scale
-
-        for reg in area.regions:
-            if reg.type == 'UI':
-                region_width_raw = reg.width
-
-        region_width = region_width_raw - 40
-        region_width_int = round(region_width / (20 * resolution))
-
-        layout = self.layout
-
-        root = layout.column(align=True)
-
-        # TODO: Make an iterator for this stuff
-
-        if region_width_int >= 12:
-            tog_row_cols = 5
-            cols_8_8_8_4_2 = 8
-            cols_4_4_4_2_1 = 4
-            cols_4_4_2_2_1 = 4
-            cols_2_2_1_1_1 = 2
-            cols_3_3_3_1_1 = 3
-            giz_row_2_cols = 2
-
-        if region_width_int < 12:
-            tog_row_cols = 5
-            cols_8_8_8_4_2 = 8
-            cols_4_4_4_2_1 = 4
-            cols_4_4_2_2_1 = 4
-            cols_2_2_1_1_1 = 2
-            cols_3_3_3_1_1 = 3
-            giz_row_2_cols = 2
-
-        if region_width_int <= 8:
-            tog_row_cols = 5
-            cols_8_8_8_4_2 = 8
-            cols_4_4_4_2_1 = 2
-            cols_4_4_2_2_1 = 2
-            cols_2_2_1_1_1 = 1
-            cols_3_3_3_1_1 = 3
-            giz_row_2_cols = 2
-
-        if region_width_int <= 6:
-            tog_row_cols = 5
-            cols_8_8_8_4_2 = 4
-            cols_4_4_4_2_1 = 2
-            cols_4_4_2_2_1 = 2
-            cols_2_2_1_1_1 = 1
-            cols_3_3_3_1_1 = 1
-            giz_row_2_cols = 1
-
-        if region_width_int < 6:
-            tog_row_cols = 5
-            cols_8_8_8_4_2 = 2
-            cols_4_4_4_2_1 = 1
-            cols_4_4_2_2_1 = 1
-            cols_2_2_1_1_1 = 1
-            cols_3_3_3_1_1 = 1
-            giz_row_2_cols = 1
-
-        # Aliased Stuff
-        scene = context.scene
-        # units = scene.unit_settings
-        overlay = context.space_data.overlay
-        view = context.space_data
-        shading = VIEW3D_PT_view3d_fast_panel.get_shading(context)
-        active_obj = context.active_object
-
-        # Fast Panel Property Group
-        wm = bpy.context.window_manager
-        fp = wm.fp_props
-
-        layout = self.layout
-        # layout.ui_units_x = 11
-
-        root = layout.column(align=True)
-        root.scale_y = 1
-
-        tab_row = root.grid_flow(columns=tog_row_cols, align=True)
-        tab_row.prop(fp, "fast_panel_tabs", expand=True)
-
-        # Measures Row
-        if fp.fast_panel_tabs == 'MEASURES':
-            but_box = root.box()
-            but_box_inner_col = but_box.column(align=False)
-            but_row = but_box_inner_col.grid_flow(columns=cols_4_4_4_2_1, align=True)
-
-            but_row.prop(
-                overlay,
-                "show_extra_edge_length",
-                text="Length",
-                toggle=True
-            )
-            but_row.prop(
-                overlay,
-                "show_extra_edge_angle",
-                text="Angle",
-                toggle=True
-            )
-            but_row.prop(
-                overlay,
-                "show_extra_face_area",
-                text="Area",
-                toggle=True
-            )
-            but_row.prop(
-                overlay,
-                "show_extra_face_angle",
-                text="Angle",
-                toggle=True
-            )
-
-            but_row = but_box_inner_col.grid_flow(columns=cols_4_4_4_2_1, align=True)
-            but_row.scale_x = 0.65
-            measure_tool = but_row.operator(
-                "wm.tool_set_by_id",
-                text="Measure Tool"
-            )
-            measure_tool.name = "builtin.measure"
-            measure_tool.space_type = "VIEW_3D"
-
-            annotate_tool = but_row.operator(
-                "wm.tool_set_by_id",
-                text="Annotate Tool"
-            )
-            annotate_tool.name = "builtin.annotate"
-            annotate_tool.space_type = "VIEW_3D"
-
-        # Overlays Row
-        if fp.fast_panel_tabs == 'OVERLAYS':
-            but_box = root.box()
-            but_box_inner_col = but_box.column(align=False)
-            but_row = but_box_inner_col.grid_flow(columns=cols_4_4_4_2_1, align=True)
-
-            but_row.prop(
-                overlay,
-                "show_edge_crease",
-                text="Crease",
-                toggle=True,
-                icon='MOD_SUBSURF'
-            )
-            but_row.prop(
-                overlay,
-                "show_edge_sharp",
-                text="Sharp",
-                toggle=True,
-                icon='MOD_EDGESPLIT'
-            )
-            but_row.prop(
-                overlay,
-                "show_edge_bevel_weight",
-                text="Bevel",
-                toggle=True,
-                icon='MOD_BEVEL'
-            )
-            but_row.prop(
-                overlay,
-                "show_edge_seams",
-                text="Seam",
-                toggle=True,
-                icon='UV_DATA'
-            )
-
-            but_row = but_box_inner_col.grid_flow(columns=cols_4_4_2_2_1, align=True)
-
-            but_row.prop(
-                overlay,
-                "show_edges",
-                text="Edges",
-                toggle=True,
-                icon='MOD_WIREFRAME'
-            )
-            but_row.prop(
-                overlay,
-                "show_faces",
-                text="Faces",
-                toggle=True,
-                icon='FACE_MAPS'
-            )
-            but_row.prop(
-                overlay,
-                "show_face_center",
-                text="Face Dots",
-                toggle=True,
-                icon='SNAP_FACE_CENTER'
-            )
-
-        # Normals Row
-        if fp.fast_panel_tabs == 'NORMALS':
-            but_box = root.box()
-            but_box_inner_col = but_box.column(align=True)
-
-            but_row = but_box_inner_col.grid_flow(columns=cols_2_2_1_1_1, align=True)
-
-            sub1 = but_row.row(align=True)
-            sub1.prop(overlay, "normals_length", text="Normals")
-
-            sub2 = but_row.grid_flow(columns=cols_3_3_3_1_1, align=True)
-            sub2.prop(
-                overlay,
-                "show_vertex_normals",
-                text="",
-                icon='NORMALS_VERTEX'
-            )
-            sub2.prop(
-                overlay,
-                "show_split_normals",
-                text="",
-                icon='NORMALS_VERTEX_FACE'
-            )
-            sub2.prop(
-                overlay,
-                "show_face_normals",
-                text="",
-                icon='NORMALS_FACE'
-            )
-
-            but_row = but_box_inner_col.grid_flow(align=True)
-            but_row.scale_x = 0.65
-            but_row.prop(
-                shading,
-                "show_backface_culling",
-                text="Cull Backfaces",
-                toggle=True,
-                invert_checkbox=False,
-            )
-            but_row.prop(
-                overlay,
-                "show_face_orientation",
-                text="Show Orientation",
-                toggle=True,
-                invert_checkbox=False,
-            )
-
-            if active_obj:
-                if active_obj.type == 'MESH':
-                    active_mesh = context.active_object.data
-                    but_row.prop(
-                        active_mesh,
-                        "use_auto_smooth",
-                        toggle=True
-                    )
-
-        # Gizmo Row
-        if fp.fast_panel_tabs == 'GIZMOS':
-            but_box = root.box()
-            but_box_inner_col = but_box.column(align=False)
-
-            row_1 = but_box_inner_col.grid_flow(
-                                                columns=cols_2_2_1_1_1,
-                                                align=True,
-                                                even_columns=True
-                                                )
-
-            row_1.prop(
-                context.preferences.view,
-                "gizmo_size",
-                text="Gizmo Size"
-            )
-
-            sub_row = row_1.grid_flow(columns=cols_8_8_8_4_2, align=True)
-            sub_row.prop(
-                view,
-                "show_gizmo_empty_image",
-                text="",
-                toggle=True,
-                icon='IMAGE_PLANE',
-            )
-            sub_row.prop(
-                view,
-                "show_gizmo_empty_force_field",
-                text="",
-                toggle=True,
-                icon='FORCE_VORTEX',
-            )
-            sub_row.prop(
-                view,
-                "show_gizmo_light_size",
-                text="",
-                toggle=True,
-                icon='OUTLINER_OB_LIGHT',
-            )
-            sub_row.prop(
-                view,
-                "show_gizmo_light_look_at",
-                text="",
-                toggle=True,
-                icon='LIGHT_SPOT',
-            )
-            sub_row.prop(
-                view,
-                "show_gizmo_camera_lens",
-                text="",
-                toggle=True,
-                icon='CON_CAMERASOLVER',
-            )
-            sub_row.prop(
-                view,
-                "show_gizmo_camera_dof_distance",
-                text="",
-                toggle=True,
-                icon='CAMERA_DATA',
-            )
-            # sub_row.prop(
-            #     view,
-            #     "show_gizmo",
-            #     text="",
-            #     toggle=True,
-            #     icon='GIZMO',
-            # )
-
-            row_2 = but_box_inner_col.grid_flow(columns=giz_row_2_cols, align=True)
-            sub_row_1 = row_2.grid_flow(columns=3, align=True)
-            sub_row_1.prop(
-                view,
-                "show_gizmo_object_translate",
-                text="",
-                toggle=True,
-                icon='ORIENTATION_VIEW',
-                )
-            sub_row_1.prop(
-                view,
-                "show_gizmo_object_rotate",
-                text="",
-                toggle=True,
-                icon='DRIVER_ROTATIONAL_DIFFERENCE'
-            )
-            sub_row_1.prop(
-                view,
-                "show_gizmo_object_scale",
-                text="",
-                toggle=True,
-                icon='CON_SIZELIMIT'
-            )
-            sub_row_2 = row_2.row(align=True)
-            sub_row_2.prop(
-                scene.transform_orientation_slots[1],
-                "type",
-                text=""
-            )
-
-        # Display Row
-        if fp.fast_panel_tabs == 'DISPLAY':
-            but_box = root.box()
-            # but_box.scale_y = 0.85
-            but_box_inner_col = but_box.column(align=False)
-            but_row_1 = but_box_inner_col.grid_flow(columns=cols_4_4_4_2_1,  align=True)
-            # but_row.scale_x = 0.5
-
-            if context.active_object.type == 'MESH':
-                but_row_1.prop_enum(
-                    context.object,
-                    "display_type",
-                    'BOUNDS',
-                )
-                but_row_1.prop_enum(
-                    context.object,
-                    "display_type",
-                    'WIRE',
-                )
-                but_row_1.prop_enum(
-                    context.object,
-                    "display_type",
-                    'SOLID',
-                )
-                but_row_1.prop_enum(
-                    context.object,
-                    "display_type",
-                    'TEXTURED',
-                )
-
-                but_row_2 = but_box_inner_col.grid_flow(
-                                                        columns=cols_4_4_4_2_1,
-                                                        align=True,
-                                                        even_columns=True
-                                                        )
-
-                but_row_2.prop(
-                    context.object,
-                    'show_name',
-                    text="Name",
-                    toggle=True
-                )
-                but_row_2.prop(
-                    context.object,
-                    "show_wire",
-                    text="Wires",
-                    toggle=True
-                )
-                but_row_2.prop(
-                    context.object,
-                    "show_in_front",
-                    text="Clip",
-                    toggle=True,
-                    invert_checkbox=True
-                )
-                but_row_2.prop(
-                    context.object,
-                    'show_bounds',
-                    text="Bounds",
-                    toggle=True,
-                )
-                but_row_2.prop(
-                    context.object,
-                    "show_axis",
-                    text="Axis",
-                    toggle=True
-                )
-                but_row_2.prop(
-                    context.object,
-                    'display_bounds_type',
-                    text="",
-                    icon='REC'
-                )
-
-            elif context.active_object.type == 'EMPTY':
-                but_row.prop(
-                    context.object,
-                    'empty_display_type',
-                    text="",
-                    expand=False
-                )
-                but_row.prop(
-                    context.object,
-                    'parent',
-                    text="",
-                )
-
-                but_row_split = but_box_inner_col.split(factor=0.5, align=True)
-
-                but_row_split.prop(
-                    context.object,
-                    'empty_display_size',
-                    text="",
-                    expand=False
-                )
-
-                but_row_inner = but_row_split.row(align=True)
-
-                but_row_inner.prop(
-                    context.object,
-                    'show_name',
-                    text="Name",
-                    toggle=True
-                )
-                but_row_inner.prop(
-                    context.object,
-                    'show_axis',
-                    text="Axis",
-                    toggle=True
-                )
-
-            elif context.active_object.type == 'CAMERA':
-                but_row.prop(
-                    context.object.data,
-                    'show_limits',
-                    text="Limits",
-                    toggle=True
-                )
-                but_row.prop(
-                    context.object.data,
-                    'show_mist',
-                    text="Mist",
-                    toggle=True
-                )
-                but_row.prop(
-                    context.object.data,
-                    'show_sensor',
-                    text="Sensor",
-                    toggle=True
-                )
-                but_row.prop(
-                    context.object.data,
-                    'show_name',
-                    text="Name",
-                    toggle=True
-                )
-
-                but_row = but_box_inner_col.row(align=True)
-                but_row.prop(
-                    context.object.data,
-                    'display_size',
-                    text="Size",
-                )

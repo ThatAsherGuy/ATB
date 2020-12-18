@@ -27,8 +27,10 @@ from bpy.props import (
     BoolProperty,
     BoolVectorProperty,
     IntProperty,
+    IntVectorProperty,
     StringProperty,
-    PointerProperty
+    PointerProperty,
+    FloatProperty,
 )
 # import math
 
@@ -676,6 +678,14 @@ class ATB_WorkspaceProperties(PropertyGroup):
 
     mp_transforms: PointerProperty(type=CustomTransforms)
 
+    mp_debug: BoolVectorProperty(
+                            name="MetaPanelDebugFlags",
+                            description="ATB Gizmo Toolbox",
+                            default=(False, False, False, False),
+                            size=4,
+                            options={'SKIP_SAVE'}
+                             )
+
 
     ### Quick-Menu ###
     qm_menus: EnumProperty(
@@ -702,4 +712,50 @@ class ATB_WorkspaceProperties(PropertyGroup):
         name=' ',
         description='Fast Panel Tabs',
         items=fp_tab_items
+    )
+
+
+class ATB_WindowProperties(PropertyGroup):
+    """
+    Root group for ATB properties that can be
+    configured per-workspace. Mostly panel tabs.
+    """
+    # Top-level debug flag
+    debug: BoolProperty(
+            name="Debug",
+            description="ATB Debug Mode",
+            default=True,
+            options={'SKIP_SAVE'}
+            )
+
+    last_tap: FloatProperty(
+        name="Last Tap",
+        description="Previous key-down time",
+        default=-1.00000,
+        precision=6,
+    )
+
+    quick_threshold: FloatProperty(
+        name="Quick Tap Time",
+        description="Time threshold for quick taps",
+        default=0.50
+    )
+
+    hard_threshold: FloatProperty(
+        name="Hard Tap Time",
+        description="Force threshold for hard taps",
+        default=0.2
+    )
+
+
+    tap_seq: IntVectorProperty(
+        name="Tap Sequence",
+        description="The current sequence of taps",
+        size=9,
+        default=(-1, -1, -1, -1, -1, -1, -1, -1, -1),
+    )
+
+    combo_seq: StringProperty(
+        name="Tap Combo",
+        default=""
     )

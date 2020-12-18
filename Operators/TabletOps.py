@@ -29,12 +29,15 @@ import math
 import msvcrt
 import time
 import datetime
+import winsound
 
 from ..Utilities.DeepInspect import (
     isModalRunning
 )
 
 from ..Utilities.DeepInspect_Alt import isModalRunning_Alt
+
+from ..Utilities.InputCombos import add_input
 
 
 class ATB_OT_SuperTabletPie(bpy.types.Operator):
@@ -154,3 +157,45 @@ class ATB_OT_SuperTabletPie(bpy.types.Operator):
 
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
+
+
+class ATB_OT_RhythmInvoke(bpy.types.Operator):
+    bl_idname = "atb.tap_it"
+    bl_label = "ATB TAP"
+    bl_description = """Fancy Things"""
+    # bl_options = {'REGISTER'}
+
+    def invoke(self, context, event):
+        combo_state = context.window_manager.ATB
+        add_input(context, event)
+
+        print(combo_state.combo_seq)
+
+        if combo_state.combo_seq == "qsq":
+            print("META PIE")
+            combo_state.combo_seq = ""
+            combo_state.last_tap = -1
+            winsound.Beep(1250, 250)
+            bpy.ops.atb.meta_pie('INVOKE_DEFAULT')
+
+        if combo_state.combo_seq == "qqq":
+            print("SUPER SELECT")
+            combo_state.combo_seq = ""
+            combo_state.last_tap = -1
+            winsound.Beep(1250, 250)
+            bpy.ops.atb.super_select('INVOKE_DEFAULT')
+
+        if combo_state.combo_seq == "qss":
+            print("Save Pie")
+            combo_state.combo_seq = ""
+            combo_state.last_tap = -1
+            winsound.Beep(1250, 250)
+            bpy.ops.atb.save_pie('INVOKE_DEFAULT')
+
+        if len(combo_state.combo_seq) > 7:
+            print("RESET")
+            combo_state.combo_seq = ""
+            combo_state.last_tap = -1
+
+        return {'FINISHED'}
+

@@ -1111,29 +1111,29 @@ class ATB_PT_quick_operators(View3DPanel, bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         wm = bpy.context.window_manager
-        menu_sel = wm.quick_op_menus
+        qm_props = context.workspace.ATB
 
         tb_root = layout.column(align=True)
         # tb_root.label(text="Operator Toolbox:")
 
         menu = "VIEW3D_MT_select_edit_mesh"
 
-        if menu_sel.menus == 'EDIT':
+        if qm_props.qm_menus == 'EDIT':
             menu = "VIEW3D_MT_edit_mesh"
-        if menu_sel.menus == "ADD":
+        if qm_props.qm_menus == "ADD":
             menu = "VIEW3D_MT_mesh_add"
-        if menu_sel.menus == "UV":
+        if qm_props.qm_menus == "UV":
             menu = "VIEW3D_MT_uv_map"
-        if menu_sel.menus == "CONTEXT":
+        if qm_props.qm_menus == "CONTEXT":
             menu = "VIEW3D_MT_edit_mesh_context_menu"
-        if menu_sel.menus == "VERTEX":
+        if qm_props.qm_menus == "VERTEX":
             menu = "VIEW3D_MT_edit_mesh_vertices"
-        if menu_sel.menus == "EDGE":
+        if qm_props.qm_menus == "EDGE":
             menu = "VIEW3D_MT_edit_mesh_edges"
-        if menu_sel.menus == "FACE":
+        if qm_props.qm_menus == "FACE":
             menu = "VIEW3D_MT_edit_mesh_faces"
 
-        tb_root.prop(menu_sel, "menus", text="")
+        tb_root.prop(qm_props, "qm_menus", text="")
 
         box = tb_root.box()
 

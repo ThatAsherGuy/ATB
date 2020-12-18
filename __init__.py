@@ -22,8 +22,8 @@ from bpy.props import (
 )
 # import math
 
-# from .Icons.__init__ import *
-# from . Icons import initialize_icons_collection, unload_icons
+from .Icons.__init__ import *
+from . Icons import initialize_icons_collection, unload_icons
 
 from . properties import FastPanelProps
 from . properties import ObjectMatrixConversions
@@ -37,6 +37,7 @@ from . properties import ModalProps
 from . properties import ATB_ObjectProperties
 from . properties import ATB_SceneProperties
 from . properties import ATB_WorkspaceProperties
+from . properties import ATB_WindowProperties
 
 from . preferences import ATBAddonPreferences
 from . preferences import register_keymaps, unregister_keymaps
@@ -61,7 +62,8 @@ from .Operators.wrappers import ATB_OT_TogglePhotoMode
 from .Operators.wrappers import ATB_OT_Frame_Object
 from .Operators.wrappers import ATB_OT_Select_Object
 from .Operators.wrappers import ATB_OT_Nuke_Panel
-from .Operators.wrappers import  ATB_OT_Set_Object_Display
+from .Operators.wrappers import ATB_OT_Set_Object_Display
+from .Operators.wrappers import ATB_OT_SaveIncremental
 
 from .Operators.CameraOps import ATB_OT_Zoop
 from .Operators.CameraOps import ATB_OT_Lock_Camera
@@ -75,6 +77,7 @@ from .Operators.TransformOperators import ATB_OT_CreateNamedOrientation
 from .Operators.TransformOperators import ATB_OT_CursorToOrientation
 from .Operators.TransformOperators import ATB_OT_SetOrigin
 from .Operators.TransformOperators import ATB_OT_SetOriginToBBox
+from .Operators.TransformOperators import ATB_OT_QuickSnapOrigin
 
 from .Operators.ThemeOps import ATB_OT_set_color
 from .Operators.ThemeOps import ATB_OT_store_wire_color
@@ -84,6 +87,7 @@ from .Operators.SelectOps import ATB_OT_SelectThrough
 from .Operators.SelectOps import ATB_OT_ProximitySelect
 
 from .Operators.TabletOps import ATB_OT_SuperTabletPie
+from .Operators.TabletOps import ATB_OT_RhythmInvoke
 
 from .Operators.MeshOps import ATB_OT_QuickSymmetry
 
@@ -103,6 +107,7 @@ from .Gizmos.VPCursorGizmo import ATVPCursorGizmo
 from .Gizmos.VPCursorGizmo import ATCursorTool
 from .Gizmos.TabletGizmo import ATB_TabletGizmoGroup
 from .Gizmos.MirrorGizmo import ATB_MirrorGizmoGroup
+from .Gizmos.PreselectGizmo import ATB_PreselectGizmoGroup
 
 from .UI.MetaPanel import VIEW3D_PT_meta_panel
 from .UI.MetaPanel import CUSTOM_UL_camera_list
@@ -117,6 +122,7 @@ from .UI.ContextPies import VIEW3D_MT_PIE_expand_mode
 from .UI.ContextPies import VIEW3D_MT_PIE_quick_snap
 from .UI.ContextPies import VIEW3D_MT_PIE_quick_orientation
 from .UI.ContextPies import ATB_OT_MetaPie
+from .UI.ContextPies import ATB_OT_SavePie
 
 from .UI.ViewPanel import ATB_PT_ViewOverlaysPanel
 from .UI.ViewPanel import ATB_MT_MeshShadingMenu
@@ -126,9 +132,6 @@ from .UI.ViewPanel import ATB_PT_viewport_transform_settings
 from .UI.ViewPanel import ATB_PT_MiscOverlaysPanel
 
 from .UI.FastPanel import VIEW3D_PT_view3d_fast_panel
-from .UI.FastPanel import VIEW3D_PT_grid_ribbon
-from .UI.FastPanel import VIEW3D_PT_snap_ribbon
-from .UI.FastPanel import VIEW3D_PT_draw_ribbon
 
 from .UI.ViewPie import VIEW3D_MT_ATB_view_pie
 from .UI.ViewPie import VIEW3D_MT_ATB_cursor_pie
@@ -202,6 +205,7 @@ classes = (
     ATB_OT_Select_Object,
     ATB_OT_Nuke_Panel,
     ATB_OT_Set_Object_Display,
+    ATB_OT_SaveIncremental,
     # CameraOps.py,
     ATB_OT_Zoop,
     ATB_OT_Lock_Camera,
@@ -212,6 +216,7 @@ classes = (
     ATB_OT_CursorToOrientation,
     ATB_OT_SetOrigin,
     ATB_OT_SetOriginToBBox,
+    ATB_OT_QuickSnapOrigin,
     # Other Stuff
     ATB_PT_ViewOverlaysPanel,
     ATB_PT_viewport_transform_settings,
@@ -223,19 +228,18 @@ classes = (
     ATB_OT_set_color,
     ATB_OT_store_wire_color,
     VIEW3D_PT_view3d_fast_panel,
-    VIEW3D_PT_grid_ribbon,
-    VIEW3D_PT_snap_ribbon,
-    VIEW3D_PT_draw_ribbon,
     ATVertexGizmoGroup,
     ATPivotGizmoGroup,
     # MetaPanel.py
     VIEW3D_PT_meta_panel,
     VIEW3D_MT_set_origin,
     CUSTOM_UL_camera_list,
+    # Gizmos
     ATVPCursorGizmo,
     AxisGizmo,
     ATB_TabletGizmoGroup,
     ATB_MirrorGizmoGroup,
+    ATB_PreselectGizmoGroup,
     # ViewportOps.py
     ATB_OT_ViewAxis,
     ATB_OT_set_axis,
@@ -245,6 +249,7 @@ classes = (
     ATB_OT_ProximitySelect,
     # TabletOps.py
     ATB_OT_SuperTabletPie,
+    ATB_OT_RhythmInvoke,
     # Mesh Ops
     ATB_OT_QuickSymmetry,
     # Object Ops
@@ -269,6 +274,7 @@ classes = (
     VIEW3D_PT_viewport_rotation_panel,
     VIEW3D_PT_viewport_orbit_panel,
     ATB_OT_MetaPie,
+    ATB_OT_SavePie,
     # Property Groups
     MetaPanelTabs,
     QuickOpMenus,
@@ -282,6 +288,7 @@ classes = (
     ATB_ObjectProperties,
     ATB_SceneProperties,
     ATB_WorkspaceProperties,
+    ATB_WindowProperties,
     # Quick FavoritesMenu
     VIEW3D_MT_actc_root,
     VIEW3D_MT_actc_sub_edges,
@@ -299,17 +306,16 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    WorkSpace.ATB = PointerProperty(type=ATB_WorkspaceProperties)
 
-    WindowManager.metapanel_tabs = PointerProperty(type=MetaPanelTabs)
-    WindowManager.quick_op_menus = PointerProperty(type=QuickOpMenus)
     WorkSpace.custom_transforms = PointerProperty(type=CustomTransforms)
-    WindowManager.fp_props = PointerProperty(type=FastPanelProps)
-    WindowManager.mat_convert = PointerProperty(type=ObjectMatrixConversions)
     WorkSpace.temp_wires = PointerProperty(type=ATBWireColors)
     WorkSpace.customPops = PointerProperty(type=CustomPopoverProps)
-    bpy.types.Object.atb_props = PointerProperty(type=ATB_ObjectProperties)
+
+    # Currently working to unify my properties
+    bpy.types.Object.ATB = PointerProperty(type=ATB_ObjectProperties)
     bpy.types.Scene.ATB = PointerProperty(type=ATB_SceneProperties)
+    WindowManager.ATB = PointerProperty(type=ATB_WindowProperties)
+    WorkSpace.ATB = PointerProperty(type=ATB_WorkspaceProperties)
 
     WorkSpace.modals = PointerProperty(type=ModalProps)
 
@@ -331,11 +337,7 @@ def register():
         keylist = get_keys(dictname="keysdict")
         print("Loading Backup Keymap")
 
-    # keylist = get_keys()
     keymaps = register_keymaps(keylist)
-
-    # debug_keymap()
-
 
 def unregister():
     global keymaps
@@ -349,10 +351,10 @@ def unregister():
 
     bpy.utils.unregister_tool(ATCursorTool)
 
-    del bpy.types.WindowManager.metapanel_tabs
-    del bpy.types.WindowManager.quick_op_menus
-    del bpy.types.WindowManager.mat_convert
     del bpy.types.WorkSpace.customPops
+
+    # Newer unified properties setup
     del bpy.types.Scene.ATB
-    del bpy.types.Object.atb_props
+    del bpy.types.Object.ATB
     del bpy.types.WorkSpace.ATB
+    del bpy.types.WindowManager.ATB

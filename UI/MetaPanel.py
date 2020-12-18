@@ -43,6 +43,8 @@ from bl_ui.space_toolsystem_toolbar import (
 )
 from bpy_extras.node_utils import find_node_input
 
+from .. import Icons
+
 def active_tool():
     return view3d_tools.tool_active_from_context(bpy.context)
 
@@ -214,12 +216,10 @@ class VIEW3D_PT_meta_panel(Panel):
 
         active_obj = context.view_layer.objects.active
         wm = bpy.context.window_manager
-        tabs = wm.metapanel_tabs
-        metapanel = wm.metapanel_tabs
-        atb_props = context.scene.ATB
+        atb_props = context.workspace.ATB
 
-        if not tabs.tab:
-            tabs.tab = '0'
+        if not atb_props.mp_tabs:
+            atb_props.mp_tabs = '0'
 
         # Aliased Stuff
         scene = context.scene
@@ -232,7 +232,6 @@ class VIEW3D_PT_meta_panel(Panel):
         layout = self.layout
 
         root = layout.column(align=True)
-        root.prop(atb_props, "mode_flag")
 
         tb_width_check = check_width('UI', 12, 1, 440)
 
@@ -251,28 +250,28 @@ class VIEW3D_PT_meta_panel(Panel):
         tb_row.alignment = 'RIGHT'
 
         tb_row.prop_enum(
-                        tabs,
-                        'tab',
+                        atb_props,
+                        'mp_tabs',
                         '0',
-                        text=tab_labels[0][tb_ico_only]
+                        text=tab_labels[0][tb_ico_only],
         )
         tb_row.prop_enum(
-                        tabs,
-                        'tab',
+                        atb_props,
+                        'mp_tabs',
                         '1',
-                        text=tab_labels[1][tb_ico_only]
+                        text=tab_labels[1][tb_ico_only],
         )
         tb_row.prop_enum(
-                        tabs,
-                        'tab',
+                        atb_props,
+                        'mp_tabs',
                         '2',
-                        text=tab_labels[2][tb_ico_only]
+                        text=tab_labels[2][tb_ico_only],
         )
         tb_row.prop_enum(
-                        tabs,
-                        'tab',
+                        atb_props,
+                        'mp_tabs',
                         '3',
-                        text=tab_labels[3][tb_ico_only]
+                        text=tab_labels[3][tb_ico_only],
         )
 
         rbox = root.box()
@@ -280,82 +279,80 @@ class VIEW3D_PT_meta_panel(Panel):
 
         # $$Move Tab
         # TODO: ALL of this naming needs to be updated
-        if tabs.tab == '0':
+        if atb_props.mp_tabs == '0':
             orient_slot = scene.transform_orientation_slots[0]
 
             # Group 1 - Transform Orientation and Pivot
-            # bcol.label(text=self.bl_owner_id)
-            # bcol.template_running_jobs()
             bcol.label(text="Orientation")
 
-            g1_r = bcol.grid_flow(align=True)
+            flow = bcol.grid_flow(align=True)
 
-            g1_r.prop_enum(
+            flow.prop_enum(
                         orient_slot,
                         "type",
                         'GLOBAL',
                         text=""
                         )
-            g1_r.prop_enum(
+            flow.prop_enum(
                         orient_slot,
                         "type",
                         'LOCAL',
                         text=""
                         )
-            g1_r.prop_enum(
+            flow.prop_enum(
                         orient_slot,
                         "type",
                         'NORMAL',
                         text=""
                         )
-            g1_r.prop_enum(
+            flow.prop_enum(
                         orient_slot,
                         "type",
                         'CURSOR',
                         text=""
                         )
-            g1_r.prop_enum(
+            flow.prop_enum(
                         orient_slot,
                         "type",
                         'GIMBAL',
                         text=""
                         )
-            g1_r.prop_enum(
+            flow.prop_enum(
                         orient_slot,
                         "type",
                         'VIEW',
                         text=""
                         )
 
-            g_1_r_1 = bcol.grid_flow(align=True)
-            # g_1_r_1.scale_y = 0.5
+            flow = bcol.grid_flow(align=True)
+            # flow.scale_y = 0.5
 
-            g_1_r_1.operator(
+            flow.operator(
                 "atb.make_named_orientation",
                 text="",
                 icon='EVENT_A'
             ).transform_slot = 'SLOT_A'
-            g_1_r_1.operator(
+            flow.operator(
                 "atb.make_named_orientation",
                 text="",
                 icon='EVENT_B'
             ).transform_slot = 'SLOT_B'
-            g_1_r_1.operator(
+            flow.operator(
                 "atb.make_named_orientation",
                 text="",
                 icon='EVENT_C'
             ).transform_slot = 'SLOT_C'
-            g_1_r_1.operator(
+            flow.operator(
                 "atb.make_named_orientation",
                 text="",
                 icon='EVENT_D'
             ).transform_slot = 'SLOT_D'
-            g_1_r_1.operator(
+            flow.operator(
                 "atb.make_named_orientation",
                 text="",
                 icon='EVENT_E'
             ).transform_slot = 'SLOT_E'
-            g_1_r_1.operator(
+            flow.operator(
                 "atb.make_named_orientation",
                 text="",
                 icon='EVENT_F'
@@ -366,38 +363,30 @@ class VIEW3D_PT_meta_panel(Panel):
             # Group 2 - Pivot
             labeltext = "Pivot"
 
-            # if isModalRunning():
-            #     labeltext = "In Modal"
-
-            # tablet = isTablet()
-
-            # if tablet == 1:
-            #     labeltext = "Tablet"
-
             bcol.label(text=labeltext)
 
-            g_1_r_2 = bcol.row(align=True)
-            g_1_r_2.prop(
+            row = bcol.row(align=True)
+            row.prop(
                 tool_settings,
                 "transform_pivot_point",
                 text="",
                 expand=False
             )
-            g_1_r_2.prop(
+            row.prop(
                 tool_settings,
                 "use_transform_data_origin",
                 text="",
                 icon='TRANSFORM_ORIGINS',
                 toggle=True
             )
-            g_1_r_2.prop(
+            row.prop(
                 tool_settings,
                 "use_transform_pivot_point_align",
                 text="",
                 icon='CON_PIVOT',
                 toggle=True
             )
-            g_1_r_2.prop(
+            row.prop(
                 tool_settings,
                 "use_transform_skip_children",
                 text="",
@@ -405,22 +394,22 @@ class VIEW3D_PT_meta_panel(Panel):
                 toggle=True
             )
 
-            g_1_r_3 = bcol.row(align=True)
+            row = bcol.row(align=True)
 
-            g_1_r_3.operator(
+            row.operator(
                 "atb.align_cursor_to_orientation",
                 text="Do Cursor",
             )
 
-            g_1_r_3.operator_context = 'EXEC_REGION_WIN'
+            row.operator_context = 'EXEC_REGION_WIN'
 
-            op = g_1_r_3.operator(
+            op = row.operator(
                 "transform.transform",
                 text="Do Object",
             )
             op.mode = 'ALIGN'
 
-            g_1_r_1.operator_context = 'INVOKE_DEFAULT'
+            flow.operator_context = 'INVOKE_DEFAULT'
 
             bcol.separator()
             header_row = bcol.row(align=True)
@@ -484,7 +473,6 @@ class VIEW3D_PT_meta_panel(Panel):
                 text='Cursor',
             )
             op.snap_mode = 'CURSOR'
-            
 
             # Group 2 - Proportional Editing
 
@@ -493,8 +481,8 @@ class VIEW3D_PT_meta_panel(Panel):
 
             g2 = bcol.grid_flow(columns=1, align=True)
             g2.separator(factor=0.25)
-            g2_s1 = g2.row(align=True)
-            # g2_s1.alignment = 'CENTER'
+            row = g2.row(align=True)
+            # row.alignment = 'CENTER'
 
             obj = context.active_object
             object_mode = 'OBJECT' if obj is None else obj.mode
@@ -542,23 +530,23 @@ class VIEW3D_PT_meta_panel(Panel):
                     exp = False
                     proport_label = ""
 
-                g2_s1.prop(tool_settings, attr, text=proport_label, icon_only=True, **kw)
-                g2_s1.prop(tool_settings, "proportional_edit_falloff", expand=exp, text="")
+                row.prop(tool_settings, attr, text=proport_label, icon_only=True, **kw)
+                row.prop(tool_settings, "proportional_edit_falloff", expand=exp, text="")
                 quarg = (True if context.mode != 'OBJECT' else False)
 
-                g2_s2_t = (2, 3, 6)
-                g2_s2_v = (1, 1, 2)
-                g2_s2_cols = get_breakpoints('UI', g2_s2_t, g2_s2_v)
+                flow_t = (2, 3, 6)
+                flow_v = (1, 1, 2)
+                flow_cols = get_breakpoints('UI', flow_t, flow_v)
 
-                g2_s2 = g2.grid_flow(columns=g2_s2_cols[0], align=True)
-                g2_s2.active = quarg
-                g2_s2.prop(
+                flow = g2.grid_flow(columns=flow_cols[0], align=True)
+                flow.active = quarg
+                flow.prop(
                     tool_settings,
                     "use_proportional_connected",
                     text="Connected",
                     toggle=True
                 )
-                g2_s2.prop(
+                flow.prop(
                     tool_settings,
                     "use_proportional_projected",
                     text="Project",
@@ -571,14 +559,14 @@ class VIEW3D_PT_meta_panel(Panel):
 
             g3 = bcol.grid_flow(columns=1, align=True)
             g3.separator(factor=0.25)
-            rr_1 = g3.row(align=True)
+            row = g3.row(align=True)
 
             bcr1_t = (6, 8, 12)
             bcr1_v = (1, 1, 1)
             bcr1_cols = get_breakpoints('UI', bcr1_t, bcr1_v)
-            bcol_rg1 = rr_1.grid_flow(columns=bcr1_cols[0], align=True)
+            bcol_rg1 = row.grid_flow(columns=bcr1_cols[0], align=True)
 
-            bcol_rg1 = rr_1.row(align=True)
+            bcol_rg1 = row.row(align=True)
 
             # Row 1 Sub 1
             bcr1_s1_t = (2, 5, 8)
@@ -598,23 +586,23 @@ class VIEW3D_PT_meta_panel(Panel):
             bcol_row1_sub1 = bcol_rg1.grid_flow(columns=8, align=True)
             exec(snp_elem)
 
-            bcol_rg2 = rr_1.row(align=True)
+            sub_row = row.row(align=True)
 
-            bcol_rg2.prop(
+            sub_row.prop(
                         tool_settings,
                         "use_snap_project",
                         text="",
                         icon='MOD_SHRINKWRAP',
                         toggle=True
             )
-            bcol_rg2.prop(
+            sub_row.prop(
                         tool_settings,
                         "use_snap_align_rotation",
                         text="",
                         icon='CON_SHRINKWRAP',
                         toggle=True
             )
-            bcol_rg2.prop(
+            sub_row.prop(
                         tool_settings,
                         "use_snap_peel_object",
                         text="",
@@ -622,27 +610,27 @@ class VIEW3D_PT_meta_panel(Panel):
                         toggle=True
             )
 
-            rr_2 = g3.row(align=True)
-            rr_2L = rr_2.row(align=True)
-            rr_2L.prop(tool_settings, "snap_target", text="")
+            row = g3.row(align=True)
+            left = row.row(align=True)
+            left.prop(tool_settings, "snap_target", text="")
 
-            rr_2R = rr_2.row(align=True)
+            right = row.row(align=True)
 
-            rr_2R.prop(
+            right.prop(
                         tool_settings,
                         "use_snap_rotate",
                         text="",
                         icon='FORCE_CURVE',
                         toggle=True
             )
-            rr_2R.prop(
+            right.prop(
                         tool_settings,
                         "use_snap_translate",
                         text="",
                         icon='CON_LOCLIKE',
                         toggle=True
             )
-            rr_2R.prop(
+            right.prop(
                         tool_settings,
                         "use_snap_grid_absolute",
                         text="",
@@ -654,37 +642,37 @@ class VIEW3D_PT_meta_panel(Panel):
 
             bcol.separator()
             bcol.label(text="Grid")
-            g4 = bcol.grid_flow(columns=1, align=True)
-            # g4.separator(factor=0.25)
+            group = bcol.grid_flow(columns=1, align=True)
+            # group.separator(factor=0.25)
 
-            row_1 = g4.split(factor=0.5, align=True)
+            row = group.split(factor=0.5, align=True)
 
-            row_1_l = row_1.row(align=True)
-            row_1_l.prop(overlay, "grid_scale")
+            left = row.row(align=True)
+            left.prop(overlay, "grid_scale")
 
-            row_1_r = row_1.row(align=True)
-            # row_1_r.prop(overlay, "show_floor", toggle=True, text="Floor")
-            row_1_r.prop(units, "length_unit", text="")
+            right = row.row(align=True)
+            # right.prop(overlay, "show_floor", toggle=True, text="Floor")
+            right.prop(units, "length_unit", text="")
 
-            row_2 = g4.split(factor=0.5, align=True)
+            row = group.split(factor=0.5, align=True)
 
-            row_2_l = row_2.row(align=True)
-            row_2_l.prop(overlay, "show_ortho_grid", toggle=True, text="Ortho Grid")
+            left = row.row(align=True)
+            left.prop(overlay, "show_ortho_grid", toggle=True, text="Ortho Grid")
 
-            row_2_r = row_2.split(factor=0.5, align=True)
-            row_2_r.prop(overlay, "show_floor", toggle=True, text="Floor")
+            right = row.split(factor=0.5, align=True)
+            right.prop(overlay, "show_floor", toggle=True, text="Floor")
 
-            row_2_r.prop(overlay, "show_axis_x", toggle=True, text="X")
-            row_2_r.prop(overlay, "show_axis_y", toggle=True, text="Y")
-            row_2_r.prop(overlay, "show_axis_z", toggle=True, text="Z")
+            right.prop(overlay, "show_axis_x", toggle=True, text="X")
+            right.prop(overlay, "show_axis_y", toggle=True, text="Y")
+            right.prop(overlay, "show_axis_z", toggle=True, text="Z")
 
         # $$CameraManager Tab
-        if tabs.tab == '1':
+        if atb_props.mp_tabs == '1':
 
             bcol.label(text="Scene Cameras:")
 
             row = bcol.row(align=True)
-            row.template_list("CUSTOM_UL_camera_list", "", context.blend_data, "cameras", tabs, "cam_index", rows=1, maxrows=4)
+            row.template_list("CUSTOM_UL_camera_list", "", context.blend_data, "cameras", atb_props, "mp_cam_index", rows=1, maxrows=4)
 
             if active_obj and active_obj.type == 'CAMERA':
                 camera = active_obj
@@ -960,62 +948,63 @@ class VIEW3D_PT_meta_panel(Panel):
 
         # $$Display Tab
         # TODO: FIX NAMING
-        if tabs.tab == '2':
+        if atb_props.mp_tabs == '2':
             shading = self.get_shading(context)
             overlay = context.space_data.overlay
 
+            active_mat = None
             if active_obj:
                 if active_obj.type == 'MESH':
                     active_mat = active_obj.active_material
 
-            g2 = bcol.column(align=True)
-            g2.active = (True if shading.type in {'SOLID'} else False)
-            g2.scale_y = 1
+            group = bcol.column(align=True)
+            group.active = (True if shading.type in {'SOLID'} else False)
+            group.scale_y = 1
 
-            g2_r1 = g2.row(align=True)
-            g2_r1_c1 = g2_r1.column(align=True)
-            g2_r1_c1.ui_units_x = 3.75
+            row = group.row(align=True)
+            col = row.column(align=True)
+            col.ui_units_x = 3.75
 
-            g2_r1_c1.prop(shading, "light", expand=True)
+            col.prop(shading, "light", expand=True)
             if shading.light == 'MATCAP':
-                g2_r1_c1_sub = g2_r1_c1.row(align=True)
-                g2_r1_c1_sub.operator(
+                col_sub = col.row(align=True)
+                col_sub.operator(
                                     "view3d.toggle_matcap_flip",
                                     text="Flip",
                                     icon='ARROW_LEFTRIGHT'
                                     )
-                g2_r1_c1_sub.operator("preferences.studiolight_show", text="", icon='PREFERENCES')
+                col_sub.operator("preferences.studiolight_show", text="", icon='PREFERENCES')
             if shading.light == 'STUDIO':
-                g2_r1_c1_sub = g2_r1_c1.row(align=True)
-                g2_r1_c1_sub.prop(
+                col_sub = col.row(align=True)
+                col_sub.prop(
                                 shading,
                                 "use_world_space_lighting",
                                 text="",
                                 toggle=True,
                                 icon='WORLD'
                                 )
-                g2_r1_c1_sub.prop(
+                col_sub.prop(
                                 shading,
                                 "studiolight_rotate_z",
                                 text=""
                                 )
 
-            g2_r1_c2 = g2_r1.column(align=True)
-            g2_r1_c2.enabled = (True if shading.light in {'MATCAP', 'STUDIO'} else False)
-            asdasd_scale = (4 if shading.light in {'MATCAP', 'STUDIO'} else 3)
-            g2_r1_c2.template_icon_view(
+            sub_col = row.column(align=True)
+            sub_col.enabled = (True if shading.light in {'MATCAP', 'STUDIO'} else False)
+            scale = (4 if shading.light in {'MATCAP', 'STUDIO'} else 3)
+            sub_col.template_icon_view(
                 shading,
                 "studio_light",
-                scale=asdasd_scale,
+                scale=scale,
                 scale_popup=3
             )
 
             bcol.label(text="Color")
 
-            g1 = bcol.split(factor=0.75, align=True)
+            group = bcol.split(factor=0.75, align=True)
 
-            g1_left = g1.column(align=True)
-            g1_left.scale_y = 1
+            group_left = group.column(align=True)
+            group_left.scale_y = 1
 
             shade_mode = " "
             shade_submodes = ('SINGLE', 'OBJECT', 'RANDOM', 'MATERIAL', 'VERTEX', 'TEXTURE')
@@ -1023,45 +1012,48 @@ class VIEW3D_PT_meta_panel(Panel):
 
             if shading.type == 'SOLID':
                 shade_mode = "color_type"
-                g1_left_1 = g1_left.row(align=True)
+                sub_row = group_left.row(align=True)
             elif shading.type == 'WIREFRAME':
                 shade_mode = "wireframe_color_type"
-                g1_left_1 = g1_left.row(align=True)
-                g1_left.scale_y = 2
+                sub_row = group_left.row(align=True)
+                group_left.scale_y = 2
+            else:
+                shade_mode = "color_type"
+                sub_row = group_left.row(align=True)
 
             if shading.type == 'SOLID' or shading.type == 'WIREFRAME':
                 for i in range(0, shade_len):
-                    g1_left_1.prop_enum(
+                    sub_row.prop_enum(
                         shading, shade_mode, shade_submodes[i]
                     )
 
                 if shading.type == 'SOLID':
-                    g1_left_2 = g1_left.row(align=True)
+                    sub_row = group_left.row(align=True)
                     for i in range(0, shade_len):
-                        g1_left_2.prop_enum(
+                        sub_row.prop_enum(
                             shading, shade_mode, shade_submodes[i+3]
                         )
 
-            g1_c2 = g1.grid_flow(align=True)
-            g1_c2.scale_y = 2
+            flow = group.grid_flow(align=True)
+            flow.scale_y = 2
 
             if shading.type == 'WIREFRAME':
                 if shading.wireframe_color_type == 'SINGLE':
-                    g1_c2.prop(v3dtheme, "wire", text="")
+                    flow.prop(v3dtheme, "wire", text="")
                 elif (shading.wireframe_color_type == 'OBJECT'
                         and active_obj.type == 'MESH'):
-                    g1_c2.prop(active_obj, "color", text="")
+                    flow.prop(active_obj, "color", text="")
 
             if (shading.type == 'SOLID' and active_obj):
                 if shading.color_type == 'SINGLE':
-                    g1_c2.prop(shading, "single_color", text="")
+                    flow.prop(shading, "single_color", text="")
                 elif (shading.color_type == 'OBJECT'
                         and active_obj.type == 'MESH'):
-                    g1_c2.prop(active_obj, "color", text="")
+                    flow.prop(active_obj, "color", text="")
                 elif (shading.color_type == 'MATERIAL'
                         and active_obj.type == 'MESH'):
                     if active_obj.active_material:
-                        g1_c2.prop(active_mat, "diffuse_color", text="")
+                        flow.prop(active_mat, "diffuse_color", text="")
                         if shading.light == 'STUDIO':
                             col = bcol.row(align=True)
                             col.prop(active_mat, "metallic", text="Metalic")
@@ -1098,9 +1090,9 @@ class VIEW3D_PT_meta_panel(Panel):
                       in {'SCREEN', 'BOTH'}
                       and shading.show_cavity else False)
 
-            ico = ('WORLD_DATA' if metapanel.cavity_toggle[1] else 'WORLD_DATA')
+            ico = ('WORLD_DATA' if atb_props.mp_shading_cavtoggle[1] else 'WORLD_DATA')
             op = row.operator("atb.bool_to_enum", text="", icon=ico, depress=press1)
-            op.bool_prop = 'window_manager.metapanel_tabs.cavity_toggle'
+            op.bool_prop = 'window_manager.ATB.mp_shading_cavtoggle'
             op.enum_prop_path = 'space_data.shading.cavity_type'
             op.bool_index = 1
 
@@ -1119,10 +1111,10 @@ class VIEW3D_PT_meta_panel(Panel):
 
             row = c_col.row(align=True)
 
-            ico = ('RESTRICT_VIEW_OFF' if metapanel.cavity_toggle[0] else 'RESTRICT_VIEW_ON')
+            ico = ('RESTRICT_VIEW_OFF' if atb_props.mp_shading_cavtoggle[0] else 'RESTRICT_VIEW_ON')
 
             op = row.operator("atb.bool_to_enum", text="", icon=ico, depress=press2)
-            op.bool_prop = 'window_manager.metapanel_tabs.cavity_toggle'
+            op.bool_prop = 'window_manager.atb_props.mp_shading_cavtoggle'
             op.enum_prop_path = 'space_data.shading.cavity_type'
             op.bool_index = 0
 
@@ -1210,11 +1202,11 @@ class VIEW3D_PT_meta_panel(Panel):
 
             split = bcol.split(factor=0.725, align=True)
 
-            split_l = split.row(align=True)
-            split_l.alignment = 'LEFT'
+            left = split.row(align=True)
+            left.alignment = 'LEFT'
 
             ico = ('CHECKBOX_HLT' if shading.show_object_outline else 'CHECKBOX_DEHLT')
-            split_l.prop(
+            left.prop(
                         shading,
                         "show_object_outline",
                         text="Object Outlines",
@@ -1223,8 +1215,8 @@ class VIEW3D_PT_meta_panel(Panel):
                         emboss=False
                         )
 
-            split_r = split.row(align=True)
-            split_r.prop(shading, "object_outline_color", text="")
+            right = split.row(align=True)
+            right.prop(shading, "object_outline_color", text="")
 
             row = bcol.row(align=True)
             row.alignment = 'LEFT'
@@ -1253,7 +1245,7 @@ class VIEW3D_PT_meta_panel(Panel):
 
 
         # $$Active Object Tab
-        if tabs.tab == '3':
+        if atb_props.mp_tabs == '3':
 
             shading = self.get_shading(context)
             overlay = context.space_data.overlay
@@ -1485,47 +1477,41 @@ class VIEW3D_PT_meta_panel(Panel):
 
                 # TODO: Fix this horrific naming 
 
-                _row = col.row(align=True)
-                _row.menu("MESH_MT_vertex_group_context_menu", icon='PROPERTIES', text="")
+                sub_row = col.row(align=True)
+                sub_row.menu("MESH_MT_vertex_group_context_menu", icon='PROPERTIES', text="")
 
-                _col = col.column(align=True)
+                sub_col = col.column(align=True)
 
-                _col.operator("object.vertex_group_add", icon='ADD', text="")
+                sub_col.operator("object.vertex_group_add", icon='ADD', text="")
 
-                _col = col.column(align=True)
-                _col.active = (True if group else False)
-                querb = False
+                sub_col = col.column(align=True)
+                sub_col.active = (True if group else False)
+                show_active = False
 
-                props = _col.operator("object.vertex_group_remove", icon='REMOVE', text="")
+                props = sub_col.operator("object.vertex_group_remove", icon='REMOVE', text="")
                 props.all_unlocked = props.all = False
 
-                _col.operator(
+                sub_col.operator(
                     "object.vertex_group_move",
                     icon='TRIA_UP',
                     text=""
                     ).direction = 'UP'
-                _col.operator(
+                sub_col.operator(
                     "object.vertex_group_move",
                     icon='TRIA_DOWN',
                     text=""
                     ).direction = 'DOWN'
 
-                if (
-                        active_obj.vertex_groups and
-                        (
-                            active_obj.mode == 'EDIT' or
-                                                         (
-                                                             active_obj.mode == 'WEIGHT_PAINT'
-                                                             and active_obj.type == 'MESH'
-                                                             and active_obj.data.use_paint_mask_vertex
-                                                         )
-                        )
-                ):
-                    querb = True
+                if (active_obj.vertex_groups and
+                   (active_obj.mode == 'EDIT' or
+                   (active_obj.mode == 'WEIGHT_PAINT' and 
+                    active_obj.type == 'MESH' and
+                    active_obj.data.use_paint_mask_vertex))):
+                    show_active = True
 
                 ocol.separator(factor=0.5)
                 row = ocol.row(align=True)
-                row.active = querb
+                row.active = show_active
 
                 row_width_check = check_width('UI', 9, 1, 440)
 
@@ -1537,15 +1523,13 @@ class VIEW3D_PT_meta_panel(Panel):
                             ("Assign", " "),
                             ("Remove", " "),
                             ("Select", " "),
-                            ("Deselect", " "),
-                ]
+                            ("Deselect", " "),]
 
                 row_icons = [
                             ('NONE', 'ADD'),
                             ('NONE', 'REMOVE'),
                             ('NONE', 'RESTRICT_SELECT_OFF'),
-                            ('NONE', 'RESTRICT_SELECT_ON'),
-                ]
+                            ('NONE', 'RESTRICT_SELECT_ON'),]
 
                 sub = row.row(align=True)
 
@@ -1574,7 +1558,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             )
 
                 row = ocol.row(align=True)
-                row.active = querb
+                row.active = show_active
 
                 row.prop(context.tool_settings, "vertex_group_weight", text="Weight")
 
@@ -1588,10 +1572,10 @@ class VIEW3D_PT_meta_panel(Panel):
                 subrow = row.row(align=True)
 
                 subrow.prop(active_obj, 'parent_type', text="")
-                subrow.prop(tabs, 'activeObjectPanel_Toggles', index=1, text="", icon='DOWNARROW_HLT')
+                subrow.prop(atb_props, 'mp_active_subsections', index=1, text="", icon='DOWNARROW_HLT')
 
                 if active_obj and active_obj.parent:
-                    if tabs.activeObjectPanel_Toggles[1]:
+                    if  atb_props.mp_active_subsections[1]:
 
                         section = ocol.column(align=True)
 
@@ -1670,6 +1654,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             'radius')
 
                     if active_point:
+                        col = row.column(align=True)
                         col.prop(
                             active_point,
                             'tilt')
@@ -1903,38 +1888,37 @@ class VIEW3D_PT_meta_panel(Panel):
                                 )
 
                 col = row.column(align=True)
-                _row = col.row(align=True)
-                _row.menu("MESH_MT_vertex_group_context_menu", icon='PROPERTIES', text="")
+                sub_row = col.row(align=True)
+                sub_row.menu("MESH_MT_vertex_group_context_menu", icon='PROPERTIES', text="")
 
-                _col = col.column(align=True)
+                sub_col = col.column(align=True)
 
-                _col.operator("object.vertex_group_add", icon='ADD', text="")
+                sub_col.operator("object.vertex_group_add", icon='ADD', text="")
 
-                _col = col.column(align=True)
-                _col.active = (True if group else False)
-                querb = False
+                sub_col = col.column(align=True)
+                sub_col.active = (True if group else False)
+                show_active = False
 
-                props = _col.operator("object.vertex_group_remove", icon='REMOVE', text="")
+                props = sub_col.operator("object.vertex_group_remove", icon='REMOVE', text="")
                 props.all_unlocked = props.all = False
 
-                _col.operator(
+                sub_col.operator(
                     "object.vertex_group_move",
                     icon='TRIA_UP',
                     text=""
                     ).direction = 'UP'
-                _col.operator(
+                sub_col.operator(
                     "object.vertex_group_move",
                     icon='TRIA_DOWN',
                     text=""
                     ).direction = 'DOWN'
 
-                if (active_obj.vertex_groups and (active_obj.mode == 'EDIT' 
-                                                  or  (
-                                                      active_obj.mode == 'WEIGHT_PAINT'
-                                                      and active_obj.type == 'MESH'
-                                                      and active_obj.data.use_paint_mask_vertex
-                                                      )
-                                                  )):
+                do = False
+                if (active_obj.vertex_groups and
+                    (active_obj.mode == 'EDIT' or
+                        (active_obj.mode == 'WEIGHT_PAINT'and
+                         active_obj.type == 'MESH' and
+                         active_obj.data.use_paint_mask_vertex))):
                     do = True
 
                 ocol.separator(factor=0.5)
@@ -1986,7 +1970,7 @@ class VIEW3D_PT_meta_panel(Panel):
                             )
 
                 row = ocol.row(align=True)
-                row.active = querb
+                row.active = show_active
 
                 row.prop(context.tool_settings, "vertex_group_weight", text="Weight")
 
@@ -2056,7 +2040,9 @@ class VIEW3D_PT_meta_panel(Panel):
                                    unlink="object.unlink_data",
                                    hide_buttons=False
                                    )
+
                     ocol.separator(factor=2)
+
                     col = ocol.column(align=True)
                     col.template_image(
                                       context.object,
@@ -2767,43 +2753,37 @@ class VIEW3D_PT_meta_panel(Panel):
 
         footer_row.scale_y = 1
         footer_row.prop(
-            tabs,
-            "debug",
+            atb_props,
+            "mp_debug",
             text="Debug",
             icon='TOOL_SETTINGS',
             index=0,
             toggle=True
             )
         footer_row.prop(
-            tabs,
-            "debug",
+            atb_props,
+            "mp_debug",
             text="",
             icon='KEYFRAME_HLT',
             index=1,
             toggle=True
             )
         footer_row.prop(
-            tabs,
-            "debug",
+            atb_props,
+            "mp_debug",
             text="",
             icon='LAYER_USED',
             index=2,
             toggle=True
             )
         footer_row.prop(
-            tabs,
-            "debug",
+            atb_props,
+            "mp_debug",
             text="",
             icon='DOT',
             index=3,
             toggle=True
             )
-
-        # footer_col = root.column(align=True)
-
-        # footer_col.template_icon(icon_value=T1, scale=8)
-        # footer_col.template_icon(icon_value=T2, scale=8)
-        # footer_col.template_icon(icon_value=T4, scale=8)
 
 
 class VIEW3D_MT_set_origin(bpy.types.Menu):
