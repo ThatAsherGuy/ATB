@@ -57,7 +57,7 @@ class ATB_OT_SnapAndAlignCursor(bpy.types.Operator):
     """Wrapper for transform.rotate"""
     bl_idname = "atb.snap_align_cursor"
     bl_label = "ATB Snap and Align Cursor"
-    bl_description = "Wrapper for transform.rotate"
+    bl_description = "This is an experimental operator that you really shouldn't use"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -65,10 +65,10 @@ class ATB_OT_SnapAndAlignCursor(bpy.types.Operator):
         return context.active_object or context.selected_objects
 
     mode_items = [
-        ("SNAP_ONLY", "Red", "", 1),
-        ("ALIGN_ONLY", "Green", "", 2),
-        ("SNAP_ALIGN", "Blue", "", 3),
-        ("TWIST", "Yellow", "", 4),
+        ("SNAP_ONLY", "Snap Only", "", 1),
+        ("ALIGN_ONLY", "Align Only", "", 2),
+        ("SNAP_ALIGN", "Snap and Align", "", 3),
+        ("TWIST", "Twist it", "", 4),
     ]
 
     move_mode: EnumProperty(
@@ -84,10 +84,13 @@ class ATB_OT_SnapAndAlignCursor(bpy.types.Operator):
     def align_cursor(self, context, active):
 
         if self.internal_mode == 'EDIT_MESH':
+            print("Align Me!")
 
             bm = bmesh.from_edit_mesh(active.data)
             bm.normal_update()
             bm.verts.ensure_lookup_table()
+
+            elements = []
 
             if context.scene.tool_settings.mesh_select_mode[0]:
                 elements = [v for v in bm.verts if v.select]
@@ -117,13 +120,26 @@ class ATB_OT_SnapAndAlignCursor(bpy.types.Operator):
                     normal = mx.to_3x3() @ element.normal
                     rmx = create_rotation_matrix_from_normal(active, normal)
 
+                else:
+                    origin = Vector(0,0,0)
+                    normal = mx.to_3x3() @ element.normal
+                    rmx = None
+                    print("FAIL!")
+
                 # create quat from rmx
                 quat = rmx.to_quaternion()
 
-                set_cursor(origin, quat)
+                cursor = bpy.context.scene.cursor
+                cursor.location = origin
+
+                if cursor.rotation_mode == 'QUATERNION':
+                    cursor.rotation_quaternion = quat
+                elif cursor.rotation_mode == 'AXIS_ANGLE':
+                    cursor.rotation_axis_angle = quat.to_axis_angle()
+                else:
+                    cursor.rotation_euler = quat.to_euler(cursor.rotation_mode)
 
                 return True
-
             else:
                 return False
         if not active:
@@ -159,6 +175,8 @@ class ATB_OT_SnapAndAlignCursor(bpy.types.Operator):
             self.align_cursor(context, active)
         elif self.move_mode == 'TWIST':
             print("I didn't expect to get this far")
+
+        return {'FINISHED'}
 
 
 # Bunch of stuff yoinked from Machin3Tools for reference. Buy his add-ons. They're better than mine.
@@ -532,7 +550,6 @@ class ATB_OT_CursorToOrientation(bpy.types.Operator):
         self.execute(context)
         return {'FINISHED'}
 
-
 class ATB_OT_SetOrigin(bpy.types.Operator):
     bl_idname = "atb.set_origin"
     bl_label = "ATB Set Origin"
@@ -652,6 +669,7 @@ class ATB_OT_SetOriginToBBox(bpy.types.Operator):
         obj = context.active_object
         obj_rot = obj.matrix_world.to_quaternion()
         obj_loc = obj.location.copy()
+        obj_scale = obj.matrix_world.to_scale()
         raw_bounds = obj.bound_box
 
         bounds = []
@@ -709,8 +727,8 @@ class ATB_OT_SetOriginToBBox(bpy.types.Operator):
                 snap_type = 'ORIGIN_GEOMETRY'
 
         snap_point.rotate(obj_rot)
-
-        cursor.location = snap_point + obj.location
+        snap_point *= obj_scale
+        cursor.location = snap_point + obj_loc
 
         if bpy.context.mode == 'EDIT_MESH':
             bpy.ops.object.editmode_toggle()

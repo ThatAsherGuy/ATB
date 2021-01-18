@@ -39,6 +39,10 @@ from ..Utilities.DeepInspect_Alt import isModalRunning_Alt
 
 from ..Utilities.InputCombos import add_input
 
+from ..Utilities.Draw import draw_modal_text_px
+from ..Utilities.Draw import make_batch_edges
+from ..Utilities.Draw import draw_batch
+
 
 class ATB_OT_SuperTabletPie(bpy.types.Operator):
     """A pie menu for tablet users, wrapped in an operator so we can do input event processing"""
@@ -199,3 +203,43 @@ class ATB_OT_RhythmInvoke(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class ATB_OT_DRAW(bpy.types.Operator):
+    bl_idname = "atb.draw_it"
+    bl_label = "ATB DRAW"
+    bl_description = """Fancy Things"""
+    # bl_options = {'REGISTER'}
+
+    def modal(self, context, event):
+        context.area.tag_redraw()
+
+        if event.type == 'MOUSEMOVE':
+            self.loc = (event.mouse_region_x, event.mouse_region_y)
+        elif event.type in {'RIGHTMOUSE', 'ESC'}:
+            bpy.types.SpaceView3D.draw_handler_remove(self._mesh_handle, 'WINDOW')
+            return {'CANCELLED'}
+        else:
+            return {'PASS_THROUGH'}
+
+        return {'RUNNING_MODAL'}
+
+    def invoke(self, context, event):
+        if context.area.type == 'VIEW_3D':
+            args = (self, context)
+            
+
+            self.loc = (event.mouse_region_x, event.mouse_region_y)
+            self.offset = (20, 20)
+
+            self.obj = bpy.context.active_object
+
+            mesh_batch, mesh_shader = make_batch_edges(self, context)
+            mesh_args = (self, context, mesh_shader, mesh_batch)
+            self._mesh_handle = bpy.types.SpaceView3D.draw_handler_add(draw_batch, mesh_args, 'WINDOW', 'POST_VIEW')
+
+            context.window_manager.modal_handler_add(self)
+            return {'RUNNING_MODAL'}
+        else:
+            self.report({'WARNING'}, "View3D not found, cannot run operator")
+            return {'CANCELLED'}
+
+        return {'CANCELLED'}

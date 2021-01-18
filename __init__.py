@@ -78,6 +78,7 @@ from .Operators.TransformOperators import ATB_OT_CursorToOrientation
 from .Operators.TransformOperators import ATB_OT_SetOrigin
 from .Operators.TransformOperators import ATB_OT_SetOriginToBBox
 from .Operators.TransformOperators import ATB_OT_QuickSnapOrigin
+from .Operators.TransformOperators import ATB_OT_SnapAndAlignCursor
 
 from .Operators.ThemeOps import ATB_OT_set_color
 from .Operators.ThemeOps import ATB_OT_store_wire_color
@@ -88,6 +89,7 @@ from .Operators.SelectOps import ATB_OT_ProximitySelect
 
 from .Operators.TabletOps import ATB_OT_SuperTabletPie
 from .Operators.TabletOps import ATB_OT_RhythmInvoke
+from .Operators.TabletOps import ATB_OT_DRAW
 
 from .Operators.MeshOps import ATB_OT_QuickSymmetry
 
@@ -217,6 +219,7 @@ classes = (
     ATB_OT_SetOrigin,
     ATB_OT_SetOriginToBBox,
     ATB_OT_QuickSnapOrigin,
+    ATB_OT_SnapAndAlignCursor,
     # Other Stuff
     ATB_PT_ViewOverlaysPanel,
     ATB_PT_viewport_transform_settings,
@@ -250,6 +253,7 @@ classes = (
     # TabletOps.py
     ATB_OT_SuperTabletPie,
     ATB_OT_RhythmInvoke,
+    ATB_OT_DRAW,
     # Mesh Ops
     ATB_OT_QuickSymmetry,
     # Object Ops
